@@ -1,6 +1,8 @@
-package com.orange.poi;
+package com.orange.poi.word;
 
 import com.orange.poi.util.TempFileUtil;
+import com.orange.poi.word.PoiWordParagraphTool;
+import com.orange.poi.word.PoiWordTool;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.After;
@@ -52,16 +54,16 @@ public class PoiWordToolTest {
         XWPFParagraph paragraph;
 
         paragraph = doc.createParagraph();
-        PoiWordTool.setLineHeightMultiple(paragraph, 1.5f);
-        PoiWordTool.addParagraph(paragraph, "1.5 倍 行间距测试", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 1.5f);
+        PoiWordParagraphTool.addParagraph(paragraph, "1.5 倍 行间距测试", defaultFontFamily, defaultFontSize, defaultColor);
 
         paragraph = doc.createParagraph();
-        PoiWordTool.setLineHeightMultiple(paragraph, 2.0f);
-        PoiWordTool.addParagraph(paragraph, "2.0 倍 行间距测试", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 2.0f);
+        PoiWordParagraphTool.addParagraph(paragraph, "2.0 倍 行间距测试", defaultFontFamily, defaultFontSize, defaultColor);
 
         paragraph = doc.createParagraph();
-        PoiWordTool.setLineHeightMultiple(paragraph, 3.0f);
-        PoiWordTool.addParagraph(paragraph, "3.0 倍 行间距测试", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 3.0f);
+        PoiWordParagraphTool.addParagraph(paragraph, "3.0 倍 行间距测试", defaultFontFamily, defaultFontSize, defaultColor);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 

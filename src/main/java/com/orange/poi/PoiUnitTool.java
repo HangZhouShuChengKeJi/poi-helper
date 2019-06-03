@@ -23,7 +23,7 @@ public class PoiUnitTool {
     public static double centimeterToPoint(double cm) {
         // 1 英寸 = 2.54 厘米
         // 网络图片的分辨率一般是 72dpi，即：1 英寸有 72 个像素点
-        return (cm / 2.54) * Units.POINT_DPI;
+        return (cm / 2.54f) * Units.POINT_DPI;
     }
 
     /**
@@ -69,6 +69,17 @@ public class PoiUnitTool {
      */
     public static int dxaToPoint(int dxa) {
         return dxa / 20;
+    }
+
+    /**
+     * {@link STTblWidth#DXA} 转换为 磅（像素点数）
+     *
+     * @param dxa {@link STTblWidth#DXA}
+     *
+     * @return 磅（像素点数）
+     */
+    public static int dxaToPixel(int dxa) {
+        return Units.pointsToPixel(dxa / 20.f);
     }
 
     /**
