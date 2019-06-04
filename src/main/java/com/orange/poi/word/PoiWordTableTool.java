@@ -38,9 +38,9 @@ public class PoiWordTableTool {
     /**
      * 创建没有边框的表格
      *
-     * @param document    {@link XWPFParagraph}
-     * @param rows        行数
-     * @param cols        列数
+     * @param document {@link XWPFParagraph}
+     * @param rows     行数
+     * @param cols     列数
      *
      * @return {@link XWPFTable}
      */
@@ -51,10 +51,10 @@ public class PoiWordTableTool {
     /**
      * 创建没有边框的表格
      *
-     * @param document    {@link XWPFParagraph}
-     * @param rows        行数
-     * @param cols        列数
-     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     * @param document   {@link XWPFParagraph}
+     * @param rows       行数
+     * @param cols       列数
+     * @param tableWidth 表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
      *
      * @return {@link XWPFTable}
      */
@@ -66,10 +66,10 @@ public class PoiWordTableTool {
     /**
      * 创建表格
      *
-     * @param document    {@link XWPFParagraph}
-     * @param rows        行数
-     * @param cols        列数
-     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     * @param document   {@link XWPFParagraph}
+     * @param rows       行数
+     * @param cols       列数
+     * @param tableWidth 表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
      *
      * @return {@link XWPFTable}
      */
@@ -118,23 +118,28 @@ public class PoiWordTableTool {
         table.setInsideHBorder(borderType, borderSize, 0, borderColor);
         table.setInsideVBorder(borderType, borderSize, 0, borderColor);
 
-        for (int i = 1; i < rows; i++) {
-            table.createRow();
+
+        if (rows > 1) {
+            for (int i = 1; i < rows; i++) {
+                table.createRow();
+            }
         }
-        XWPFTableRow tableRowOne = table.getRow(0);
 
-        BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
+        if (cols > 1) {
+            XWPFTableRow tableRowOne = table.getRow(0);
 
-        XWPFTableCell tableCell = tableRowOne.getCell(0);
-        tableCell.setWidth(String.valueOf(cellWidth.intValue()));
-        tableCell.setWidthType(TableWidthType.DXA);
+            BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
 
-        for (int i = 1; i < cols; i++) {
-            tableCell = tableRowOne.addNewTableCell();
+            XWPFTableCell tableCell = tableRowOne.getCell(0);
             tableCell.setWidth(String.valueOf(cellWidth.intValue()));
             tableCell.setWidthType(TableWidthType.DXA);
-        }
 
+            for (int i = 1; i < cols; i++) {
+                tableCell = tableRowOne.addNewTableCell();
+                tableCell.setWidth(String.valueOf(cellWidth.intValue()));
+                tableCell.setWidthType(TableWidthType.DXA);
+            }
+        }
         return table;
     }
 
