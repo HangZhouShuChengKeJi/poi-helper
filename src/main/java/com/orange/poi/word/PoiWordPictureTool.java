@@ -41,21 +41,7 @@ public class PoiWordPictureTool {
      * 添加图片
      *
      * @param paragraph {@link XWPFParagraph}
-     * @param imgFile   图片文件绝对地址
-     *
-     * @return {@link XWPFPicture}
-     *
-     * @throws IOException
-     */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile) throws IOException {
-        return addPicture(paragraph, imgFile, true);
-    }
-
-    /**
-     * 添加图片
-     *
-     * @param paragraph {@link XWPFParagraph}
-     * @param imgFile   图片文件绝对地址
+     * @param imgFile   图片文件
      *
      * @return {@link XWPFPicture}
      *
@@ -68,57 +54,48 @@ public class PoiWordPictureTool {
     /**
      * 添加图片
      *
-     * @param paragraph  {@link XWPFParagraph}
-     * @param imgFile    图片文件绝对地址
-     * @param autoResize 自动调整图片大小以确保不超出文档范围
+     * @param paragraph        {@link XWPFParagraph}
+     * @param imgFile          图片文件
+     * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
      *
      * @return {@link XWPFPicture}
      *
      * @throws IOException
      */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile, boolean autoResize) throws IOException {
-        BufferedImage image = ImageIO.read(new File(imgFile));
-        if (image == null) {
-            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
-        }
-        final int actualWidth = image.getWidth();
-        final int actualHeight = image.getHeight();
-        if (autoResize) {
-            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(new File(imgFile),
-                    PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA),
-                    PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA));
-
-            return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
-        }
-        return addPicture(paragraph, imgFile, actualWidth, actualHeight);
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, boolean redrawOnOverflow) throws IOException {
+        return addPicture(paragraph, imgFile, PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), redrawOnOverflow);
     }
 
     /**
      * 添加图片
      *
-     * @param paragraph  {@link XWPFParagraph}
-     * @param imgFile    图片文件绝对地址
-     * @param autoResize 自动调整图片大小以确保不超出文档范围
+     * @param paragraph        {@link XWPFParagraph}
+     * @param imgFile          图片文件
+     * @param width            图片宽度（单位： 像素）
+     * @param height           图片高度（单位： 像素）
+     * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
      *
      * @return {@link XWPFPicture}
      *
      * @throws IOException
      */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, boolean autoResize) throws IOException {
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, int width, int height, boolean redrawOnOverflow) throws IOException {
+        if (redrawOnOverflow) {
+            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, width, height);
+            return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
+        }
         BufferedImage image = ImageIO.read(imgFile);
         if (image == null) {
             throw new IllegalArgumentException("图片文件不存在： " + imgFile);
         }
         final int actualWidth = image.getWidth();
         final int actualHeight = image.getHeight();
-        if (autoResize) {
-            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile,
-                    PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA),
-                    PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA));
-
-            return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
+        final double scaleW = (double) actualWidth / width;
+        final double scaleH = (double) actualHeight / height;
+        if (scaleW > scaleH) {
+            return addPicture(paragraph, imgFile.getAbsolutePath(), width, (int) (actualHeight / scaleW));
         }
-        return addPicture(paragraph, imgFile.getAbsolutePath(), actualWidth, actualHeight);
+        return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (width / scaleH), height);
     }
 
     /**
@@ -177,6 +154,30 @@ public class PoiWordPictureTool {
 
         try (FileInputStream is = new FileInputStream(imgFile)) {
             picture = paragraphRun.addPicture(is, getPictureType(imgFile), imgFile, Units.pixelToEMU(width), Units.pixelToEMU(height));
+        } catch (InvalidFormatException ignore) {
+        }
+        return picture;
+    }
+
+
+    /**
+     * 添加图片（只负责基本的绘制操作，不做其他任何处理）
+     *
+     * @param paragraph {@link XWPFParagraph}
+     * @param imgFile   图片文件绝对地址
+     * @param width     图片宽度（单位： 像素）
+     * @param height    图片高度（单位： 像素）
+     *
+     * @return {@link XWPFPicture}
+     *
+     * @throws IOException
+     */
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, int width, int height) throws IOException {
+        XWPFRun paragraphRun = paragraph.createRun();
+        XWPFPicture picture = null;
+
+        try (FileInputStream is = new FileInputStream(imgFile)) {
+            picture = paragraphRun.addPicture(is, getPictureType(imgFile.getAbsolutePath()), imgFile.getAbsolutePath(), Units.pixelToEMU(width), Units.pixelToEMU(height));
         } catch (InvalidFormatException ignore) {
         }
         return picture;
