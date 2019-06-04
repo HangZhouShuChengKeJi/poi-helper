@@ -15,8 +15,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,12 +38,43 @@ public class PoiWordTableTool {
     /**
      * 创建没有边框的表格
      *
-     * @param document {@link XWPFDocument}
+     * @param document    {@link XWPFParagraph}
+     * @param rows        行数
+     * @param cols        列数
      *
      * @return {@link XWPFTable}
      */
     public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols) {
         return createTable(document, rows, cols, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    }
+
+    /**
+     * 创建没有边框的表格
+     *
+     * @param document    {@link XWPFParagraph}
+     * @param rows        行数
+     * @param cols        列数
+     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, int tableWidth) {
+        return createTable(document, rows, cols, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    }
+
+
+    /**
+     * 创建表格
+     *
+     * @param document    {@link XWPFParagraph}
+     * @param rows        行数
+     * @param cols        列数
+     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, int tableWidth) {
+        return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
     }
 
     /**
@@ -56,9 +89,26 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable createTable(XWPFDocument document, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+        return createTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
+    }
+
+    /**
+     * 创建表格
+     *
+     * @param document    {@link XWPFParagraph}
+     * @param rows        行数
+     * @param cols        列数
+     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     * @param borderType  边框样式
+     * @param borderSize  边框宽度，取值范围：[2, 96]，2：1/4 磅，96：12磅
+     * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, int tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = document.createTable();
         table.setWidthType(TableWidthType.DXA);
-        table.setWidth(String.valueOf(A4_CONTENT_WIDTH_DXA));
+        table.setWidth(String.valueOf(tableWidth));
 
         table.setTopBorder(borderType, borderSize, 0, borderColor);
         table.setBottomBorder(borderType, borderSize, 0, borderColor);
@@ -73,7 +123,7 @@ public class PoiWordTableTool {
         }
         XWPFTableRow tableRowOne = table.getRow(0);
 
-        BigDecimal cellWidth = new BigDecimal(A4_CONTENT_WIDTH_DXA).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
+        BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
 
         XWPFTableCell tableCell = tableRowOne.getCell(0);
         tableCell.setWidth(String.valueOf(cellWidth.intValue()));
@@ -108,7 +158,7 @@ public class PoiWordTableTool {
      * @param tableCell 单元格
      * @param width     宽度（单位：磅）
      */
-    public static void setTableWidth(XWPFTableCell tableCell, int width) {
+    public static void setTableCellWidth(XWPFTableCell tableCell, int width) {
         tableCell.setWidth(String.valueOf(PoiUnitTool.pointToDXA(width)));
         tableCell.setWidthType(TableWidthType.DXA);
     }
@@ -120,7 +170,7 @@ public class PoiWordTableTool {
      * @param horizontalAlign 水平对齐方式
      * @param verticalAlign   垂直对齐方式
      */
-    public static void setTableCellAlign(XWPFTableCell cell, String text, String color, STJc.Enum horizontalAlign, XWPFTableCell.XWPFVertAlign verticalAlign) {
+    public static void setTableCellAlign(XWPFTableCell cell, String text, String color, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
         cell.setText(text);
         cell.setColor(color);
         setTableCellAlign(cell, horizontalAlign, verticalAlign);
@@ -133,14 +183,19 @@ public class PoiWordTableTool {
      * @param horizontalAlign 垂直对齐方式
      * @param verticalAlign   水平对齐方式
      */
-    public static void setTableCellAlign(XWPFTableCell cell, STJc.Enum horizontalAlign, XWPFTableCell.XWPFVertAlign verticalAlign) {
+    public static void setTableCellAlign(XWPFTableCell cell, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+        CTTc ctTc = cell.getCTTc();
+        CTPPr ctpPr;
+
+        // 垂直对齐
         if (verticalAlign != null) {
-            cell.setVerticalAlignment(verticalAlign);
+            CTTcPr tcPr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
+            CTVerticalJc vJc = tcPr.isSetVAlign() ? tcPr.getVAlign() : tcPr.addNewVAlign();
+            vJc.setVal(verticalAlign);
         }
+
         // 水平对齐
         if (horizontalAlign != null) {
-            CTTc ctTc = cell.getCTTc();
-            CTPPr ctpPr;
             List<CTP> ctpList = ctTc.getPList();
             if (ctpList == null || ctpList.size() == 0) {
                 return;

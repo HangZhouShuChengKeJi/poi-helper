@@ -37,6 +37,22 @@ public class PoiWordParagraphTool {
         return createParagraph(document, "", null, null, null);
     }
 
+    /**
+     * 创建段落
+     *
+     * @param document   {@link XWPFDocument}
+     * @param plainTxt   文本内容
+     * @param fontFamily 字体
+     * @param fontSize   字号
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
+                                                String fontFamily, Integer fontSize) {
+        XWPFParagraph paragraph = document.createParagraph();
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        return paragraph;
+    }
 
     /**
      * 创建段落
@@ -78,6 +94,21 @@ public class PoiWordParagraphTool {
         XWPFParagraph paragraph = document.createParagraph();
         addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline, alignment, verticalAlign);
         return paragraph;
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param plainTxt   文本内容
+     * @param fontFamily 字体
+     * @param fontSize   字号
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
+                                                String fontFamily, Integer fontSize) {
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, ParagraphAlignment.LEFT, TextAlignment.CENTER);
     }
 
     /**
