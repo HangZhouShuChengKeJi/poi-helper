@@ -209,12 +209,17 @@ public class PoiWordPictureTool {
         if (runList == null || runList.size() == 0) {
             return;
         }
+
         XWPFRun paragraphRun = runList.get(runList.size() - 1);
         CTDrawing drawing = paragraphRun.getCTR().getDrawingArray(0);
         CTAnchor ctAnchor = drawing.addNewAnchor();
 
         ctAnchor.setSimplePos2(false);
         ctAnchor.setRelativeHeight(0);
+
+        // 以下两个属性必须指定，否则使用 Microsoft Word 打开时，会提示文档已损坏
+        ctAnchor.setLocked(false);
+        ctAnchor.setLayoutInCell(false);
 
         // 水平位置
         CTPosH posH;
@@ -240,7 +245,11 @@ public class PoiWordPictureTool {
         ctAnchor.setDistB(ctInline.getDistB());
         ctAnchor.setDistL(ctInline.getDistL());
 
+        // 置于文字底部
         ctAnchor.setBehindDoc(true);
+        ctAnchor.addNewWrapNone();
+
+        // 允许图片叠加
         ctAnchor.setAllowOverlap(true);
 
         ctAnchor.setExtent(ctInline.getExtent());
@@ -256,10 +265,11 @@ public class PoiWordPictureTool {
         effectExtent.setB(0);
         effectExtent.setL(0);
 
-        ctAnchor.addNewWrapNone();
         ctAnchor.addNewCNvGraphicFramePr();
 
+        // 将旧的图片数据拷贝过来
         ctAnchor.setGraphic(ctInline.getGraphic());
+
 
         // 移除旧的图片
         drawing.removeInline(0);

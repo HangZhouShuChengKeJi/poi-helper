@@ -1,8 +1,12 @@
 package com.orange.poi.word;
 
+import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.TempFileUtil;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.TextAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.junit.Test;
 
 import java.io.File;
@@ -10,13 +14,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
-
 /**
  * @author 小天
  * @date 2019/6/3 22:17
  */
 public class PoiWordPictureToolTest {
+
+    private String defaultFontFamily = "宋体";
+    private int    defaultFontSize   = 14;
+    private String defaultColor      = "000000";
 
     @Test
     public void createPicture() {
@@ -31,21 +37,25 @@ public class PoiWordPictureToolTest {
         XWPFDocument doc = new XWPFDocument();
         PoiWordTool.initDocForA4(doc);
 
-        // 图片自动缩放
-        PoiWordPictureTool.addPicture(doc.createParagraph(), img1, true);
+//        // 图片自动缩放
+//        PoiWordPictureTool.addPicture(doc.createParagraph(), img1, true);
+//
+//        PoiWordParagraphTool.addBlankLine(doc);
+//        PoiWordParagraphTool.addBlankLine(doc);
+//        PoiWordParagraphTool.addBlankLine(doc);
 
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
 
-        PoiWordPictureTool.addPicture(doc.createParagraph(), img2, true);
+        XWPFParagraph titleParagraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(titleParagraph, "背景图片测试", defaultFontFamily , 25, defaultColor,
+                true, false,
+                ParagraphAlignment.CENTER, TextAlignment.CENTER);
 
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
+        // 设置行高
+        PoiWordParagraphTool.setLineHeightExact(titleParagraph, PoiUnitTool.pixelToPoint(200));
 
-        PoiWordPictureTool.addPicture(doc.createParagraph(), img3, false);
-        PoiWordParagraphTool.addBlankLine(doc);
+        // 设置背景图
+        XWPFPicture picture = PoiWordPictureTool.addPicture(titleParagraph, img1);
+        PoiWordPictureTool.setPicturePosition(titleParagraph, 0, 0);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
