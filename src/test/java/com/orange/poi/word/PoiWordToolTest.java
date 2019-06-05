@@ -35,6 +35,7 @@ public class PoiWordToolTest {
     @Test
     public void initDocForA4() {
         System.out.println(PoiUnitTool.dxaToPixel(PoiWordTool.A4_CONTENT_WIDTH_DXA));
+        System.out.println(PoiUnitTool.dxaToPoint(PoiWordTool.A4_CONTENT_WIDTH_DXA));
     }
 
     @Test
