@@ -32,19 +32,19 @@ public class PoiWordPictureToolTest {
         PoiWordTool.initDocForA4(doc);
 
         // 图片自动缩放
-        PoiWordPictureTool.addPicture(doc.createParagraph(), img1.getAbsolutePath(), true);
+        PoiWordPictureTool.addPicture(doc.createParagraph(), img1, true);
 
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
 
-        PoiWordPictureTool.addPicture(doc.createParagraph(), img2.getAbsolutePath(), true);
+        PoiWordPictureTool.addPicture(doc.createParagraph(), img2, true);
 
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
 
-        PoiWordPictureTool.addPicture(doc.createParagraph(), img3.getAbsolutePath(), false);
+        PoiWordPictureTool.addPicture(doc.createParagraph(), img3, false);
         PoiWordParagraphTool.addBlankLine(doc);
 
         File wordFile = TempFileUtil.createTempFile("docx");

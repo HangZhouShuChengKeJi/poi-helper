@@ -22,10 +22,6 @@ public class PoiWordTool {
      */
     public static final  int DEFAULT_FONT_SIZE = 12;
     /**
-     * 常量，在文档中定义长度和高度的单位
-     */
-    private static final int PER_LINE          = 100;
-    /**
      * 基准行高
      */
     public static final  int LINE_HEIGHT_DXA   = 240;
