@@ -1,5 +1,6 @@
 package com.orange.poi.word;
 
+import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.TempFileUtil;
 import com.orange.poi.word.PoiWordParagraphTool;
 import com.orange.poi.word.PoiWordTool;
@@ -33,6 +34,7 @@ public class PoiWordToolTest {
 
     @Test
     public void initDocForA4() {
+        System.out.println(PoiUnitTool.dxaToPixel(PoiWordTool.A4_CONTENT_WIDTH_DXA));
     }
 
     @Test

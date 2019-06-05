@@ -118,7 +118,6 @@ public class PoiWordTableTool {
         table.setInsideHBorder(borderType, borderSize, 0, borderColor);
         table.setInsideVBorder(borderType, borderSize, 0, borderColor);
 
-
         if (rows > 1) {
             for (int i = 1; i < rows; i++) {
                 table.createRow();
@@ -157,6 +156,22 @@ public class PoiWordTableTool {
         ctHeight.setVal(BigInteger.valueOf(PoiUnitTool.pixelToDXA(pixel)));
     }
 
+
+    /**
+     * 设置单元格文字
+     *
+     * @param cell            单元格
+     * @param text            单元格
+     * @param color           文本颜色
+     * @param horizontalAlign 水平对齐方式
+     * @param verticalAlign   垂直对齐方式
+     */
+    public static void setTableCellText(XWPFTableCell cell, String text, String color, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+        cell.setText(text);
+        cell.setColor(color);
+        setTableCellAlign(cell, horizontalAlign, verticalAlign);
+    }
+
     /**
      * 设置单元格宽度
      *
@@ -169,24 +184,11 @@ public class PoiWordTableTool {
     }
 
     /**
-     * 设置单元格文字
+     * 设置单元格对齐方式
      *
      * @param cell            单元格
      * @param horizontalAlign 水平对齐方式
      * @param verticalAlign   垂直对齐方式
-     */
-    public static void setTableCellAlign(XWPFTableCell cell, String text, String color, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
-        cell.setText(text);
-        cell.setColor(color);
-        setTableCellAlign(cell, horizontalAlign, verticalAlign);
-    }
-
-    /**
-     * 设置单元格对齐方式
-     *
-     * @param cell            单元格
-     * @param horizontalAlign 垂直对齐方式
-     * @param verticalAlign   水平对齐方式
      */
     public static void setTableCellAlign(XWPFTableCell cell, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
         CTTc ctTc = cell.getCTTc();
