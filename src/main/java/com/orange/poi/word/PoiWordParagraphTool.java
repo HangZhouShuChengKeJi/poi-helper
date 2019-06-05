@@ -50,7 +50,7 @@ public class PoiWordParagraphTool {
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize) {
         XWPFParagraph paragraph = document.createParagraph();
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, null, null);
         return paragraph;
     }
 
@@ -68,7 +68,7 @@ public class PoiWordParagraphTool {
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color) {
         XWPFParagraph paragraph = document.createParagraph();
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false, null, null);
         return paragraph;
     }
 
@@ -108,7 +108,7 @@ public class PoiWordParagraphTool {
      */
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
                                                 String fontFamily, Integer fontSize) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, null, null);
     }
 
     /**
@@ -122,7 +122,7 @@ public class PoiWordParagraphTool {
      */
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
                                     String fontFamily, Integer fontSize, String color) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false, null, null);
     }
 
 
@@ -140,7 +140,7 @@ public class PoiWordParagraphTool {
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
                                     String fontFamily, Integer fontSize, String color,
                                     boolean bold, boolean underline) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline, null, null);
     }
 
     /**
@@ -193,6 +193,7 @@ public class PoiWordParagraphTool {
      * @param multiple  多倍行距，例如： 1.5f 表示 1.5 倍行距
      */
     public static void setLineHeightMultiple(XWPFParagraph paragraph, double multiple) {
+        // todo 设置行高后， office 里，文本在垂直方向未居中
         if (multiple == 1.0f) {
             return;
         }
