@@ -41,6 +41,20 @@ public class PoiWordPictureTool {
      * 添加图片
      *
      * @param paragraph {@link XWPFParagraph}
+     * @param imgFile   图片文件绝对地址
+     *
+     * @return {@link XWPFPicture}
+     *
+     * @throws IOException
+     */
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile) throws IOException {
+        return addPicture(paragraph, new File(imgFile), true);
+    }
+
+    /**
+     * 添加图片
+     *
+     * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件
      *
      * @return {@link XWPFPicture}
