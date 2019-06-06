@@ -15,6 +15,8 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTEffect
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTPosH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTPosV;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignH;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignV;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromV;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
@@ -198,13 +200,70 @@ public class PoiWordPictureTool {
     }
 
     /**
-     * 设置图片位置
+     * 设置图片相对页面的定位
      *
      * @param paragraph  {@link XWPFParagraph}
      * @param leftOffset 水平偏移（单位： 磅）
      * @param topOffset  垂直偏移（单位： 磅）
      */
-    public static void setPicturePosition(XWPFParagraph paragraph, int leftOffset, int topOffset) {
+    public static void setPicturePositionOfPage(XWPFParagraph paragraph, int leftOffset, int topOffset) {
+        setPicturePosition(paragraph, STRelFromH.PAGE, leftOffset, null, STRelFromV.PAGE, topOffset, null,
+                true, false);
+    }
+
+    /**
+     * 设置图片相对页面边距的定位
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param leftOffset 水平偏移（单位： 磅）
+     * @param topOffset  垂直偏移（单位： 磅）
+     */
+    public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, int leftOffset, int topOffset) {
+        setPicturePosition(paragraph, STRelFromH.LEFT_MARGIN, leftOffset, null, STRelFromV.TOP_MARGIN, topOffset, null,
+                true, false);
+    }
+
+    /**
+     * 设置图片相对页面边距的定位
+     *
+     * @param paragraph {@link XWPFParagraph}
+     * @param alignH    水平对齐方式
+     * @param alignV    垂直对齐方式
+     */
+    public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, STAlignH.Enum alignH, STAlignV.Enum alignV) {
+        setPicturePosition(paragraph, STRelFromH.MARGIN, 0, alignH,
+                STRelFromV.MARGIN, 0, alignV, true, false);
+    }
+
+    /**
+     * 设置图片相对段落的定位
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param leftOffset 水平偏移（单位： 磅）
+     * @param topOffset  垂直偏移（单位： 磅）
+     */
+    public static void setPicturePositionOfParagraph(XWPFParagraph paragraph, int leftOffset, int topOffset, boolean layoutInCell) {
+        setPicturePosition(paragraph, STRelFromH.COLUMN, leftOffset, null,
+                STRelFromV.PARAGRAPH, topOffset, null, true, layoutInCell);
+    }
+
+    /**
+     * 设置图片位置
+     *
+     * @param paragraph             {@link XWPFParagraph}
+     * @param positionHRelativeFrom 水平位置参考方式
+     * @param leftOffset            水平偏移（单位： 磅）
+     * @param alignH                水平位置对齐方式。仅当 positionHRelativeFrom 为 STRelFromH.MARGIN 时有用
+     * @param positionVRelativeFrom 垂直位置参考方式
+     * @param topOffset             垂直偏移（单位： 磅）
+     * @param alignV                垂直位置对齐方式。仅当 positionVRelativeFrom 为 STRelFromV.MARGIN 时有用
+     * @param behindDoc             是否置于文字底部
+     * @param layoutInCell          是否在单元格内
+     */
+    public static void setPicturePosition(XWPFParagraph paragraph,
+                                          STRelFromH.Enum positionHRelativeFrom, Integer leftOffset, STAlignH.Enum alignH,
+                                          STRelFromV.Enum positionVRelativeFrom, Integer topOffset, STAlignV.Enum alignV,
+                                          boolean behindDoc, boolean layoutInCell) {
         List<XWPFRun> runList = paragraph.getRuns();
         if (runList == null || runList.size() == 0) {
             return;
@@ -219,23 +278,35 @@ public class PoiWordPictureTool {
 
         // 以下两个属性必须指定，否则使用 Microsoft Word 打开时，会提示文档已损坏
         ctAnchor.setLocked(false);
-        ctAnchor.setLayoutInCell(false);
+        ctAnchor.setLayoutInCell(layoutInCell);
 
         // 水平位置
         CTPosH posH;
         if ((posH = ctAnchor.getPositionH()) == null) {
             posH = ctAnchor.addNewPositionH();
         }
-        posH.setRelativeFrom(STRelFromH.MARGIN);
-        posH.setPosOffset(Units.toEMU(leftOffset));
+        if (positionHRelativeFrom != null) {
+            posH.setRelativeFrom(positionHRelativeFrom);
+            if (leftOffset != null) {
+                posH.setPosOffset(Units.toEMU(leftOffset));
+            } else {
+                posH.setAlign(alignH);
+            }
+        }
 
         // 垂直位置
         CTPosV posV;
         if ((posV = ctAnchor.getPositionV()) == null) {
             posV = ctAnchor.addNewPositionV();
         }
-        posV.setRelativeFrom(STRelFromV.PARAGRAPH);
-        posV.setPosOffset(Units.toEMU(topOffset));
+        if (positionVRelativeFrom != null) {
+            posV.setRelativeFrom(positionVRelativeFrom);
+            if (topOffset != null) {
+                posV.setPosOffset(Units.toEMU(topOffset));
+            } else {
+                posV.setAlign(alignV);
+            }
+        }
 
         // 复制原有的属性
         CTInline ctInline = drawing.getInlineArray(0);
@@ -246,8 +317,10 @@ public class PoiWordPictureTool {
         ctAnchor.setDistL(ctInline.getDistL());
 
         // 置于文字底部
-        ctAnchor.setBehindDoc(true);
-        ctAnchor.addNewWrapNone();
+        ctAnchor.setBehindDoc(behindDoc);
+        if (behindDoc) {
+            ctAnchor.addNewWrapNone();
+        }
 
         // 允许图片叠加
         ctAnchor.setAllowOverlap(true);
