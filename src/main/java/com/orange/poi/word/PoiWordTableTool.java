@@ -162,13 +162,11 @@ public class PoiWordTableTool {
      *
      * @param cell            单元格
      * @param text            单元格
-     * @param color           文本颜色
      * @param horizontalAlign 水平对齐方式
      * @param verticalAlign   垂直对齐方式
      */
-    public static void setTableCellText(XWPFTableCell cell, String text, String color, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+    public static void setTableCellText(XWPFTableCell cell, String text, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
         cell.setText(text);
-        cell.setColor(color);
         setTableCellAlign(cell, horizontalAlign, verticalAlign);
     }
 
@@ -226,16 +224,6 @@ public class PoiWordTableTool {
      * @param bgColor 背景色（RGB 格式，例如："FFFFFF"）
      */
     public static void setTableCellBgColor(XWPFTableCell cell, String bgColor) {
-        CTTc ctTc = cell.getCTTc();
-        CTTcPr cellProperties;
-        if ((cellProperties = ctTc.getTcPr()) == null) {
-            cellProperties = ctTc.addNewTcPr();
-        }
-        CTShd ctShd;
-        if ((ctShd = cellProperties.getShd()) == null) {
-            ctShd = cellProperties.addNewShd();
-        }
-        ctShd.setColor(bgColor);
-        ctShd.setFill(bgColor);
+        cell.setColor(bgColor);
     }
 }
