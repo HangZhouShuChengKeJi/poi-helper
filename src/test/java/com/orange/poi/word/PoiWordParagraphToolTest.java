@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
-
 /**
  * @author 小天
  * @date 2019/6/5 10:59

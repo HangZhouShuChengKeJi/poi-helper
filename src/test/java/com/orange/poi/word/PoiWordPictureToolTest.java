@@ -2,8 +2,6 @@ package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.TempFileUtil;
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.TextAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
@@ -54,7 +52,7 @@ public class PoiWordPictureToolTest {
 
         // 设置背景图
         XWPFPicture picture = PoiWordPictureTool.addPicture(titleParagraph, img1);
-        PoiWordPictureTool.setPicturePosition(titleParagraph, 0, 0);
+        PoiWordPictureTool.setPicturePositionOfParagraph(titleParagraph, 0, 0, false);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
