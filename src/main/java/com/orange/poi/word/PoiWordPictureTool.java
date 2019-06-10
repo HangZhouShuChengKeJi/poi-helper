@@ -207,7 +207,7 @@ public class PoiWordPictureTool {
      * @param leftOffset 水平偏移（单位： 磅）
      * @param topOffset  垂直偏移（单位： 磅）
      */
-    public static void setPicturePositionOfPage(XWPFParagraph paragraph, int leftOffset, int topOffset) {
+    public static void setPicturePositionOfPage(XWPFParagraph paragraph, double leftOffset, double topOffset) {
         setPicturePosition(paragraph, STRelFromH.PAGE, leftOffset, null, STRelFromV.PAGE, topOffset, null,
                 true, false);
     }
@@ -219,7 +219,7 @@ public class PoiWordPictureTool {
      * @param leftOffset 水平偏移（单位： 磅）
      * @param topOffset  垂直偏移（单位： 磅）
      */
-    public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, int leftOffset, int topOffset) {
+    public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, double leftOffset, double topOffset) {
         setPicturePosition(paragraph, STRelFromH.LEFT_MARGIN, leftOffset, null, STRelFromV.TOP_MARGIN, topOffset, null,
                 true, false);
     }
@@ -232,8 +232,8 @@ public class PoiWordPictureTool {
      * @param alignV    垂直对齐方式
      */
     public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, STAlignH.Enum alignH, STAlignV.Enum alignV) {
-        setPicturePosition(paragraph, STRelFromH.MARGIN, 0, alignH,
-                STRelFromV.MARGIN, 0, alignV, true, false);
+        setPicturePosition(paragraph, STRelFromH.MARGIN, null, alignH,
+                STRelFromV.MARGIN, null, alignV, true, false);
     }
 
     /**
@@ -243,7 +243,7 @@ public class PoiWordPictureTool {
      * @param leftOffset 水平偏移（单位： 磅）
      * @param topOffset  垂直偏移（单位： 磅）
      */
-    public static void setPicturePositionOfParagraph(XWPFParagraph paragraph, int leftOffset, int topOffset, boolean layoutInCell) {
+    public static void setPicturePositionOfParagraph(XWPFParagraph paragraph, double leftOffset, double topOffset, boolean layoutInCell) {
         setPicturePosition(paragraph, STRelFromH.COLUMN, leftOffset, null,
                 STRelFromV.PARAGRAPH, topOffset, null, true, layoutInCell);
     }
@@ -262,8 +262,8 @@ public class PoiWordPictureTool {
      * @param layoutInCell          是否在单元格内
      */
     public static void setPicturePosition(XWPFParagraph paragraph,
-                                          STRelFromH.Enum positionHRelativeFrom, Integer leftOffset, STAlignH.Enum alignH,
-                                          STRelFromV.Enum positionVRelativeFrom, Integer topOffset, STAlignV.Enum alignV,
+                                          STRelFromH.Enum positionHRelativeFrom, Double leftOffset, STAlignH.Enum alignH,
+                                          STRelFromV.Enum positionVRelativeFrom, Double topOffset, STAlignV.Enum alignV,
                                           boolean behindDoc, boolean layoutInCell) {
         List<XWPFRun> runList = paragraph.getRuns();
         if (runList == null || runList.size() == 0) {

@@ -29,47 +29,47 @@ public class PoiWordTool {
     /**
      * A4 纸宽度，单位：DXA
      */
-    public static final int  A4_WIDTH_DXA            = 11906;
+    public static final int    A4_WIDTH_DXA            = 11906;
     /**
      * A4 纸高度，单位：DXA
      */
-    public static final int  A4_HEIGHT_DXA           = 16838;
+    public static final int    A4_HEIGHT_DXA           = 16838;
     /**
      * 页面上边距默认为 1.5 cm
      */
-    public static final int  A4_MARGIN_TOP_DXA       = PoiUnitTool.centimeterToDXA(1.5f).intValue();
+    public static final long   A4_MARGIN_TOP_DXA       = PoiUnitTool.centimeterToDXA(1.5f);
     /**
      * 页面右边距默认为 1.5 cm
      */
-    public static final int  A4_MARGIN_RIGHT_DXA     = PoiUnitTool.centimeterToDXA(1.5f).intValue();
+    public static final long   A4_MARGIN_RIGHT_DXA     = PoiUnitTool.centimeterToDXA(1.5f);
     /**
      * 页面下边距默认为 1.5 cm
      */
-    public static final int  A4_MARGIN_BOTTOM_DXA    = PoiUnitTool.centimeterToDXA(1.5f).intValue();
+    public static final long   A4_MARGIN_BOTTOM_DXA    = PoiUnitTool.centimeterToDXA(1.5f);
     /**
      * 页面左边距默认为 1.5 cm
      */
-    public static final int  A4_MARGIN_LEFT_DXA      = PoiUnitTool.centimeterToDXA(1.5f).intValue();
+    public static final long   A4_MARGIN_LEFT_DXA      = PoiUnitTool.centimeterToDXA(1.5f);
     /**
      * 内容宽度（页面宽度减去左右页边距），单位：DXA
      */
-    public static final int  A4_CONTENT_WIDTH_DXA    = A4_WIDTH_DXA - A4_MARGIN_LEFT_DXA - A4_MARGIN_RIGHT_DXA;
+    public static final long    A4_CONTENT_WIDTH_DXA    = A4_WIDTH_DXA - A4_MARGIN_LEFT_DXA - A4_MARGIN_RIGHT_DXA;
     /**
      * 内容宽度（页面宽度减去左右页边距），单位：磅
      */
-    public static final int  A4_CONTENT_WIDTH_POINT  = PoiUnitTool.dxaToPoint(A4_CONTENT_WIDTH_DXA);
+    public static final double A4_CONTENT_WIDTH_POINT  = PoiUnitTool.dxaToPoint(A4_CONTENT_WIDTH_DXA);
     /**
      * 内容高度（页面高度减去上下页边距），单位：DXA
      */
-    public static final int  A4_CONTENT_HEIGHT_DXA   = A4_HEIGHT_DXA - A4_MARGIN_TOP_DXA - A4_MARGIN_BOTTOM_DXA;
+    public static final long    A4_CONTENT_HEIGHT_DXA   = A4_HEIGHT_DXA - A4_MARGIN_TOP_DXA - A4_MARGIN_BOTTOM_DXA;
     /**
      * 内容高度（页面高度减去上下页边距），单位：磅
      */
-    public static final int  A4_CONTENT_HEIGHT_POINT = PoiUnitTool.dxaToPoint(A4_CONTENT_HEIGHT_DXA);
+    public static final double A4_CONTENT_HEIGHT_POINT = PoiUnitTool.dxaToPoint(A4_CONTENT_HEIGHT_DXA);
     /**
      * 临时文件目录
      */
-    public static final File TEMP_FILE_DIR           = new File(System.getProperty("java.io.tmpdir"));
+    public static final File   TEMP_FILE_DIR           = new File(System.getProperty("java.io.tmpdir"));
 
     /**
      * 将 word 初始化为 A4 值（包括页面大小、页边距等）

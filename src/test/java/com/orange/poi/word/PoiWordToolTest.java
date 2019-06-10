@@ -36,6 +36,10 @@ public class PoiWordToolTest {
     public void initDocForA4() {
         System.out.println(PoiUnitTool.dxaToPixel(PoiWordTool.A4_CONTENT_WIDTH_DXA));
         System.out.println(PoiUnitTool.dxaToPoint(PoiWordTool.A4_CONTENT_WIDTH_DXA));
+
+        System.out.println(PoiUnitTool.pixelToPoint(40));
+        System.out.println(PoiUnitTool.pixelToPoint(30));
+        System.out.println(PoiUnitTool.pixelToPoint(16));
     }
 
     @Test

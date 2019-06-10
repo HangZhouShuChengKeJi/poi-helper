@@ -218,7 +218,7 @@ public class PoiWordParagraphTool {
         if ((spacing = ppr.getSpacing()) == null) {
             spacing = ppr.addNewSpacing();
         }
-        spacing.setLine(PoiUnitTool.pointToDXA(value));
+        spacing.setLine(BigInteger.valueOf(PoiUnitTool.pointToDXA(value)));
         spacing.setLineRule(STLineSpacingRule.EXACT);
     }
 
@@ -250,8 +250,8 @@ public class PoiWordParagraphTool {
         if ((spacing = ppr.getSpacing()) == null) {
             spacing = ppr.addNewSpacing();
         }
-        spacing.setBefore(PoiUnitTool.pointToDXA(before));
-        spacing.setAfter(PoiUnitTool.pointToDXA(after));
+        spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(before)));
+        spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(after)));
         // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
         spacing.setBeforeLines(BigInteger.valueOf((long) ((double)spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
         spacing.setAfterLines(BigInteger.valueOf((long) ((double)spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));

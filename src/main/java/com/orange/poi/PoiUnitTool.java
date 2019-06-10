@@ -3,8 +3,6 @@ package com.orange.poi;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
-import java.math.BigInteger;
-
 /**
  * apache poi 单位换算 工具类
  *
@@ -33,8 +31,8 @@ public class PoiUnitTool {
      *
      * @return {@link STTblWidth#DXA} 厘米
      */
-    public static BigInteger centimeterToDXA(double cm) {
-        return BigInteger.valueOf((long) (centimeterToPoint(cm) * 20));
+    public static long centimeterToDXA(double cm) {
+        return (long) (centimeterToPoint(cm) * 20);
     }
 
     /**
@@ -55,8 +53,8 @@ public class PoiUnitTool {
      *
      * @return {@link STTblWidth#DXA} 值
      */
-    public static BigInteger pointToDXA(double point) {
-        return BigInteger.valueOf((long) (point * 20));
+    public static long pointToDXA(double point) {
+        return (long) (point * 20);
     }
 
 
@@ -67,8 +65,8 @@ public class PoiUnitTool {
      *
      * @return 磅（像素点数）
      */
-    public static int dxaToPoint(int dxa) {
-        return dxa / 20;
+    public static double dxaToPoint(long dxa) {
+        return dxa / 20.00d;
     }
 
     /**
@@ -78,8 +76,8 @@ public class PoiUnitTool {
      *
      * @return 磅（像素点数）
      */
-    public static int dxaToPixel(int dxa) {
-        return Units.pointsToPixel(dxa / 20.f);
+    public static int dxaToPixel(long dxa) {
+        return Units.pointsToPixel(dxa / 20);
     }
 
     /**
@@ -89,9 +87,9 @@ public class PoiUnitTool {
      *
      * @return {@link STTblWidth#DXA} 值
      */
-    public static int pixelToDXA(int pixel) {
+    public static long pixelToDXA(int pixel) {
         double points = Units.pixelToPoints(pixel);
-        return (int) (points * 20);
+        return (long) (points * 20);
     }
 
     /**

@@ -11,7 +11,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
@@ -105,7 +104,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, int tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = document.createTable();
         table.setWidthType(TableWidthType.DXA);
         table.setWidth(String.valueOf(tableWidth));
@@ -146,6 +145,20 @@ public class PoiWordTableTool {
      * 设置表格行高
      *
      * @param tableRowOne {@link XWPFTableRow}
+     * @param height      高度（单位：磅）
+     */
+    public static void setTableRowHeight(XWPFTableRow tableRowOne, double height) {
+        CTRow ctRow = tableRowOne.getCtRow();
+        CTTrPr trPr = (ctRow.isSetTrPr()) ? ctRow.getTrPr() : ctRow.addNewTrPr();
+        CTHeight ctHeight = trPr.sizeOfTrHeightArray() == 0 ? trPr.addNewTrHeight() : trPr.getTrHeightArray(0);
+        ctHeight.setHRule(STHeightRule.EXACT);
+        ctHeight.setVal(BigInteger.valueOf(PoiUnitTool.pointToDXA(height)));
+    }
+
+    /**
+     * 设置表格行高
+     *
+     * @param tableRowOne {@link XWPFTableRow}
      * @param pixel       高度（单位：像素）
      */
     public static void setTableRowHeightOfPixel(XWPFTableRow tableRowOne, int pixel) {
@@ -176,7 +189,7 @@ public class PoiWordTableTool {
      * @param tableCell 单元格
      * @param width     宽度（单位：磅）
      */
-    public static void setTableCellWidth(XWPFTableCell tableCell, int width) {
+    public static void setTableCellWidth(XWPFTableCell tableCell, double width) {
         tableCell.setWidth(String.valueOf(PoiUnitTool.pointToDXA(width)));
         tableCell.setWidthType(TableWidthType.DXA);
     }
