@@ -72,8 +72,8 @@ public class PoiWordTableToolTest {
         paragraph = tableCell.getParagraphArray(0);
         PoiWordPictureTool.addPicture(paragraph, getClass().getResource("/img/bg.png").getFile());
         PoiWordPictureTool.setPicturePosition(paragraph,
-                STRelFromH.MARGIN,0, STAlignH.LEFT,
-                STRelFromV.PARAGRAPH, 0, null,
+                STRelFromH.MARGIN,null, STAlignH.LEFT,
+                STRelFromV.PARAGRAPH, 0.00d, null,
                 true, false);
 
         // 第三列 背景图
@@ -81,8 +81,8 @@ public class PoiWordTableToolTest {
         paragraph = tableCell.getParagraphArray(0);
         PoiWordPictureTool.addPicture(paragraph, img3);
         PoiWordPictureTool.setPicturePosition(paragraph,
-                STRelFromH.MARGIN, (int) PoiUnitTool.pixelToPoint(452), null,
-                STRelFromV.PARAGRAPH, (int) PoiUnitTool.pixelToPoint(7), null,
+                STRelFromH.MARGIN, PoiUnitTool.pixelToPoint(452), null,
+                STRelFromV.PARAGRAPH, PoiUnitTool.pixelToPoint(7), null,
                 true, false);
 
         // 添加空行
