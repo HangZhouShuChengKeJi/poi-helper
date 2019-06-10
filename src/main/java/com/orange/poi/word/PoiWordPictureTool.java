@@ -24,7 +24,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -193,7 +192,7 @@ public class PoiWordPictureTool {
         XWPFRun paragraphRun = paragraph.createRun();
         XWPFPicture picture = null;
 
-        try (FileInputStream is = new FileInputStream(imgFile)) {
+        try (InputStream is = FileUtil.readFile(imgFile)) {
             picture = paragraphRun.addPicture(is, getPictureType(imgFile.getAbsolutePath()), imgFile.getAbsolutePath(), Units.pixelToEMU(width), Units.pixelToEMU(height));
         } catch (InvalidFormatException ignore) {
         }
