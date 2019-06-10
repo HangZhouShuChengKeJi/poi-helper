@@ -57,7 +57,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, int tableWidth) {
+    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, long tableWidth) {
         return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
