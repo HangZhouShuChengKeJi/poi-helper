@@ -34,7 +34,7 @@ public class PoiWordTableToolTest {
     @Before
     public void setUp() throws Exception {
 
-        System.setProperty("java.io.tmpdir", "C:\\Users\\hanyufei\\AppData\\Local\\Temp\\poiTest");
+        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir") + "\\poiTest");
     }
 
     @After
@@ -54,22 +54,22 @@ public class PoiWordTableToolTest {
         PoiWordTableTool.setTableRowHeightOfPixel(tableRowOne, 40);
 
         XWPFTableCell tableCell = tableRowOne.getCell(0);
-        PoiWordTableTool.setTableCellText(tableCell, "111111", STJc.LEFT, STVerticalJc.CENTER);
+        PoiWordTableTool.setTableCellText(tableCell, "对齐测试", STJc.LEFT, STVerticalJc.CENTER);
 
         tableCell = tableRowOne.getCell(1);
-        PoiWordTableTool.setTableCellText(tableCell, "222222", STJc.LEFT, STVerticalJc.CENTER);
+        PoiWordTableTool.setTableCellText(tableCell, "对齐测试测试", STJc.LEFT, STVerticalJc.CENTER);
 
         // 第三列
         tableCell = tableRowOne.getCell(2);
         paragraph = tableCell.getParagraphArray(0);
 
-        PoiWordParagraphTool.addParagraph(paragraph, "考纲要求： ", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addParagraph(paragraph, "对齐测试测", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordTableTool.setTableCellAlign(tableCell, STJc.LEFT, STVerticalJc.CENTER);
 
         PoiWordPictureTool.addPicture(paragraph, getClass().getResource("/img/star.png").getFile());
         PoiWordPictureTool.setPicturePosition(paragraph,
-                STRelFromH.LEFT_MARGIN, PoiUnitTool.pixelToPoint(100), null,
-                STRelFromV.PARAGRAPH, PoiUnitTool.pixelToPoint(1), null,
+                STRelFromH.MARGIN, PoiUnitTool.pixelToPoint(100), null,
+                STRelFromV.MARGIN, PoiUnitTool.pixelToPoint(5), null,
                 true, true);
 
         // 添加空行
