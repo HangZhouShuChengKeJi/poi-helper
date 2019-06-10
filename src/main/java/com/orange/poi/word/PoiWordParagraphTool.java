@@ -180,9 +180,13 @@ public class PoiWordParagraphTool {
         }
         if (alignment != null) {
             paragraph.setAlignment(alignment);
+        } else {
+            paragraph.setAlignment(ParagraphAlignment.LEFT);
         }
         if (verticalAlign != null) {
             paragraph.setVerticalAlignment(verticalAlign);
+        } else {
+            paragraph.setVerticalAlignment(TextAlignment.CENTER);
         }
     }
 

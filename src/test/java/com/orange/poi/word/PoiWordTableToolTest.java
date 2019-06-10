@@ -33,6 +33,8 @@ public class PoiWordTableToolTest {
 
     @Before
     public void setUp() throws Exception {
+
+        System.setProperty("java.io.tmpdir", "C:\\Users\\hanyufei\\AppData\\Local\\Temp\\poiTest");
     }
 
     @After
@@ -41,14 +43,12 @@ public class PoiWordTableToolTest {
 
     @Test
     public void createTableWithoutBorder() throws URISyntaxException, IOException {
-        File img3 = new File(getClass().getResource("/img/green_bg.png").toURI());
-
         XWPFDocument doc = new XWPFDocument();
         PoiWordTool.initDocForA4(doc);
 
         XWPFParagraph paragraph;
 
-        XWPFTable table = PoiWordTableTool.createTableWithoutBorder(doc, 1, 3);
+        XWPFTable table = PoiWordTableTool.createTable(doc, 1, 3, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
         XWPFTableRow tableRowOne = table.getRow(0);
         // 设置表格高度
         PoiWordTableTool.setTableRowHeightOfPixel(tableRowOne, 40);
@@ -59,31 +59,18 @@ public class PoiWordTableToolTest {
         tableCell = tableRowOne.getCell(1);
         PoiWordTableTool.setTableCellText(tableCell, "222222", STJc.LEFT, STVerticalJc.CENTER);
 
-        tableCell = tableRowOne.getCell(2);
-//        paragraph = tableCell.getParagraphArray(0);
-        PoiWordTableTool.setTableCellText(tableCell, "33333", STJc.LEFT, STVerticalJc.CENTER);
-//        PoiWordParagraphTool.addParagraph(paragraph, "33333", defaultFontFamily, defaultFontSize, defaultColor,
-//                true, false,
-//                null, TextAlignment.CENTER);
-//        PoiWordParagraphTool.setLineHeightExact(paragraph, PoiUnitTool.pixelToPoint(40));
-
-        tableCell = tableRowOne.getCell(0);
-        tableCell.setColor("FF0000");
-        paragraph = tableCell.getParagraphArray(0);
-        PoiWordPictureTool.addPicture(paragraph, getClass().getResource("/img/bg.png").getFile());
-        PoiWordPictureTool.setPicturePosition(paragraph,
-                STRelFromH.MARGIN,null, STAlignH.LEFT,
-                STRelFromV.PARAGRAPH, 0.00d, null,
-                true, false);
-
-        // 第三列 背景图
+        // 第三列
         tableCell = tableRowOne.getCell(2);
         paragraph = tableCell.getParagraphArray(0);
-        PoiWordPictureTool.addPicture(paragraph, img3);
+
+        PoiWordParagraphTool.addParagraph(paragraph, "考纲要求： ", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordTableTool.setTableCellAlign(tableCell, STJc.LEFT, STVerticalJc.CENTER);
+
+        PoiWordPictureTool.addPicture(paragraph, getClass().getResource("/img/star.png").getFile());
         PoiWordPictureTool.setPicturePosition(paragraph,
-                STRelFromH.MARGIN, PoiUnitTool.pixelToPoint(452), null,
-                STRelFromV.PARAGRAPH, PoiUnitTool.pixelToPoint(7), null,
-                true, false);
+                STRelFromH.LEFT_MARGIN, PoiUnitTool.pixelToPoint(100), null,
+                STRelFromV.PARAGRAPH, PoiUnitTool.pixelToPoint(1), null,
+                true, true);
 
         // 添加空行
         PoiWordParagraphTool.addBlankLine(doc);

@@ -40,6 +40,7 @@ public class PoiWordToolTest {
         System.out.println(PoiUnitTool.pixelToPoint(40));
         System.out.println(PoiUnitTool.pixelToPoint(30));
         System.out.println(PoiUnitTool.pixelToPoint(16));
+        System.out.println(PoiUnitTool.pointToPixel(12));
     }
 
     @Test
