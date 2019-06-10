@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 图片处理工具
@@ -13,6 +14,23 @@ import java.io.IOException;
  * @date 2019/6/3 23:29
  */
 public class ImageTool {
+
+    /**
+     * 读取图片文件
+     *
+     * @param imgFile 图片文件
+     *
+     * @return {@link BufferedImage}
+     *
+     * @throws IOException
+     */
+    public static BufferedImage readImage(File imgFile) throws IOException {
+        InputStream inputStream;
+        if ((inputStream = FileUtil.readFile(imgFile)) == null) {
+            return null;
+        }
+        return ImageIO.read(inputStream);
+    }
 
     /**
      * 等比例缩放图片
@@ -26,9 +44,9 @@ public class ImageTool {
      * @throws IOException
      */
     public static ImageInfo resizeImage(File imgFile, final int maxWidth, final int maxHeight) throws IOException {
-        BufferedImage image = ImageIO.read(imgFile);
+        final BufferedImage image = readImage(imgFile);
         if (image == null) {
-            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
+            throw new IllegalArgumentException("图片文件不存在： " + imgFile.getAbsolutePath());
         }
         final int actualWidth = image.getWidth();
         final int actualHeight = image.getHeight();

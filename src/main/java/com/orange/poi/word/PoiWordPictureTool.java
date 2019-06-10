@@ -1,6 +1,7 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import com.orange.poi.util.FileUtil;
 import com.orange.poi.util.ImageTool;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
@@ -21,11 +22,11 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFro
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromV;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static com.orange.poi.word.PoiWordTool.A4_CONTENT_HEIGHT_DXA;
@@ -100,7 +101,7 @@ public class PoiWordPictureTool {
             ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, width, height);
             return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
         }
-        BufferedImage image = ImageIO.read(imgFile);
+        BufferedImage image = ImageTool.readImage(imgFile);
         if (image == null) {
             throw new IllegalArgumentException("图片文件不存在： " + imgFile);
         }
@@ -168,7 +169,7 @@ public class PoiWordPictureTool {
         XWPFRun paragraphRun = paragraph.createRun();
         XWPFPicture picture = null;
 
-        try (FileInputStream is = new FileInputStream(imgFile)) {
+        try (InputStream is = FileUtil.readFile(new File(imgFile))) {
             picture = paragraphRun.addPicture(is, getPictureType(imgFile), imgFile, Units.pixelToEMU(width), Units.pixelToEMU(height));
         } catch (InvalidFormatException ignore) {
         }
