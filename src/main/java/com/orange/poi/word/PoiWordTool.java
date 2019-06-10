@@ -2,9 +2,11 @@ package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocGrid;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -85,6 +87,16 @@ public class PoiWordTool {
         pageMar.setRight(BigInteger.valueOf(A4_MARGIN_RIGHT_DXA));
         pageMar.setBottom(BigInteger.valueOf(A4_MARGIN_BOTTOM_DXA));
         pageMar.setLeft(BigInteger.valueOf(A4_MARGIN_LEFT_DXA));
+
+        /**
+         *  docGrid 的 type 设置为 STDocGrid.LINES，linePitch 设置为 312 被证明在 A4 版面中，用于设置文字在行中居中。
+         *
+         *  todo 这两个值是 通过对比 office 和 wps 生成的文档得出的结论，尚不清楚具体意思
+         */
+        CTDocGrid docGrid = sectPr.addNewDocGrid();
+        docGrid.setType(STDocGrid.LINES);
+        // 线间距，单位：dxa
+        docGrid.setLinePitch(BigInteger.valueOf(312));
     }
 
 

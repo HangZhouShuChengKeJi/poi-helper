@@ -107,7 +107,7 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFParagraph}
      */
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
-                                                String fontFamily, Integer fontSize) {
+                                    String fontFamily, Integer fontSize) {
         addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, null, null);
     }
 
@@ -191,16 +191,12 @@ public class PoiWordParagraphTool {
     }
 
     /**
-     * 设置行高
+     * 设置行高（行距）为多倍行距
      *
      * @param paragraph {@link XWPFParagraph}
      * @param multiple  多倍行距，例如： 1.5f 表示 1.5 倍行距
      */
     public static void setLineHeightMultiple(XWPFParagraph paragraph, double multiple) {
-        // todo 设置行高后， office 里，文本在垂直方向未居中
-        if (multiple == 1.0f) {
-            return;
-        }
         CTPPr ppr = getParagraphProperties(paragraph);
         CTSpacing spacing;
         if ((spacing = ppr.getSpacing()) == null) {
@@ -211,7 +207,8 @@ public class PoiWordParagraphTool {
     }
 
     /**
-     * 设置行高
+     * 设置行高（行距）为固定值。<br>
+     * <p><b>注意：</b> 设置行高为固定值时，在 wps 里，文本不能垂直居中。</p>
      *
      * @param paragraph {@link XWPFParagraph}
      * @param value     行高，单位：磅
@@ -257,8 +254,8 @@ public class PoiWordParagraphTool {
         spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(before)));
         spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(after)));
         // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
-        spacing.setBeforeLines(BigInteger.valueOf((long) ((double)spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
-        spacing.setAfterLines(BigInteger.valueOf((long) ((double)spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
+        spacing.setBeforeLines(BigInteger.valueOf((long) ((double) spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
+        spacing.setAfterLines(BigInteger.valueOf((long) ((double) spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
     }
 
     /**

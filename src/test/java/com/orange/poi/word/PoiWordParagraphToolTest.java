@@ -3,6 +3,8 @@ package com.orange.poi.word;
 import com.orange.poi.util.TempFileUtil;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,6 +21,20 @@ public class PoiWordParagraphToolTest {
     private int    defaultFontSize   = 14;
     private String defaultColor      = "000000";
 
+
+    @Before
+    public void setUp() throws Exception {
+        File tempDir = new File("C:\\Users\\Administrator\\AppData\\Local\\Temp\\poiTest");
+        if (!tempDir.exists()) {
+            tempDir.mkdir();
+        }
+        System.setProperty("java.io.tmpdir", "C:\\Users\\Administrator\\AppData\\Local\\Temp\\poiTest");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
     @Test
     public void addBlankLine() {
     }
@@ -32,11 +48,53 @@ public class PoiWordParagraphToolTest {
     }
 
     @Test
-    public void setLineHeightMultiple() {
+    public void setLineHeightMultiple() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+        XWPFParagraph paragraph;
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "1.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 0.5f);
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "2.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 2.0f);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 
     @Test
-    public void setLineHeightExact() {
+    public void setLineHeightExact() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+        XWPFParagraph paragraph;
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "40磅 行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightExact(paragraph, 40.00d);
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "80磅 行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightExact(paragraph, 80.00d);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 
     @Test
