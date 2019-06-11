@@ -72,7 +72,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, int tableWidth) {
+    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth) {
         return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
     }
 
