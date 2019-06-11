@@ -50,7 +50,7 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile) throws IOException {
-        return addPicture(paragraph, new File(imgFile), PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), false, false);
+        return addPicture(paragraph, new File(imgFile));
     }
 
     /**
@@ -64,58 +64,49 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile) throws IOException {
-        return addPicture(paragraph, imgFile, PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), false, false);
+        BufferedImage image = ImageTool.readImage(imgFile);
+        if (image == null) {
+            throw new IllegalArgumentException("图片文件不存在： " + imgFile.getAbsolutePath());
+        }
+        final int actualWidth = image.getWidth();
+        final int actualHeight = image.getHeight();
+        return addPicture(paragraph, imgFile, actualWidth, actualHeight);
     }
 
     /**
-     * 添加图片
+     * 添加图片，当图片实际宽高超出指定的最大宽高时，对图片进行等比缩放
      *
      * @param paragraph        {@link XWPFParagraph}
      * @param imgFile          图片文件
+     * @param maxWidth         最大宽度，单位：像素
+     * @param maxHeight        最大高度，单位：像素
      * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
      *
      * @return {@link XWPFPicture}
      *
      * @throws IOException
      */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, boolean redrawOnOverflow) throws IOException {
-        return addPicture(paragraph, imgFile, PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), redrawOnOverflow, false);
-    }
-
-    /**
-     * 添加图片
-     *
-     * @param paragraph        {@link XWPFParagraph}
-     * @param imgFile          图片文件
-     * @param width            图片宽度（单位： 像素）
-     * @param height           图片高度（单位： 像素）
-     * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
-     * @param lockScale        锁定缩放比例
-     *
-     * @return {@link XWPFPicture}
-     *
-     * @throws IOException
-     */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow, boolean lockScale) throws IOException {
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, final int maxWidth, final int maxHeight, boolean redrawOnOverflow) throws IOException {
         if (redrawOnOverflow) {
-            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, width, height, lockScale);
+            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, maxWidth, maxHeight);
             return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
         }
-        if (lockScale) {
-            BufferedImage image = ImageTool.readImage(imgFile);
-            if (image == null) {
-                throw new IllegalArgumentException("图片文件不存在： " + imgFile);
-            }
-            final int actualWidth = image.getWidth();
-            final int actualHeight = image.getHeight();
-            final double scaleW = (double) actualWidth / width;
-            final double scaleH = (double) actualHeight / height;
-            if (scaleW > scaleH) {
-                return addPicture(paragraph, imgFile.getAbsolutePath(), width, (int) (actualHeight / scaleW));
-            }
-            return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (width / scaleH), height);
+        BufferedImage image = ImageTool.readImage(imgFile);
+        if (image == null) {
+            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
         }
-        return addPicture(paragraph, imgFile.getAbsolutePath(), width, height);
+        final int actualWidth = image.getWidth();
+        final int actualHeight = image.getHeight();
+        if (actualWidth > maxWidth || actualHeight > maxHeight) {
+            // 通过指定宽高，强制缩放图片
+            final double scaleW = (double) actualWidth / maxWidth;
+            final double scaleH = (double) actualHeight / maxHeight;
+            if (scaleW > scaleH) {
+                return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (actualHeight / scaleW));
+            }
+            return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (maxWidth / scaleH), maxHeight);
+        }
+        return addPicture(paragraph, imgFile.getAbsolutePath(), actualWidth, actualHeight);
     }
 
     /**
