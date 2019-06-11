@@ -1,6 +1,5 @@
 package com.orange.poi.word;
 
-import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.FileUtil;
 import com.orange.poi.util.ImageTool;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -27,9 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
-import static com.orange.poi.word.PoiWordTool.A4_CONTENT_HEIGHT_DXA;
-import static com.orange.poi.word.PoiWordTool.A4_CONTENT_WIDTH_DXA;
 
 /**
  * apache poi word 图片工具类
@@ -86,7 +82,7 @@ public class PoiWordPictureTool {
      *
      * @throws IOException
      */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, final int maxWidth, final int maxHeight, boolean redrawOnOverflow) throws IOException {
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int maxWidth, final int maxHeight, boolean redrawOnOverflow) throws IOException {
         if (redrawOnOverflow) {
             ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, maxWidth, maxHeight);
             return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
