@@ -162,7 +162,7 @@ public class PoiWordPictureTool {
         XWPFPicture picture = null;
 
         try (InputStream is = FileUtil.readFile(new File(imgFile))) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile), imgFile, Units.pixelToEMU(width), Units.pixelToEMU(height));
+            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
         } catch (InvalidFormatException ignore) {
         }
         return picture;
@@ -186,7 +186,7 @@ public class PoiWordPictureTool {
         XWPFPicture picture = null;
 
         try (InputStream is = FileUtil.readFile(imgFile)) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile.getAbsolutePath()), imgFile.getAbsolutePath(), Units.pixelToEMU(width), Units.pixelToEMU(height));
+            picture = paragraphRun.addPicture(is, getPictureType(imgFile.getAbsolutePath()), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
         } catch (InvalidFormatException ignore) {
         }
         return picture;
