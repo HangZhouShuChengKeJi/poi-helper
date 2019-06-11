@@ -44,7 +44,20 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols) {
-        return createTable(document, rows, cols, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+        return createTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    }
+
+    /**
+     * 在单元格内创建没有边框的表格
+     *
+     * @param tableCell {@link XWPFTableCell}
+     * @param rows      行数
+     * @param cols      列数
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols) {
+        return createTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
     /**
@@ -61,6 +74,19 @@ public class PoiWordTableTool {
         return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
+    /**
+     * 在单元格内创建没有边框的表格
+     *
+     * @param tableCell  {@link XWPFTableCell}
+     * @param rows       行数
+     * @param cols       列数
+     * @param tableWidth 表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols, long tableWidth) {
+        return createTable(tableCell, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    }
 
     /**
      * 创建表格
@@ -74,6 +100,20 @@ public class PoiWordTableTool {
      */
     public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth) {
         return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
+    }
+
+    /**
+     * 在单元格内创建表格
+     *
+     * @param tableCell  {@link XWPFTableCell}
+     * @param rows       行数
+     * @param cols       列数
+     * @param tableWidth 表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth) {
+        return createTable(tableCell, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
     }
 
     /**
@@ -92,6 +132,21 @@ public class PoiWordTableTool {
     }
 
     /**
+     * 在单元格内创建表格
+     *
+     * @param tableCell   {@link XWPFTableCell}
+     * @param borderSize  边框宽度
+     * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
+     * @param rows        行数
+     * @param cols        列数
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+        return createTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
+    }
+
+    /**
      * 创建表格
      *
      * @param document    {@link XWPFParagraph}
@@ -106,6 +161,42 @@ public class PoiWordTableTool {
      */
     public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = document.createTable();
+        initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor);
+        return table;
+    }
+
+    /**
+     * 在单元格内创建表格
+     *
+     * @param tableCell   {@link XWPFTableCell}
+     * @param rows        行数
+     * @param cols        列数
+     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     * @param borderType  边框样式
+     * @param borderSize  边框宽度，取值范围：[2, 96]，2：1/4 磅，96：12磅
+     * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+        XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
+        tableCell.insertTable(tableCell.getTables().size(), table);
+        initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor);
+        return table;
+    }
+
+    /**
+     * 初始化表格
+     *
+     * @param table       {@link XWPFTable}
+     * @param rows        行数
+     * @param cols        列数
+     * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
+     * @param borderType  边框样式
+     * @param borderSize  边框宽度，取值范围：[2, 96]，2：1/4 磅，96：12磅
+     * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
+     */
+    public static void initTable(XWPFTable table, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         table.setWidthType(TableWidthType.DXA);
         table.setWidth(String.valueOf(tableWidth));
 
@@ -138,7 +229,6 @@ public class PoiWordTableTool {
                 tableCell.setWidthType(TableWidthType.DXA);
             }
         }
-        return table;
     }
 
     /**
@@ -168,7 +258,6 @@ public class PoiWordTableTool {
         ctHeight.setHRule(STHeightRule.EXACT);
         ctHeight.setVal(BigInteger.valueOf(PoiUnitTool.pixelToDXA(pixel)));
     }
-
 
     /**
      * 设置单元格文字
