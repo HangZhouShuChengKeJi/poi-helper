@@ -50,7 +50,7 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile) throws IOException {
-        return addPicture(paragraph, new File(imgFile), true);
+        return addPicture(paragraph, new File(imgFile), PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), false, false);
     }
 
     /**
@@ -64,7 +64,7 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile) throws IOException {
-        return addPicture(paragraph, imgFile, true);
+        return addPicture(paragraph, imgFile, PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), false, false);
     }
 
     /**
@@ -79,7 +79,7 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, boolean redrawOnOverflow) throws IOException {
-        return addPicture(paragraph, imgFile, PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), redrawOnOverflow);
+        return addPicture(paragraph, imgFile, PoiUnitTool.dxaToPixel(A4_CONTENT_WIDTH_DXA), PoiUnitTool.dxaToPixel(A4_CONTENT_HEIGHT_DXA), redrawOnOverflow, false);
     }
 
     /**
@@ -90,28 +90,32 @@ public class PoiWordPictureTool {
      * @param width            图片宽度（单位： 像素）
      * @param height           图片高度（单位： 像素）
      * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     * @param lockScale        锁定缩放比例
      *
      * @return {@link XWPFPicture}
      *
      * @throws IOException
      */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, int width, int height, boolean redrawOnOverflow) throws IOException {
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow, boolean lockScale) throws IOException {
         if (redrawOnOverflow) {
-            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, width, height);
+            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, width, height, lockScale);
             return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
         }
-        BufferedImage image = ImageTool.readImage(imgFile);
-        if (image == null) {
-            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
+        if (lockScale) {
+            BufferedImage image = ImageTool.readImage(imgFile);
+            if (image == null) {
+                throw new IllegalArgumentException("图片文件不存在： " + imgFile);
+            }
+            final int actualWidth = image.getWidth();
+            final int actualHeight = image.getHeight();
+            final double scaleW = (double) actualWidth / width;
+            final double scaleH = (double) actualHeight / height;
+            if (scaleW > scaleH) {
+                return addPicture(paragraph, imgFile.getAbsolutePath(), width, (int) (actualHeight / scaleW));
+            }
+            return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (width / scaleH), height);
         }
-        final int actualWidth = image.getWidth();
-        final int actualHeight = image.getHeight();
-        final double scaleW = (double) actualWidth / width;
-        final double scaleH = (double) actualHeight / height;
-        if (scaleW > scaleH) {
-            return addPicture(paragraph, imgFile.getAbsolutePath(), width, (int) (actualHeight / scaleW));
-        }
-        return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (width / scaleH), height);
+        return addPicture(paragraph, imgFile.getAbsolutePath(), width, height);
     }
 
     /**

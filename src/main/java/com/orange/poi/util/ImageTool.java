@@ -38,12 +38,14 @@ public class ImageTool {
      * @param imgFile   图片文件
      * @param maxWidth  缩放后的最大宽度，单位：像素
      * @param maxHeight 缩放后的最大高度，单位：像素
+     * @param lockScale 锁定缩放比例
      *
      * @return 图片信息 {@link ImageInfo}
      *
      * @throws IOException
      */
-    public static ImageInfo resizeImage(File imgFile, final int maxWidth, final int maxHeight) throws IOException {
+    public static ImageInfo resizeImage(File imgFile, final int maxWidth, final int maxHeight, boolean lockScale) throws IOException {
+        // todo 实现不按照比例重绘功能
         final BufferedImage image = readImage(imgFile);
         if (image == null) {
             throw new IllegalArgumentException("图片文件不存在： " + imgFile.getAbsolutePath());
