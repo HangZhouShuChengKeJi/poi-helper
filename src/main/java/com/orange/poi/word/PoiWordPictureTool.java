@@ -138,8 +138,10 @@ public class PoiWordPictureTool {
         } else if (imgFile.endsWith(".wpg")) {
             return XWPFDocument.PICTURE_TYPE_WPG;
         } else {
-            throw new IllegalArgumentException("Unsupported picture: " + imgFile +
-                    ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
+//            throw new IllegalArgumentException("Unsupported picture: " + imgFile +
+//                    ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
+            // 默认作为 jpeg 处理
+            return XWPFDocument.PICTURE_TYPE_JPEG;
         }
     }
 
