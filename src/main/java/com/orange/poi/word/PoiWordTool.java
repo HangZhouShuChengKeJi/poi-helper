@@ -1,7 +1,9 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
@@ -55,7 +57,7 @@ public class PoiWordTool {
     /**
      * 内容宽度（页面宽度减去左右页边距），单位：DXA
      */
-    public static final long    A4_CONTENT_WIDTH_DXA    = A4_WIDTH_DXA - A4_MARGIN_LEFT_DXA - A4_MARGIN_RIGHT_DXA;
+    public static final long   A4_CONTENT_WIDTH_DXA    = A4_WIDTH_DXA - A4_MARGIN_LEFT_DXA - A4_MARGIN_RIGHT_DXA;
     /**
      * 内容宽度（页面宽度减去左右页边距），单位：磅
      */
@@ -63,7 +65,7 @@ public class PoiWordTool {
     /**
      * 内容高度（页面高度减去上下页边距），单位：DXA
      */
-    public static final long    A4_CONTENT_HEIGHT_DXA   = A4_HEIGHT_DXA - A4_MARGIN_TOP_DXA - A4_MARGIN_BOTTOM_DXA;
+    public static final long   A4_CONTENT_HEIGHT_DXA   = A4_HEIGHT_DXA - A4_MARGIN_TOP_DXA - A4_MARGIN_BOTTOM_DXA;
     /**
      * 内容高度（页面高度减去上下页边距），单位：磅
      */
@@ -99,5 +101,25 @@ public class PoiWordTool {
         docGrid.setLinePitch(BigInteger.valueOf(312));
     }
 
+    /**
+     * 设置文档属性
+     *
+     * @param doc      文档 {@link XWPFDocument}
+     * @param title    文档标题
+     * @param author   作者
+     * @param company  公司
+     * @param category 类别
+     */
+    public static void setProperties(XWPFDocument doc, String title, String author, String company, String category) {
+        POIXMLProperties poixmlProperties = doc.getProperties();
+        POIXMLProperties.CoreProperties coreProperties = poixmlProperties.getCoreProperties();
+        coreProperties.setTitle(title);
+        coreProperties.setCreator(author);
+        coreProperties.setCategory(category);
 
+        POIXMLProperties.ExtendedProperties extendedProperties = poixmlProperties.getExtendedProperties();
+
+        CTProperties ctProperties = extendedProperties.getUnderlyingProperties();
+        ctProperties.setCompany(company);
+    }
 }
