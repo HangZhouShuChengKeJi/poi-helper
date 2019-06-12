@@ -17,18 +17,14 @@ import java.io.IOException;
  */
 public class PoiWordParagraphToolTest {
 
-    private String defaultFontFamily = "宋体";
+    private String defaultFontFamily = "思源宋体";
     private int    defaultFontSize   = 14;
     private String defaultColor      = "000000";
 
 
     @Before
     public void setUp() throws Exception {
-        File tempDir = new File("C:\\Users\\Administrator\\AppData\\Local\\Temp\\poiTest");
-        if (!tempDir.exists()) {
-            tempDir.mkdir();
-        }
-        System.setProperty("java.io.tmpdir", "C:\\Users\\Administrator\\AppData\\Local\\Temp\\poiTest");
+        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir") + "\\poiTest");
     }
 
     @After
@@ -45,6 +41,29 @@ public class PoiWordParagraphToolTest {
 
     @Test
     public void addParagraph() {
+    }
+
+    @Test
+    public void addSubscript() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+        XWPFParagraph paragraph;
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addSubscript(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addSuperscript(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 
     @Test

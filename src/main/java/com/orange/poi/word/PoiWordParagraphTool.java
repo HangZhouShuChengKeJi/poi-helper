@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.TextAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
+import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -188,6 +189,102 @@ public class PoiWordParagraphTool {
         } else {
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
         }
+    }
+
+
+    /**
+     * 添加下角标
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param plainTxt   文本内容
+     * @param fontFamily 字体
+     * @param fontSize   字号
+     * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     */
+    public static void addSubscript(XWPFParagraph paragraph, String plainTxt, String fontFamily, Integer fontSize, String color) {
+        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, false, VerticalAlign.SUBSCRIPT);
+    }
+
+    /**
+     * 添加下角标
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param plainTxt   文本内容
+     * @param fontFamily 字体
+     * @param fontSize   字号
+     * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold       是否加粗
+     */
+    public static void addSubscript(XWPFParagraph paragraph, String plainTxt,
+                                    String fontFamily, Integer fontSize, String color,
+                                    boolean bold) {
+
+        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, bold, VerticalAlign.SUBSCRIPT);
+    }
+
+
+    /**
+     * 添加上角标
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param plainTxt   文本内容
+     * @param fontFamily 字体
+     * @param fontSize   字号
+     * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     */
+    public static void addSuperscript(XWPFParagraph paragraph, String plainTxt, String fontFamily, Integer fontSize, String color) {
+        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, false, VerticalAlign.SUPERSCRIPT);
+    }
+
+    /**
+     * 添加上角标
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param plainTxt   文本内容
+     * @param fontFamily 字体
+     * @param fontSize   字号
+     * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold       是否加粗
+     */
+    public static void addSuperscript(XWPFParagraph paragraph, String plainTxt,
+                                    String fontFamily, Integer fontSize, String color,
+                                    boolean bold) {
+
+        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, bold, VerticalAlign.SUPERSCRIPT);
+    }
+
+    /**
+     * 添加角标
+     *
+     * @param paragraph     {@link XWPFParagraph}
+     * @param plainTxt      文本内容
+     * @param fontFamily    字体
+     * @param fontSize      字号
+     * @param color         颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold          是否加粗
+     * @param verticalAlign 对齐方式
+     */
+    private static void addSubscript(XWPFParagraph paragraph, String plainTxt,
+                                    String fontFamily, Integer fontSize, String color,
+                                    boolean bold, VerticalAlign verticalAlign) {
+        if (paragraph == null) {
+            return;
+        }
+        XWPFRun paragraphRun = paragraph.createRun();
+        paragraphRun.setText(plainTxt);
+        if (StringUtils.isNotBlank(fontFamily)) {
+            paragraphRun.setFontFamily(fontFamily);
+        }
+        if (fontSize != null) {
+            paragraphRun.setFontSize(fontSize);
+        }
+        if (StringUtils.isNotBlank(color)) {
+            paragraphRun.setColor(color);
+        }
+        if (bold) {
+            paragraphRun.setBold(bold);
+        }
+        paragraphRun.setSubscript(verticalAlign);
     }
 
     /**
