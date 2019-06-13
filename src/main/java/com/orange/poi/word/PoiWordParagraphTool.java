@@ -1,6 +1,7 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.TextAlignment;
@@ -16,6 +17,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import static com.orange.poi.word.PoiWordTool.LINE_HEIGHT_DXA;
 
@@ -405,8 +407,9 @@ public class PoiWordParagraphTool {
      */
     public static XWPFRun getXWPFRun(XWPFParagraph paragraph) {
         XWPFRun paragraphRun = null;
-        if (paragraph.getRuns() != null && paragraph.getRuns().size() > 0) {
-            paragraphRun = paragraph.getRuns().get(0);
+        List<XWPFRun> runList;
+        if (CollectionUtils.isNotEmpty(runList = paragraph.getRuns())) {
+            paragraphRun = paragraph.getRuns().get(runList.size() - 1);
         } else {
             paragraphRun = paragraph.createRun();
         }
