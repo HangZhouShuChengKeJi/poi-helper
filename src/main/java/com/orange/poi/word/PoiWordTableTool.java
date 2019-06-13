@@ -63,9 +63,9 @@ public class PoiWordTableTool {
     public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
         XWPFTable table = document.createTable();
         if (isAutoFit) {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -84,9 +84,9 @@ public class PoiWordTableTool {
         XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
         tableCell.insertTable(tableCell.getTables().size(), table);
         if (isAutoFit) {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -104,9 +104,9 @@ public class PoiWordTableTool {
     public static XWPFTable createTable(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
         XWPFTable table = document.createTable();
         if (isAutoFit) {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.AUTOFIT);
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -125,9 +125,9 @@ public class PoiWordTableTool {
         XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
         tableCell.insertTable(tableCell.getTables().size(), table);
         if (isAutoFit) {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
