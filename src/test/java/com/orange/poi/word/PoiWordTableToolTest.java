@@ -13,8 +13,13 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromV;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STXAlign;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STYAlign;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -106,5 +111,50 @@ public class PoiWordTableToolTest {
 
     @Test
     public void setTableCellBgColor() {
+    }
+
+    @Test
+    public void setTableCellBorderOfLeft() {
+
+    }
+
+
+    @Test
+    public void setTablePosition() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+
+        PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格", defaultFontFamily, defaultFontSize);
+
+
+        XWPFTable table = PoiWordTableTool.createTableWithoutBorder(doc, 1, 3, true);
+        XWPFTableRow tableRowOne = table.getRow(0);
+
+        XWPFTableCell tableCell = tableRowOne.getCell(0);
+        PoiWordTableTool.setTableCellText(tableCell, "111", STJc.LEFT, STVerticalJc.CENTER);
+
+        PoiWordTableTool.setTableCellBorderOfBottom(tableCell, 1, "000000", STBorder.SINGLE);
+
+        tableCell = tableRowOne.getCell(1);
+        PoiWordTableTool.setTableCellText(tableCell, "222", STJc.LEFT, STVerticalJc.CENTER);
+
+        // 第三列
+        tableCell = tableRowOne.getCell(2);
+        PoiWordTableTool.setTableCellText(tableCell, "333", STJc.LEFT, STVerticalJc.CENTER);
+
+        PoiWordTableTool.setTablePosition(table, STHAnchor.TEXT, PoiUnitTool.pointToDXA(40),
+                STVAnchor.TEXT, 0);
+        PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格", defaultFontFamily, defaultFontSize);
+        PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格", defaultFontFamily, defaultFontSize);
+        // 添加空行
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 }

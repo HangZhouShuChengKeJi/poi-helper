@@ -3,21 +3,10 @@ package com.orange.poi.word;
 import com.orange.poi.PoiUnitTool;
 import org.apache.poi.xwpf.usermodel.TableWidthType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -37,7 +26,7 @@ public class PoiWordTableTool {
     /**
      * 创建没有边框的表格
      *
-     * @param document {@link XWPFParagraph}
+     * @param document {@link XWPFDocument}
      * @param rows     行数
      * @param cols     列数
      *
@@ -60,10 +49,93 @@ public class PoiWordTableTool {
         return createTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
+
     /**
      * 创建没有边框的表格
      *
-     * @param document   {@link XWPFParagraph}
+     * @param document  {@link XWPFDocument}
+     * @param rows      行数
+     * @param cols      列数
+     * @param isAutoFit 是否自适应宽度
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
+        XWPFTable table = document.createTable();
+        if (isAutoFit) {
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
+        } else {
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+        }
+        return table;
+    }
+
+    /**
+     * 在单元格内创建没有边框的表格
+     *
+     * @param tableCell {@link XWPFTableCell}
+     * @param rows      行数
+     * @param cols      列数
+     * @param isAutoFit 是否自适应宽度
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols, boolean isAutoFit) {
+        XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
+        tableCell.insertTable(tableCell.getTables().size(), table);
+        if (isAutoFit) {
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
+        } else {
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+        }
+        return table;
+    }
+
+    /**
+     * 创建没有边框的表格
+     *
+     * @param document  {@link XWPFDocument}
+     * @param rows      行数
+     * @param cols      列数
+     * @param isAutoFit 是否自适应宽度
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
+        XWPFTable table = document.createTable();
+        if (isAutoFit) {
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.AUTOFIT);
+        } else {
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.FIXED);
+        }
+        return table;
+    }
+
+    /**
+     * 在单元格内创建没有边框的表格
+     *
+     * @param tableCell {@link XWPFTableCell}
+     * @param rows      行数
+     * @param cols      列数
+     * @param isAutoFit 是否自适应宽度
+     *
+     * @return {@link XWPFTable}
+     */
+    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, boolean isAutoFit) {
+        XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
+        tableCell.insertTable(tableCell.getTables().size(), table);
+        if (isAutoFit) {
+            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
+        } else {
+            initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+        }
+        return table;
+    }
+
+    /**
+     * 创建没有边框的表格
+     *
+     * @param document   {@link XWPFDocument}
      * @param rows       行数
      * @param cols       列数
      * @param tableWidth 表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
@@ -91,7 +163,7 @@ public class PoiWordTableTool {
     /**
      * 创建表格
      *
-     * @param document   {@link XWPFParagraph}
+     * @param document   {@link XWPFDocument}
      * @param rows       行数
      * @param cols       列数
      * @param tableWidth 表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
@@ -119,7 +191,7 @@ public class PoiWordTableTool {
     /**
      * 创建表格
      *
-     * @param document    {@link XWPFParagraph}
+     * @param document    {@link XWPFDocument}
      * @param borderSize  边框宽度
      * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
      * @param rows        行数
@@ -149,7 +221,7 @@ public class PoiWordTableTool {
     /**
      * 创建表格
      *
-     * @param document    {@link XWPFParagraph}
+     * @param document    {@link XWPFDocument}
      * @param rows        行数
      * @param cols        列数
      * @param tableWidth  表格宽度，单位：DXA（可以通过 {@link PoiUnitTool#pointToDXA(double)} 将“磅”转换为 DXA）
@@ -161,7 +233,7 @@ public class PoiWordTableTool {
      */
     public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = document.createTable();
-        initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor);
+        initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor, STTblLayoutType.FIXED);
         return table;
     }
 
@@ -181,7 +253,7 @@ public class PoiWordTableTool {
     public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
         tableCell.insertTable(tableCell.getTables().size(), table);
-        initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor);
+        initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor, STTblLayoutType.FIXED);
         return table;
     }
 
@@ -195,10 +267,29 @@ public class PoiWordTableTool {
      * @param borderType  边框样式
      * @param borderSize  边框宽度，取值范围：[2, 96]，2：1/4 磅，96：12磅
      * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
+     * @param layoutType  布局方式
      */
-    public static void initTable(XWPFTable table, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
-        table.setWidthType(TableWidthType.DXA);
-        table.setWidth(String.valueOf(tableWidth));
+    public static void initTable(XWPFTable table, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor, STTblLayoutType.Enum layoutType) {
+        CTTbl ctTbl = table.getCTTbl();
+        CTTblPr ctTblPr;
+        if ((ctTblPr = ctTbl.getTblPr()) == null) {
+            ctTblPr = ctTbl.addNewTblPr();
+        }
+        if (layoutType != null) {
+            CTTblLayoutType ctTblLayoutType;
+            if ((ctTblLayoutType = ctTblPr.getTblLayout()) == null) {
+                ctTblLayoutType = ctTblPr.addNewTblLayout();
+            }
+            ctTblLayoutType.setType(layoutType);
+
+            if (layoutType == STTblLayoutType.FIXED) {
+                table.setWidthType(TableWidthType.DXA);
+                table.setWidth(String.valueOf(tableWidth));
+            }
+        } else {
+            table.setWidthType(TableWidthType.DXA);
+            table.setWidth(String.valueOf(tableWidth));
+        }
 
         table.setTopBorder(borderType, borderSize, 0, borderColor);
         table.setBottomBorder(borderType, borderSize, 0, borderColor);
@@ -219,16 +310,113 @@ public class PoiWordTableTool {
 
             BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
 
-            XWPFTableCell tableCell = tableRowOne.getCell(0);
-            tableCell.setWidth(String.valueOf(cellWidth.intValue()));
-            tableCell.setWidthType(TableWidthType.DXA);
-
             for (int i = 1; i < cols; i++) {
-                tableCell = tableRowOne.addNewTableCell();
-                tableCell.setWidth(String.valueOf(cellWidth.intValue()));
-                tableCell.setWidthType(TableWidthType.DXA);
+                tableRowOne.addNewTableCell();
+            }
+
+            if (layoutType == STTblLayoutType.FIXED) {
+                // 固定宽度时，计算每个单元格宽度
+                XWPFTableCell tableCell;
+                for (int i = 0; i < cols; i++) {
+                    tableCell = tableRowOne.getCell(i);
+                    tableCell.setWidth(String.valueOf(cellWidth.intValue()));
+                    tableCell.setWidthType(TableWidthType.DXA);
+                }
             }
         }
+    }
+
+    /**
+     * 设置表格位置
+     *
+     * @param table      {@link XWPFTable}
+     * @param horzAnchor 水平对齐锚点
+     * @param leftOffset 水平偏移距离，单位：dxa
+     * @param vertAnchor 垂直对齐锚点
+     * @param topOffset  垂直偏移距离，单位：dxa
+     */
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset,
+                                        STVAnchor.Enum vertAnchor, long topOffset) {
+        setTablePosition(table, horzAnchor, leftOffset, null, vertAnchor, topOffset, null, 0, 0, 0, 0);
+    }
+
+
+    /**
+     * 设置表格位置
+     *
+     * @param table      {@link XWPFTable}
+     * @param horzAnchor 水平对齐锚点
+     * @param tblpXSpec  水平对齐方式
+     * @param vertAnchor 垂直对齐锚点
+     * @param tblpYSpec  垂直对齐方式
+     */
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, STXAlign.Enum tblpXSpec,
+                                        STVAnchor.Enum vertAnchor, STYAlign.Enum tblpYSpec) {
+        setTablePosition(table, horzAnchor, 0, tblpXSpec, vertAnchor, 0, tblpYSpec, 0, 0, 0, 0);
+    }
+
+
+    /**
+     * 设置表格位置
+     *
+     * @param table      {@link XWPFTable}
+     * @param horzAnchor 水平对齐锚点
+     * @param leftOffset 水平偏移距离，单位：dxa
+     * @param tblpXSpec  水平对齐方式
+     * @param vertAnchor 垂直对齐锚点
+     * @param topOffset  垂直偏移距离，单位：dxa
+     * @param tblpYSpec  垂直对齐方式
+     */
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset, STXAlign.Enum tblpXSpec,
+                                        STVAnchor.Enum vertAnchor, long topOffset, STYAlign.Enum tblpYSpec) {
+        setTablePosition(table, horzAnchor, leftOffset, tblpXSpec, vertAnchor, topOffset, tblpYSpec, 0, 0, 0, 0);
+    }
+
+    /**
+     * 设置表格位置
+     *
+     * @param table          {@link XWPFTable}
+     * @param horzAnchor     水平对齐锚点
+     * @param leftOffset     水平偏移距离，单位：dxa
+     * @param tblpXSpec      水平对齐方式
+     * @param vertAnchor     垂直对齐锚点
+     * @param topOffset      垂直偏移距离，单位：dxa
+     * @param tblpYSpec      水平对齐方式
+     * @param topFromText    顶部和文字的距离，单位：dxa
+     * @param rightFromText  右边和文字的距离，单位：dxa
+     * @param bottomFromText 底部和文字的距离，单位：dxa
+     * @param leftFromText   左边和文字的距离，单位：dxa
+     */
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset, STXAlign.Enum tblpXSpec,
+                                        STVAnchor.Enum vertAnchor, long topOffset, STYAlign.Enum tblpYSpec,
+                                        long topFromText, long rightFromText, long bottomFromText, long leftFromText) {
+        CTTbl ctTbl = table.getCTTbl();
+        CTTblPr ctTblPr;
+        if ((ctTblPr = ctTbl.getTblPr()) == null) {
+            ctTblPr = ctTbl.addNewTblPr();
+        }
+        CTTblPPr ctTblPPr;
+        if ((ctTblPPr = ctTblPr.getTblpPr()) == null) {
+            ctTblPPr = ctTblPr.addNewTblpPr();
+        }
+        ctTblPPr.setHorzAnchor(horzAnchor);
+        if (tblpXSpec == null) {
+            ctTblPPr.setTblpX(BigInteger.valueOf(leftOffset));
+        } else {
+            ctTblPPr.setTblpXSpec(tblpXSpec);
+        }
+
+        ctTblPPr.setVertAnchor(vertAnchor);
+        if (tblpYSpec == null) {
+            ctTblPPr.setTblpY(BigInteger.valueOf(topOffset));
+        } else {
+            ctTblPPr.setTblpYSpec(tblpYSpec);
+        }
+
+        ctTblPPr.setTopFromText(BigInteger.valueOf(topFromText));
+        ctTblPPr.setRightFromText(BigInteger.valueOf(rightFromText));
+        ctTblPPr.setBottomFromText(BigInteger.valueOf(bottomFromText));
+        ctTblPPr.setLeftFromText(BigInteger.valueOf(leftFromText));
     }
 
     /**
@@ -317,6 +505,132 @@ public class PoiWordTableTool {
             }
         }
 
+    }
+
+    private static CTTcBorders getCTTcBorders(XWPFTableCell tableCell) {
+        CTTc ctTc = tableCell.getCTTc();
+        CTTcPr ctTcPr;
+        if ((ctTcPr = ctTc.getTcPr()) == null) {
+            ctTcPr = ctTc.addNewTcPr();
+        }
+        CTTcBorders ctTblBorders;
+        if ((ctTblBorders = ctTcPr.getTcBorders()) == null) {
+            ctTblBorders = ctTcPr.addNewTcBorders();
+        }
+        return ctTblBorders;
+    }
+
+    /**
+     * 设置单元格上边框宽度
+     *
+     * @param tableCell 单元格
+     * @param width     宽度，单位：1/8磅，取值：[2, 96]，即：1/4磅 到 12磅
+     * @param color     颜色
+     * @param style     样式
+     */
+    public static void setTableCellBorderOfTop(XWPFTableCell tableCell, int width, String color, STBorder.Enum style) {
+        CTTcBorders ctTblBorders = getCTTcBorders(tableCell);
+        CTBorder ctBorder;
+        if ((ctBorder = ctTblBorders.getTop()) == null) {
+            ctBorder = ctTblBorders.addNewTop();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+    }
+
+    /**
+     * 设置单元格下边框宽度
+     *
+     * @param tableCell 单元格
+     * @param width     宽度，单位：1/8磅，取值：[2, 96]，即：1/4磅 到 12磅
+     * @param color     颜色
+     * @param style     样式
+     */
+    public static void setTableCellBorderOfBottom(XWPFTableCell tableCell, int width, String color, STBorder.Enum style) {
+        CTTcBorders ctTblBorders = getCTTcBorders(tableCell);
+        CTBorder ctBorder;
+        if ((ctBorder = ctTblBorders.getBottom()) == null) {
+            ctBorder = ctTblBorders.addNewBottom();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+    }
+
+    /**
+     * 设置单元格左边框宽度
+     *
+     * @param tableCell 单元格
+     * @param width     宽度，单位：1/8磅，取值：[2, 96]，即：1/4磅 到 12磅
+     * @param color     颜色
+     * @param style     样式
+     */
+    public static void setTableCellBorderOfLeft(XWPFTableCell tableCell, int width, String color, STBorder.Enum style) {
+        CTTcBorders ctTblBorders = getCTTcBorders(tableCell);
+        CTBorder ctBorder;
+        if ((ctBorder = ctTblBorders.getLeft()) == null) {
+            ctBorder = ctTblBorders.addNewLeft();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+    }
+
+    /**
+     * 设置单元格右边框宽度
+     *
+     * @param tableCell 单元格
+     * @param width     宽度，单位：1/8磅，取值：[2, 96]，即：1/4磅 到 12磅
+     * @param color     颜色
+     * @param style     样式
+     */
+    public static void setTableCellBorderOfRight(XWPFTableCell tableCell, int width, String color, STBorder.Enum style) {
+        CTTcBorders ctTblBorders = getCTTcBorders(tableCell);
+        CTBorder ctBorder;
+        if ((ctBorder = ctTblBorders.getRight()) == null) {
+            ctBorder = ctTblBorders.addNewRight();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+    }
+
+    /**
+     * 设置单元格宽度
+     *
+     * @param tableCell 单元格
+     * @param width     宽度，单位：1/8磅，取值：[2, 96]，即：1/4磅 到 12磅
+     * @param color     颜色
+     * @param style     样式
+     */
+    public static void setTableCellBorder(XWPFTableCell tableCell, int width, String color, STBorder.Enum style) {
+        CTTcBorders ctTblBorders = getCTTcBorders(tableCell);
+        CTBorder ctBorder;
+        if ((ctBorder = ctTblBorders.getTop()) == null) {
+            ctBorder = ctTblBorders.addNewTop();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+        if ((ctBorder = ctTblBorders.getBottom()) == null) {
+            ctBorder = ctTblBorders.addNewBottom();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+        if ((ctBorder = ctTblBorders.getLeft()) == null) {
+            ctBorder = ctTblBorders.addNewLeft();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
+        if ((ctBorder = ctTblBorders.getRight()) == null) {
+            ctBorder = ctTblBorders.addNewRight();
+        }
+        ctBorder.setSz(BigInteger.valueOf(width));
+        ctBorder.setColor(color);
+        ctBorder.setVal(style);
     }
 
     /**
