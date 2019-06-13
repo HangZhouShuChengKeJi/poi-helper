@@ -32,8 +32,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols) {
-        return createTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    public static XWPFTable addTableWithoutBorder(XWPFDocument document, int rows, int cols) {
+        return addTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
     /**
@@ -45,8 +45,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols) {
-        return createTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    public static XWPFTable addTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols) {
+        return addTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
 
@@ -60,7 +60,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
+    public static XWPFTable addTableWithoutBorder(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
         XWPFTable table = document.createTable();
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
@@ -80,7 +80,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols, boolean isAutoFit) {
+    public static XWPFTable addTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols, boolean isAutoFit) {
         XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
         tableCell.insertTable(tableCell.getTables().size(), table);
         if (isAutoFit) {
@@ -101,7 +101,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
+    public static XWPFTable addTable(XWPFDocument document, int rows, int cols, boolean isAutoFit) {
         XWPFTable table = document.createTable();
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.AUTOFIT);
@@ -121,7 +121,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, boolean isAutoFit) {
+    public static XWPFTable addTable(XWPFTableCell tableCell, int rows, int cols, boolean isAutoFit) {
         XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
         tableCell.insertTable(tableCell.getTables().size(), table);
         if (isAutoFit) {
@@ -142,8 +142,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFDocument document, int rows, int cols, long tableWidth) {
-        return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    public static XWPFTable addTableWithoutBorder(XWPFDocument document, int rows, int cols, long tableWidth) {
+        return addTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
     /**
@@ -156,8 +156,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols, long tableWidth) {
-        return createTable(tableCell, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+    public static XWPFTable addTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols, long tableWidth) {
+        return addTable(tableCell, rows, cols, tableWidth, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
     /**
@@ -170,8 +170,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth) {
-        return createTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
+    public static XWPFTable addTable(XWPFDocument document, int rows, int cols, long tableWidth) {
+        return addTable(document, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
     }
 
     /**
@@ -184,8 +184,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth) {
-        return createTable(tableCell, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
+    public static XWPFTable addTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth) {
+        return addTable(tableCell, rows, cols, tableWidth, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
     }
 
     /**
@@ -199,8 +199,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
-        return createTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
+    public static XWPFTable addTable(XWPFDocument document, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+        return addTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
     }
 
     /**
@@ -214,8 +214,8 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
-        return createTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
+    public static XWPFTable addTable(XWPFTableCell tableCell, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+        return addTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
     }
 
     /**
@@ -231,7 +231,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFDocument document, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+    public static XWPFTable addTable(XWPFDocument document, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = document.createTable();
         initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor, STTblLayoutType.FIXED);
         return table;
@@ -250,7 +250,7 @@ public class PoiWordTableTool {
      *
      * @return {@link XWPFTable}
      */
-    public static XWPFTable createTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+    public static XWPFTable addTable(XWPFTableCell tableCell, int rows, int cols, long tableWidth, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
         XWPFTable table = new XWPFTable(tableCell.getCTTc().addNewTbl(), tableCell);
         tableCell.insertTable(tableCell.getTables().size(), table);
         initTable(table, rows, cols, tableWidth, borderType, borderSize, borderColor, STTblLayoutType.FIXED);
@@ -291,14 +291,6 @@ public class PoiWordTableTool {
             table.setWidth(String.valueOf(tableWidth));
         }
 
-        table.setTopBorder(borderType, borderSize, 0, borderColor);
-        table.setBottomBorder(borderType, borderSize, 0, borderColor);
-        table.setLeftBorder(borderType, borderSize, 0, borderColor);
-        table.setRightBorder(borderType, borderSize, 0, borderColor);
-
-        table.setInsideHBorder(borderType, borderSize, 0, borderColor);
-        table.setInsideVBorder(borderType, borderSize, 0, borderColor);
-
         if (rows > 1) {
             for (int i = 1; i < rows; i++) {
                 table.createRow();
@@ -324,6 +316,37 @@ public class PoiWordTableTool {
                 }
             }
         }
+
+        // 设置表格边框
+        setTableBorder(table, borderType, borderSize, borderColor);
+    }
+
+    /**
+     * 移除表格边框
+     *
+     * @param table {@link XWPFTable}
+     */
+    public static void removeTableBorder(XWPFTable table) {
+        setTableBorder(table, XWPFTable.XWPFBorderType.NONE, 0, "000000");
+    }
+
+    /**
+     * 设置表格边框
+     *
+     * @param table       {@link XWPFTable}
+     * @param borderType  边框样式
+     * @param borderSize  边框宽度，取值范围：[2, 96]，2：1/4 磅，96：12磅
+     * @param borderColor 边框颜色（RGB 格式，例如："FFFFFF"）
+     */
+    public static void setTableBorder(XWPFTable table, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
+
+        table.setTopBorder(borderType, borderSize, 0, borderColor);
+        table.setBottomBorder(borderType, borderSize, 0, borderColor);
+        table.setLeftBorder(borderType, borderSize, 0, borderColor);
+        table.setRightBorder(borderType, borderSize, 0, borderColor);
+
+        table.setInsideHBorder(borderType, borderSize, 0, borderColor);
+        table.setInsideVBorder(borderType, borderSize, 0, borderColor);
     }
 
     /**

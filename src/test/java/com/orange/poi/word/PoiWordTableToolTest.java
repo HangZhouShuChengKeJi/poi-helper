@@ -10,7 +10,6 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromV;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
@@ -18,8 +17,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STXAlign;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STYAlign;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,7 +50,7 @@ public class PoiWordTableToolTest {
 
         XWPFParagraph paragraph;
 
-        XWPFTable table = PoiWordTableTool.createTable(doc, 1, 3, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
+        XWPFTable table = PoiWordTableTool.addTable(doc, 1, 3, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
         XWPFTableRow tableRowOne = table.getRow(0);
         // 设置表格高度
         PoiWordTableTool.setTableRowHeightOfPixel(tableRowOne, 40);
@@ -127,7 +124,7 @@ public class PoiWordTableToolTest {
         PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格", defaultFontFamily, defaultFontSize);
 
 
-        XWPFTable table = PoiWordTableTool.createTableWithoutBorder(doc, 1, 3, true);
+        XWPFTable table = PoiWordTableTool.addTableWithoutBorder(doc, 1, 3, true);
         XWPFTableRow tableRowOne = table.getRow(0);
 
         XWPFTableCell tableCell = tableRowOne.getCell(0);
