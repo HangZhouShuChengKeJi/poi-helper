@@ -52,9 +52,8 @@ public class PoiWordParagraphTool {
      */
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize) {
-        XWPFParagraph paragraph = document.createParagraph();
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, null, null);
-        return paragraph;
+        return createParagraph(document, plainTxt, fontFamily, fontSize, "000000", false, false,
+                ParagraphAlignment.LEFT, TextAlignment.CENTER);
     }
 
     /**
@@ -70,33 +69,54 @@ public class PoiWordParagraphTool {
      */
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color) {
-        XWPFParagraph paragraph = document.createParagraph();
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false, null, null);
-        return paragraph;
+        return createParagraph(document, plainTxt, fontFamily, fontSize, color, false, false,
+                ParagraphAlignment.LEFT, TextAlignment.CENTER);
     }
 
     /**
      * 创建段落
      *
-     * @param document      {@link XWPFDocument}
-     * @param plainTxt      文本内容
-     * @param fontFamily    字体
-     * @param fontSize      字号
-     * @param color         颜色（RGB 格式，例如："FFFFFF"）
-     * @param bold          是否加粗
-     * @param underline     是否增加下划线
-     * @param alignment     水平对齐
-     * @param verticalAlign 垂直对其
+     * @param document           {@link XWPFDocument}
+     * @param plainTxt           文本内容
+     * @param fontFamily         字体
+     * @param fontSize           字号
+     * @param color              颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold               是否加粗
+     * @param underline          是否增加下划线
+     * @param paragraphAlignment 段落对齐方式
+     * @param textAlignment      文本对齐方式
      *
      * @return {@link XWPFParagraph}
      */
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color,
                                                 boolean bold, boolean underline,
-                                                ParagraphAlignment alignment, TextAlignment verticalAlign) {
+                                                ParagraphAlignment paragraphAlignment, TextAlignment textAlignment) {
         XWPFParagraph paragraph = document.createParagraph();
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline, alignment, verticalAlign);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline);
+        setParagraphAlignment(paragraph, paragraphAlignment);
+        setTextAlignment(paragraph, textAlignment);
         return paragraph;
+    }
+
+    /**
+     * 设置文本对齐方式
+     *
+     * @param paragraph          段落 {@link XWPFDocument}
+     * @param paragraphAlignment 段落对齐方式
+     */
+    public static void setParagraphAlignment(XWPFParagraph paragraph, ParagraphAlignment paragraphAlignment) {
+        paragraph.setAlignment(paragraphAlignment);
+    }
+
+    /**
+     * 设置文本对齐方式
+     *
+     * @param paragraph     段落 {@link XWPFDocument}
+     * @param textAlignment 文本对齐方式
+     */
+    public static void setTextAlignment(XWPFParagraph paragraph, TextAlignment textAlignment) {
+        paragraph.setVerticalAlignment(textAlignment);
     }
 
     /**
@@ -111,7 +131,7 @@ public class PoiWordParagraphTool {
      */
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
                                     String fontFamily, Integer fontSize) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, null, null);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
     }
 
     /**
@@ -125,9 +145,8 @@ public class PoiWordParagraphTool {
      */
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
                                     String fontFamily, Integer fontSize, String color) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false, null, null);
+        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
     }
-
 
     /**
      * 添加段落内容
@@ -143,26 +162,6 @@ public class PoiWordParagraphTool {
     public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
                                     String fontFamily, Integer fontSize, String color,
                                     boolean bold, boolean underline) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline, null, null);
-    }
-
-    /**
-     * 添加段落内容
-     *
-     * @param paragraph     {@link XWPFParagraph}
-     * @param plainTxt      文本内容
-     * @param fontFamily    字体
-     * @param fontSize      字号
-     * @param color         颜色（RGB 格式，例如："FFFFFF"）
-     * @param bold          是否加粗
-     * @param underline     是否增加下划线
-     * @param alignment     水平对齐
-     * @param verticalAlign 垂直对其
-     */
-    public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize, String color,
-                                    boolean bold, boolean underline,
-                                    ParagraphAlignment alignment, TextAlignment verticalAlign) {
         if (paragraph == null) {
             return;
         }
@@ -180,16 +179,6 @@ public class PoiWordParagraphTool {
         paragraphRun.setBold(bold);
         if (underline) {
             paragraphRun.setUnderline(UnderlinePatterns.SINGLE);
-        }
-        if (alignment != null) {
-            paragraph.setAlignment(alignment);
-        } else {
-            paragraph.setAlignment(ParagraphAlignment.LEFT);
-        }
-        if (verticalAlign != null) {
-            paragraph.setVerticalAlignment(verticalAlign);
-        } else {
-            paragraph.setVerticalAlignment(TextAlignment.CENTER);
         }
     }
 
@@ -249,8 +238,8 @@ public class PoiWordParagraphTool {
      * @param bold       是否加粗
      */
     public static void addSuperscript(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize, String color,
-                                    boolean bold) {
+                                      String fontFamily, Integer fontSize, String color,
+                                      boolean bold) {
 
         addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, bold, VerticalAlign.SUPERSCRIPT);
     }
@@ -267,8 +256,8 @@ public class PoiWordParagraphTool {
      * @param verticalAlign 对齐方式
      */
     private static void addSubscript(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize, String color,
-                                    boolean bold, VerticalAlign verticalAlign) {
+                                     String fontFamily, Integer fontSize, String color,
+                                     boolean bold, VerticalAlign verticalAlign) {
         if (paragraph == null) {
             return;
         }
