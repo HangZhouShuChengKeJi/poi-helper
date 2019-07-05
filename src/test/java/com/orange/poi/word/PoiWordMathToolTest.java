@@ -1,0 +1,59 @@
+package com.orange.poi.word;
+
+import com.orange.poi.util.TempFileUtil;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openxmlformats.schemas.officeDocument.x2006.math.CTF;
+import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
+
+/**
+ * @author 小天
+ * @date 2019/7/5 23:23
+ */
+public class PoiWordMathToolTest {
+
+    private String defaultFontFamily = "宋体";
+    private int    defaultFontSize   = 14;
+    private String defaultColor      = "000000";
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void addFraction() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+        XWPFParagraph paragraph;
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "x=", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordMathTool.addFraction(paragraph, "a", "b", defaultFontFamily, "ff0000");
+
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addParagraph(paragraph, "计算： x=", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordMathTool.addFraction(paragraph, "999", "1000", defaultFontFamily, "00dd00");
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+}
