@@ -44,7 +44,7 @@ public class PoiWordPictureToolTest {
 
 
         XWPFParagraph titleParagraph = doc.createParagraph();
-        PoiWordParagraphTool.addParagraph(titleParagraph, "背景图片测试", defaultFontFamily , 25, defaultColor,
+        PoiWordParagraphTool.addTxt(titleParagraph, "背景图片测试", defaultFontFamily , 25, defaultColor,
                 true, false);
 
         // 设置行高

@@ -6,14 +6,10 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openxmlformats.schemas.officeDocument.x2006.math.CTF;
-import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 /**
  * @author 小天
@@ -40,12 +36,12 @@ public class PoiWordMathToolTest {
         XWPFParagraph paragraph;
 
         paragraph = doc.createParagraph();
-        PoiWordParagraphTool.addParagraph(paragraph, "x=", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "x=", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordMathTool.addFraction(paragraph, "a", "b", defaultFontFamily, "ff0000");
 
 
         paragraph = doc.createParagraph();
-        PoiWordParagraphTool.addParagraph(paragraph, "计算： x=", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "计算： x=", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordMathTool.addFraction(paragraph, "999", "1000", defaultFontFamily, "00dd00");
 
         File wordFile = TempFileUtil.createTempFile("docx");

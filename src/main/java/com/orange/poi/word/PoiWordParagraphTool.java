@@ -93,7 +93,7 @@ public class PoiWordParagraphTool {
                                                 boolean bold, boolean underline,
                                                 ParagraphAlignment paragraphAlignment, TextAlignment textAlignment) {
         XWPFParagraph paragraph = document.createParagraph();
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline);
+        addTxt(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline);
         setParagraphAlignment(paragraph, paragraphAlignment);
         setTextAlignment(paragraph, textAlignment);
         return paragraph;
@@ -120,38 +120,38 @@ public class PoiWordParagraphTool {
     }
 
     /**
-     * 创建段落
+     * 添加文本内容
      *
-     * @param paragraph  {@link XWPFParagraph}
+     * @param paragraph  段落 {@link XWPFParagraph}
      * @param plainTxt   文本内容
      * @param fontFamily 字体
      * @param fontSize   字号
      *
      * @return {@link XWPFParagraph}
      */
-    public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
+    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+                              String fontFamily, Integer fontSize) {
+        addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
     }
 
     /**
-     * 添加段落内容
+     * 添加文本内容
      *
-     * @param paragraph  {@link XWPFParagraph}
+     * @param paragraph  段落 {@link XWPFParagraph}
      * @param plainTxt   文本内容
      * @param fontFamily 字体
      * @param fontSize   字号
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
      */
-    public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize, String color) {
-        addParagraph(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
+    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+                              String fontFamily, Integer fontSize, String color) {
+        addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
     }
 
     /**
-     * 添加段落内容
+     * 添加文本内容
      *
-     * @param paragraph  {@link XWPFParagraph}
+     * @param paragraph  段落 {@link XWPFParagraph}
      * @param plainTxt   文本内容
      * @param fontFamily 字体
      * @param fontSize   字号
@@ -159,9 +159,9 @@ public class PoiWordParagraphTool {
      * @param bold       是否加粗
      * @param underline  是否增加下划线
      */
-    public static void addParagraph(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize, String color,
-                                    boolean bold, boolean underline) {
+    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+                              String fontFamily, Integer fontSize, String color,
+                              boolean bold, boolean underline) {
         if (paragraph == null) {
             return;
         }

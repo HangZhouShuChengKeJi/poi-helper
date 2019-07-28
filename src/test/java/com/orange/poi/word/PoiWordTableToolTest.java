@@ -65,7 +65,7 @@ public class PoiWordTableToolTest {
         tableCell = tableRowOne.getCell(2);
         paragraph = tableCell.getParagraphArray(0);
 
-        PoiWordParagraphTool.addParagraph(paragraph, "对齐测试测", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "对齐测试测", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordTableTool.setTableCellAlign(tableCell, STJc.LEFT, STVerticalJc.CENTER);
 
         PoiWordPictureTool.addPicture(paragraph, getClass().getResource("/img/star.png").getFile());
@@ -121,7 +121,7 @@ public class PoiWordTableToolTest {
         XWPFDocument doc = new XWPFDocument();
         PoiWordTool.initDocForA4(doc);
 
-        PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格", defaultFontFamily, defaultFontSize);
+        PoiWordParagraphTool.addTxt(doc.createParagraph(), "右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格", defaultFontFamily, defaultFontSize);
 
 
         XWPFTable table = PoiWordTableTool.addTableWithoutBorder(doc, 1, 3, true);
@@ -141,8 +141,8 @@ public class PoiWordTableToolTest {
 
         PoiWordTableTool.setTablePosition(table, STHAnchor.TEXT, PoiUnitTool.pointToDXA(40),
                 STVAnchor.TEXT, 0);
-        PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格", defaultFontFamily, defaultFontSize);
-        PoiWordParagraphTool.addParagraph(doc.createParagraph(), "右边是表格", defaultFontFamily, defaultFontSize);
+        PoiWordParagraphTool.addTxt(doc.createParagraph(), "右边是表格", defaultFontFamily, defaultFontSize);
+        PoiWordParagraphTool.addTxt(doc.createParagraph(), "右边是表格", defaultFontFamily, defaultFontSize);
         // 添加空行
         PoiWordParagraphTool.addBlankLine(doc);
 

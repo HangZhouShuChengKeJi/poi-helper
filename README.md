@@ -47,7 +47,7 @@ public class App {
          XWPFParagraph paragraph = doc.createParagraph();
          
          // 添加文字
-         PoiWordParagraphTool.addParagraph(paragraph, "hello world", defaultFontFamily, defaultFontSize, defaultColor);
+         PoiWordParagraphTool.addTxt(paragraph, "hello world", defaultFontFamily, defaultFontSize, defaultColor);
         
          // 创建输出文件
          File wordFile = TempFileUtil.createTempFile("docx");
