@@ -10,11 +10,13 @@ import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -38,6 +40,47 @@ public class PoiWordParagraphTool {
      */
     public static XWPFParagraph addBlankLine(XWPFDocument document) {
         return createParagraph(document, "", null, null, null);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document {@link XWPFDocument}
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document) {
+        return createParagraph(document, ParagraphAlignment.LEFT, TextAlignment.CENTER, false);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document   {@link XWPFDocument}
+     * @param snapToGrid true: 如果定义了文档网格，则对齐到网格
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, boolean snapToGrid) {
+        return createParagraph(document, ParagraphAlignment.LEFT, TextAlignment.CENTER, snapToGrid);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document           {@link XWPFDocument}
+     * @param paragraphAlignment 段落对齐方式
+     * @param textAlignment      文本对齐方式
+     * @param snapToGrid         true: 如果定义了文档网格，则对齐到网格
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, ParagraphAlignment paragraphAlignment, TextAlignment textAlignment, boolean snapToGrid) {
+        XWPFParagraph paragraph = document.createParagraph();
+        setParagraphAlignment(paragraph, paragraphAlignment);
+        setTextAlignment(paragraph, textAlignment);
+        setSnapToGrid(paragraph, snapToGrid);
+        return paragraph;
     }
 
     /**
@@ -70,7 +113,7 @@ public class PoiWordParagraphTool {
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color) {
         return createParagraph(document, plainTxt, fontFamily, fontSize, color, false, false,
-                ParagraphAlignment.LEFT, TextAlignment.CENTER);
+                ParagraphAlignment.LEFT, TextAlignment.CENTER, false);
     }
 
     /**
@@ -92,10 +135,32 @@ public class PoiWordParagraphTool {
                                                 String fontFamily, Integer fontSize, String color,
                                                 boolean bold, boolean underline,
                                                 ParagraphAlignment paragraphAlignment, TextAlignment textAlignment) {
-        XWPFParagraph paragraph = document.createParagraph();
+        return createParagraph(document, plainTxt, fontFamily, fontSize, color, bold, underline, paragraphAlignment, textAlignment, false);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document           {@link XWPFDocument}
+     * @param plainTxt           文本内容
+     * @param fontFamily         字体
+     * @param fontSize           字号
+     * @param color              颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold               是否加粗
+     * @param underline          是否增加下划线
+     * @param paragraphAlignment 段落对齐方式
+     * @param textAlignment      文本对齐方式
+     * @param snapToGrid         true: 如果定义了文档网格，则对齐到网格
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
+                                                String fontFamily, Integer fontSize, String color,
+                                                boolean bold, boolean underline,
+                                                ParagraphAlignment paragraphAlignment, TextAlignment textAlignment,
+                                                boolean snapToGrid) {
+        XWPFParagraph paragraph = createParagraph(document, paragraphAlignment, textAlignment, snapToGrid);
         addTxt(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline);
-        setParagraphAlignment(paragraph, paragraphAlignment);
-        setTextAlignment(paragraph, textAlignment);
         return paragraph;
     }
 
@@ -309,6 +374,39 @@ public class PoiWordParagraphTool {
         }
         spacing.setLine(BigInteger.valueOf(PoiUnitTool.pointToDXA(value)));
         spacing.setLineRule(STLineSpacingRule.EXACT);
+    }
+
+    /**
+     * 设置段落是否对齐到网格。<br>
+     *
+     * @param paragraph  {@link XWPFParagraph}
+     * @param snapToGrid true: 如果定义了文档网格，则对齐到网格
+     */
+    public static void setSnapToGrid(XWPFParagraph paragraph, boolean snapToGrid) {
+        CTPPr ppr = getParagraphProperties(paragraph);
+        if (snapToGrid) {
+
+            // 对齐到网格
+
+            if (ppr.isSetSnapToGrid()) {
+                CTOnOff ctOnOff = ppr.getSnapToGrid();
+                ctOnOff.setVal(STOnOff.X_1);
+            } else {
+                CTOnOff ctOnOff = ppr.addNewSnapToGrid();
+                ctOnOff.setVal(STOnOff.X_1);
+            }
+        } else {
+
+            // 不对齐到网格
+
+            if (ppr.isSetSnapToGrid()) {
+                CTOnOff ctOnOff = ppr.getSnapToGrid();
+                ctOnOff.setVal(STOnOff.X_0);
+            } else {
+                CTOnOff ctOnOff = ppr.addNewSnapToGrid();
+                ctOnOff.setVal(STOnOff.X_0);
+            }
+        }
     }
 
     /**

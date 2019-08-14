@@ -36,7 +36,35 @@ public class PoiWordParagraphToolTest {
     }
 
     @Test
-    public void createParagraph() {
+    public void createParagraph() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+        XWPFParagraph paragraph;
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.setSnapToGrid(paragraph, false);
+        PoiWordParagraphTool.addTxt(paragraph, "段合并同类项，把结果按照x的降幂排列：2xy3-3xy2+（-5xy2）-（-8y2x）-（-3x2y）+4x3y．2xy3-3xy2+（-5xy2）-（-8y2x）-（-3x2y）+4x3y．2xy3-3xy2+（-5xy2）-（-8y2x）-（-3x2y）+4x3y．2xy3-3xy2+（-5xy2）-（-8y2x）-（-3x2y）+4x3y．2xy3-3xy2+（-5xy2）-（-8y2x）-（-3x2y）+4x3y．2xy3-3xy2+（-5xy2）-（-8y2x）-（-3x2y）+4x3y．", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 0.5f, 0.5f);
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "新的段落", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 0.5f, 0.5f);
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 
     @Test
@@ -49,11 +77,11 @@ public class PoiWordParagraphToolTest {
         PoiWordTool.initDocForA4(doc);
         XWPFParagraph paragraph;
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.addSubscript(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.addSuperscript(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
 
@@ -72,11 +100,11 @@ public class PoiWordParagraphToolTest {
         PoiWordTool.initDocForA4(doc);
         XWPFParagraph paragraph;
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "1.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setLineHeightMultiple(paragraph, 0.5f);
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "2.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setLineHeightMultiple(paragraph, 2.0f);
 
@@ -95,7 +123,7 @@ public class PoiWordParagraphToolTest {
         PoiWordTool.initDocForA4(doc);
         XWPFParagraph paragraph;
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "40磅 行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setLineHeightExact(paragraph, 40.00d);
 
@@ -103,7 +131,7 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "80磅 行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setLineHeightExact(paragraph, 80.00d);
 
@@ -126,15 +154,15 @@ public class PoiWordParagraphToolTest {
         PoiWordTool.initDocForA4(doc);
         XWPFParagraph paragraph;
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 0.5f, 0.5f);
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段前 1.0 倍行距，段后 1.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 1.0f, 1.0f);
 
-        paragraph = doc.createParagraph();
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段前 1.5 倍行距，段后 1.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 1.5f, 1.5f);
 
