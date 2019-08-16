@@ -32,16 +32,7 @@ public class PoiWordPictureToolTest {
         File img2 = new File(getClass().getResource("/img/linux_2.jpg").toURI());
         File img3 = new File(getClass().getResource("/img/linux_3.png").toURI());
 
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
-
-//        // 图片自动缩放
-//        PoiWordPictureTool.addPicture(doc.createParagraph(), img1, true);
-//
-//        PoiWordParagraphTool.addBlankLine(doc);
-//        PoiWordParagraphTool.addBlankLine(doc);
-//        PoiWordParagraphTool.addBlankLine(doc);
-
+        XWPFDocument doc =  PoiWordTool.createDocForA4();
 
         XWPFParagraph titleParagraph = doc.createParagraph();
         PoiWordParagraphTool.addTxt(titleParagraph, "背景图片测试", defaultFontFamily , 25, defaultColor,

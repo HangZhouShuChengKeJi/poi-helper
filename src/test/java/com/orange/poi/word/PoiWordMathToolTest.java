@@ -31,8 +31,7 @@ public class PoiWordMathToolTest {
 
     @Test
     public void addFraction() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
         paragraph = doc.createParagraph();

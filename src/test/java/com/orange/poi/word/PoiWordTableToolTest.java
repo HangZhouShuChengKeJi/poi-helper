@@ -45,8 +45,7 @@ public class PoiWordTableToolTest {
 
     @Test
     public void createTableWithoutBorder() throws URISyntaxException, IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
 
         XWPFParagraph paragraph;
 
@@ -118,8 +117,7 @@ public class PoiWordTableToolTest {
 
     @Test
     public void setTablePosition() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
 
         PoiWordParagraphTool.addTxt(doc.createParagraph(), "右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格右边是表格", defaultFontFamily, defaultFontSize);
 

@@ -1,5 +1,6 @@
 package com.orange.poi.word;
 
+import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.FileUtil;
 import com.orange.poi.util.ImageTool;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -20,6 +21,9 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignV
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromV;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -67,6 +71,37 @@ public class PoiWordPictureTool {
         final int actualWidth = image.getWidth();
         final int actualHeight = image.getHeight();
         return addPicture(paragraph, imgFile, actualWidth, actualHeight);
+    }
+
+    /**
+     * 添加图片，当图片实际宽高超出文档最大宽高时，对图片进行等比缩放
+     *
+     * @param paragraph        {@link XWPFParagraph}
+     * @param imgFile          图片文件
+     * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     *
+     * @return {@link XWPFPicture}
+     *
+     * @throws IOException
+     */
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, boolean redrawOnOverflow) throws IOException {
+        XWPFDocument doc = paragraph.getDocument();
+        CTSectPr sectPr = doc.getDocument().getBody().getSectPr();
+        if (sectPr == null) {
+            throw new IllegalStateException("未设置文档尺寸");
+        }
+        CTPageSz pageSize = sectPr.getPgSz();
+        if (pageSize == null) {
+            throw new IllegalStateException("未设置文档尺寸");
+        }
+        CTPageMar pageMar = sectPr.getPgMar();
+        if (pageMar == null) {
+            throw new IllegalStateException("未设置页边距");
+        }
+
+        int contentWidth = PoiUnitTool.dxaToPixel(pageSize.getW().subtract(pageMar.getLeft()).subtract(pageMar.getRight()).longValue());
+        int contentHeight = PoiUnitTool.dxaToPixel(pageSize.getH().subtract(pageMar.getTop()).subtract(pageMar.getBottom()).longValue());
+        return addPictureWithResize(paragraph, imgFile, contentWidth, contentHeight, redrawOnOverflow);
     }
 
     /**

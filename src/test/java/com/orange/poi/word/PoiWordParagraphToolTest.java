@@ -37,8 +37,7 @@ public class PoiWordParagraphToolTest {
 
     @Test
     public void createParagraph() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
@@ -73,8 +72,7 @@ public class PoiWordParagraphToolTest {
 
     @Test
     public void addSubscript() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
@@ -96,8 +94,7 @@ public class PoiWordParagraphToolTest {
 
     @Test
     public void setLineHeightMultiple() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
@@ -119,8 +116,7 @@ public class PoiWordParagraphToolTest {
 
     @Test
     public void setLineHeightExact() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
@@ -150,8 +146,7 @@ public class PoiWordParagraphToolTest {
 
     @Test
     public void setParagraphSpaceOfLine() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        PoiWordTool.initDocForA4(doc);
+        XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);

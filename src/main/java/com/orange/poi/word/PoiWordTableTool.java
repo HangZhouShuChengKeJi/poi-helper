@@ -13,8 +13,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;
 
-import static com.orange.poi.word.PoiWordTool.A4_CONTENT_WIDTH_DXA;
-
 /**
  * apache poi word 表格工具类
  *
@@ -33,7 +31,7 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable addTableWithoutBorder(XWPFDocument document, int rows, int cols) {
-        return addTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+        return addTable(document, rows, cols, PoiWordTool.getContentWidthOfDxa(document), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
     /**
@@ -46,7 +44,7 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable addTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols) {
-        return addTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+        return addTable(tableCell, rows, cols, tableCell.getWidth(), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
 
@@ -65,7 +63,7 @@ public class PoiWordTableTool {
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, PoiWordTool.getContentWidthOfDxa(document), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -86,7 +84,7 @@ public class PoiWordTableTool {
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, tableCell.getWidth(), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -106,7 +104,7 @@ public class PoiWordTableTool {
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, PoiWordTool.getContentWidthOfDxa(document), XWPFTable.XWPFBorderType.SINGLE, 2, "000000", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -127,7 +125,7 @@ public class PoiWordTableTool {
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, A4_CONTENT_WIDTH_DXA, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, tableCell.getWidth(), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -200,7 +198,7 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable addTable(XWPFDocument document, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
-        return addTable(document, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
+        return addTable(document, rows, cols, PoiWordTool.getContentWidthOfDxa(document), borderType, borderSize, borderColor);
     }
 
     /**
@@ -215,7 +213,7 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable addTable(XWPFTableCell tableCell, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
-        return addTable(tableCell, rows, cols, A4_CONTENT_WIDTH_DXA, borderType, borderSize, borderColor);
+        return addTable(tableCell, rows, cols, tableCell.getWidth(), borderType, borderSize, borderColor);
     }
 
     /**
