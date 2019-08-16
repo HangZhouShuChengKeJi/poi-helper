@@ -444,9 +444,23 @@ public class PoiWordTableTool {
      * 设置表格行高
      *
      * @param tableRowOne {@link XWPFTableRow}
+     * @param height      高度（单位：DXA）
+     */
+    public static void setTableRowHeight(XWPFTableRow tableRowOne, long height) {
+        CTRow ctRow = tableRowOne.getCtRow();
+        CTTrPr trPr = (ctRow.isSetTrPr()) ? ctRow.getTrPr() : ctRow.addNewTrPr();
+        CTHeight ctHeight = trPr.sizeOfTrHeightArray() == 0 ? trPr.addNewTrHeight() : trPr.getTrHeightArray(0);
+        ctHeight.setHRule(STHeightRule.EXACT);
+        ctHeight.setVal(BigInteger.valueOf(height));
+    }
+
+    /**
+     * 设置表格行高
+     *
+     * @param tableRowOne {@link XWPFTableRow}
      * @param height      高度（单位：磅）
      */
-    public static void setTableRowHeight(XWPFTableRow tableRowOne, double height) {
+    public static void setTableRowHeightOfPoint(XWPFTableRow tableRowOne, double height) {
         CTRow ctRow = tableRowOne.getCtRow();
         CTTrPr trPr = (ctRow.isSetTrPr()) ? ctRow.getTrPr() : ctRow.addNewTrPr();
         CTHeight ctHeight = trPr.sizeOfTrHeightArray() == 0 ? trPr.addNewTrHeight() : trPr.getTrHeightArray(0);
@@ -485,9 +499,20 @@ public class PoiWordTableTool {
      * 设置单元格宽度
      *
      * @param tableCell 单元格
+     * @param width     宽度（单位：DXA）
+     */
+    public static void setTableCellWidth(XWPFTableCell tableCell, long width) {
+        tableCell.setWidth(String.valueOf(width));
+        tableCell.setWidthType(TableWidthType.DXA);
+    }
+
+    /**
+     * 设置单元格宽度
+     *
+     * @param tableCell 单元格
      * @param width     宽度（单位：磅）
      */
-    public static void setTableCellWidth(XWPFTableCell tableCell, double width) {
+    public static void setTableCellWidthOfPoint(XWPFTableCell tableCell, double width) {
         tableCell.setWidth(String.valueOf(PoiUnitTool.pointToDXA(width)));
         tableCell.setWidthType(TableWidthType.DXA);
     }

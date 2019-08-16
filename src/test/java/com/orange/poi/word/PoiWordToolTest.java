@@ -32,6 +32,7 @@ public class PoiWordToolTest {
 
     @Test
     public void initDocForA4() {
+        System.out.println(PoiUnitTool.centimeterToPoint(18));
         System.out.println(PoiUnitTool.pixelToPoint(40));
         System.out.println(PoiUnitTool.pixelToPoint(30));
         System.out.println(PoiUnitTool.pixelToPoint(16));
