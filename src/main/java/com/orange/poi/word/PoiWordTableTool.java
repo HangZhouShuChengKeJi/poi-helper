@@ -367,13 +367,13 @@ public class PoiWordTableTool {
      *
      * @param table      {@link XWPFTable}
      * @param horzAnchor 水平对齐锚点
-     * @param tblpXSpec  水平对齐方式
+     * @param xAlign     水平对齐方式
      * @param vertAnchor 垂直对齐锚点
-     * @param tblpYSpec  垂直对齐方式
+     * @param yAlign     垂直对齐方式
      */
-    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, STXAlign.Enum tblpXSpec,
-                                        STVAnchor.Enum vertAnchor, STYAlign.Enum tblpYSpec) {
-        setTablePosition(table, horzAnchor, 0, tblpXSpec, vertAnchor, 0, tblpYSpec, 0, 0, 0, 0);
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, STXAlign.Enum xAlign,
+                                        STVAnchor.Enum vertAnchor, STYAlign.Enum yAlign) {
+        setTablePosition(table, horzAnchor, 0, xAlign, vertAnchor, 0, yAlign, 0, 0, 0, 0);
     }
 
 
@@ -383,14 +383,14 @@ public class PoiWordTableTool {
      * @param table      {@link XWPFTable}
      * @param horzAnchor 水平对齐锚点
      * @param leftOffset 水平偏移距离，单位：dxa
-     * @param tblpXSpec  水平对齐方式
+     * @param xAlign     水平对齐方式
      * @param vertAnchor 垂直对齐锚点
      * @param topOffset  垂直偏移距离，单位：dxa
-     * @param tblpYSpec  垂直对齐方式
+     * @param yAlign     垂直对齐方式
      */
-    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset, STXAlign.Enum tblpXSpec,
-                                        STVAnchor.Enum vertAnchor, long topOffset, STYAlign.Enum tblpYSpec) {
-        setTablePosition(table, horzAnchor, leftOffset, tblpXSpec, vertAnchor, topOffset, tblpYSpec, 0, 0, 0, 0);
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset, STXAlign.Enum xAlign,
+                                        STVAnchor.Enum vertAnchor, long topOffset, STYAlign.Enum yAlign) {
+        setTablePosition(table, horzAnchor, leftOffset, xAlign, vertAnchor, topOffset, yAlign, 0, 0, 0, 0);
     }
 
     /**
@@ -399,17 +399,17 @@ public class PoiWordTableTool {
      * @param table          {@link XWPFTable}
      * @param horzAnchor     水平对齐锚点
      * @param leftOffset     水平偏移距离，单位：dxa
-     * @param tblpXSpec      水平对齐方式
+     * @param xAlign         水平对齐方式
      * @param vertAnchor     垂直对齐锚点
      * @param topOffset      垂直偏移距离，单位：dxa
-     * @param tblpYSpec      水平对齐方式
+     * @param yAlign         垂直对齐方式
      * @param topFromText    顶部和文字的距离，单位：dxa
      * @param rightFromText  右边和文字的距离，单位：dxa
      * @param bottomFromText 底部和文字的距离，单位：dxa
      * @param leftFromText   左边和文字的距离，单位：dxa
      */
-    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset, STXAlign.Enum tblpXSpec,
-                                        STVAnchor.Enum vertAnchor, long topOffset, STYAlign.Enum tblpYSpec,
+    public static void setTablePosition(XWPFTable table, STHAnchor.Enum horzAnchor, long leftOffset, STXAlign.Enum xAlign,
+                                        STVAnchor.Enum vertAnchor, long topOffset, STYAlign.Enum yAlign,
                                         long topFromText, long rightFromText, long bottomFromText, long leftFromText) {
         CTTbl ctTbl = table.getCTTbl();
         CTTblPr ctTblPr;
@@ -421,17 +421,17 @@ public class PoiWordTableTool {
             ctTblPPr = ctTblPr.addNewTblpPr();
         }
         ctTblPPr.setHorzAnchor(horzAnchor);
-        if (tblpXSpec == null) {
+        if (xAlign == null) {
             ctTblPPr.setTblpX(BigInteger.valueOf(leftOffset));
         } else {
-            ctTblPPr.setTblpXSpec(tblpXSpec);
+            ctTblPPr.setTblpXSpec(xAlign);
         }
 
         ctTblPPr.setVertAnchor(vertAnchor);
-        if (tblpYSpec == null) {
+        if (yAlign == null) {
             ctTblPPr.setTblpY(BigInteger.valueOf(topOffset));
         } else {
-            ctTblPPr.setTblpYSpec(tblpYSpec);
+            ctTblPPr.setTblpYSpec(yAlign);
         }
 
         ctTblPPr.setTopFromText(BigInteger.valueOf(topFromText));
