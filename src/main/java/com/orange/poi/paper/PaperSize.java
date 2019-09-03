@@ -27,6 +27,14 @@ public enum PaperSize {
      */
     public int  height;
     /**
+     * 页面宽度。单位：厘米
+     */
+    public double width_cm;
+    /**
+     * 页面高度。单位：厘米
+     */
+    public double height_cm;
+    /**
      * 页面宽度。单位：dxa
      */
     public long width_dxa;
@@ -34,6 +42,14 @@ public enum PaperSize {
      * 页面高度。单位：dxa
      */
     public long height_dxa;
+    /**
+     * 页面宽度。单位：point
+     */
+    public double width_point;
+    /**
+     * 页面高度。单位：point
+     */
+    public double height_point;
 
     /**
      * 构造方法
@@ -45,7 +61,13 @@ public enum PaperSize {
         this.width = width;
         this.height = height;
 
-        this.width_dxa = PoiUnitTool.centimeterToDXA(width / 10.f);
-        this.height_dxa = PoiUnitTool.centimeterToDXA(height / 10.f);
+        this.width_cm = width / 10.00f;
+        this.height_cm = height / 10.00f;
+
+        this.width_dxa = PoiUnitTool.centimeterToDXA(width_cm);
+        this.height_dxa = PoiUnitTool.centimeterToDXA(height_cm);
+
+        this.width_point = PoiUnitTool.centimeterToPoint(width_cm);
+        this.height_point = PoiUnitTool.centimeterToPoint(height_cm);
     }
 }

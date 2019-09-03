@@ -1,6 +1,7 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import com.orange.poi.paper.PaperSize;
 import com.orange.poi.util.TempFileUtil;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -32,11 +33,18 @@ public class PoiWordToolTest {
 
     @Test
     public void initDocForA4() {
-        System.out.println(PoiUnitTool.centimeterToPoint(18));
-        System.out.println(PoiUnitTool.pixelToPoint(40));
-        System.out.println(PoiUnitTool.pixelToPoint(30));
-        System.out.println(PoiUnitTool.pixelToPoint(16));
-        System.out.println(PoiUnitTool.pointToPixel(12));
+
+        System.out.println(PaperSize.A4.width);
+        System.out.println(PaperSize.A4.height);
+
+        System.out.println(PaperSize.A4.width_cm);
+        System.out.println(PaperSize.A4.height_cm);
+
+        System.out.println(PaperSize.A4.width_point);
+        System.out.println(PaperSize.A4.height_point);
+
+        System.out.println(PaperSize.B5.width_point);
+        System.out.println(PaperSize.B5.height_point);
     }
 
     @Test
