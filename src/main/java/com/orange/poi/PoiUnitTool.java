@@ -70,14 +70,14 @@ public class PoiUnitTool {
     }
 
     /**
-     * {@link STTblWidth#DXA} 转换为 磅（像素点数）
+     * {@link STTblWidth#DXA} 转换为 像素
      *
      * @param dxa {@link STTblWidth#DXA}
      *
-     * @return 磅（像素点数）
+     * @return 像素
      */
     public static int dxaToPixel(long dxa) {
-        return Units.pointsToPixel(dxa / 20);
+        return Units.pointsToPixel(dxaToPoint(dxa));
     }
 
     /**
