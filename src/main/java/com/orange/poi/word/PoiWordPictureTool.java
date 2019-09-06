@@ -44,9 +44,7 @@ public class PoiWordPictureTool {
      *
      * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件绝对地址
-     *
      * @return {@link XWPFPicture}
-     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile) throws IOException {
@@ -58,9 +56,7 @@ public class PoiWordPictureTool {
      *
      * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件
-     *
      * @return {@link XWPFPicture}
-     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile) throws IOException {
@@ -74,17 +70,48 @@ public class PoiWordPictureTool {
     }
 
     /**
-     * 添加图片，当图片实际宽高超出文档最大宽高时，对图片进行等比缩放
+     * 添加图片，当图片实际宽高超出内容区域的宽高时，对图片进行等比缩放。当图片溢出的时候，不通过重绘图片来缩小图片尺寸
+     *
+     * @param paragraph {@link XWPFParagraph}
+     * @param imgFile   图片文件
+     * @return {@link XWPFPicture}
+     * @throws IOException
+     */
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile) throws IOException {
+        return addPictureWithResize(paragraph, imgFile, false);
+    }
+
+    /**
+     * 添加图片，当图片实际宽高超出内容区域的宽高时，对图片进行等比缩放
      *
      * @param paragraph        {@link XWPFParagraph}
      * @param imgFile          图片文件
      * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
-     *
      * @return {@link XWPFPicture}
-     *
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, boolean redrawOnOverflow) throws IOException {
+        BufferedImage image = ImageTool.readImage(imgFile);
+        if (image == null) {
+            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
+        }
+        final int actualWidth = image.getWidth();
+        final int actualHeight = image.getHeight();
+        return addPictureWithResize(paragraph, imgFile, actualWidth, actualHeight, redrawOnOverflow);
+    }
+
+    /**
+     * 添加图片，并指定宽高。当指定的宽高超出内容区域的宽高时，根据指定的宽高，对图片进行等比缩放
+     *
+     * @param paragraph        {@link XWPFParagraph}
+     * @param imgFile          图片文件
+     * @param width            宽度，单位：像素
+     * @param height           高度，单位：像素
+     * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     * @return {@link XWPFPicture}
+     * @throws IOException
+     */
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow) throws IOException {
         XWPFDocument doc = paragraph.getDocument();
         CTSectPr sectPr = doc.getDocument().getBody().getSectPr();
         if (sectPr == null) {
@@ -101,52 +128,44 @@ public class PoiWordPictureTool {
 
         int contentWidth = PoiUnitTool.dxaToPixel(pageSize.getW().subtract(pageMar.getLeft()).subtract(pageMar.getRight()).longValue());
         int contentHeight = PoiUnitTool.dxaToPixel(pageSize.getH().subtract(pageMar.getTop()).subtract(pageMar.getBottom()).longValue());
-        return addPictureWithResize(paragraph, imgFile, contentWidth, contentHeight, redrawOnOverflow);
+        return addPictureWithResize(paragraph, imgFile, width, height, contentWidth, contentHeight, redrawOnOverflow);
     }
 
     /**
-     * 添加图片，当图片实际宽高超出指定的最大宽高时，对图片进行等比缩放
+     * 添加图片，并指定宽高。当指定的宽高超出指定的最大宽高时时，根据指定的宽高，对图片进行等比缩放
      *
      * @param paragraph        {@link XWPFParagraph}
      * @param imgFile          图片文件
+     * @param width            宽度，单位：像素
+     * @param height           高度，单位：像素
      * @param maxWidth         最大宽度，单位：像素
      * @param maxHeight        最大高度，单位：像素
      * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
-     *
      * @return {@link XWPFPicture}
-     *
      * @throws IOException
      */
-    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int maxWidth, final int maxHeight, boolean redrawOnOverflow) throws IOException {
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, final int maxWidth, final int maxHeight, boolean redrawOnOverflow) throws IOException {
         if (redrawOnOverflow) {
             ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, maxWidth, maxHeight);
             return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
         }
-        BufferedImage image = ImageTool.readImage(imgFile);
-        if (image == null) {
-            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
-        }
-        final int actualWidth = image.getWidth();
-        final int actualHeight = image.getHeight();
-        if (actualWidth > maxWidth || actualHeight > maxHeight) {
+        if (width > maxWidth || height > maxHeight) {
             // 通过指定宽高，强制缩放图片
-            final double scaleW = (double) actualWidth / maxWidth;
-            final double scaleH = (double) actualHeight / maxHeight;
+            final double scaleW = (double) width / maxWidth;
+            final double scaleH = (double) height / maxHeight;
             if (scaleW > scaleH) {
-                return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (actualHeight / scaleW));
+                return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (height / scaleW));
             }
             return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (maxWidth / scaleH), maxHeight);
         }
-        return addPicture(paragraph, imgFile.getAbsolutePath(), actualWidth, actualHeight);
+        return addPicture(paragraph, imgFile.getAbsolutePath(), width, height);
     }
 
     /**
      * 获取图片类型
      *
      * @param imgFile 图片文件名称
-     *
      * @return 图片类型
-     *
      * @see Document
      */
     public static Integer getPictureType(String imgFile) {
@@ -187,9 +206,7 @@ public class PoiWordPictureTool {
      * @param imgFile   图片文件绝对地址
      * @param width     图片宽度（单位： 像素）
      * @param height    图片高度（单位： 像素）
-     *
      * @return {@link XWPFPicture}
-     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile, int width, int height) throws IOException {
@@ -211,9 +228,7 @@ public class PoiWordPictureTool {
      * @param imgFile   图片文件绝对地址
      * @param width     图片宽度（单位： 像素）
      * @param height    图片高度（单位： 像素）
-     *
      * @return {@link XWPFPicture}
-     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, int width, int height) throws IOException {

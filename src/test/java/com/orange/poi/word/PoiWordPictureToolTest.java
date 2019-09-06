@@ -54,6 +54,27 @@ public class PoiWordPictureToolTest {
         out.close();
     }
 
+
+    @Test
+    public void addPictureWithResize() throws IOException, URISyntaxException {
+
+        XWPFDocument doc =  PoiWordTool.createDocForA4();
+
+        File img1 = new File(getClass().getResource("/img/1.jpg").toURI());
+        XWPFParagraph paragraph = doc.createParagraph();
+
+        // 添加图片
+        PoiWordPictureTool.addPictureWithResize(paragraph, img1, false);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
     @Test
     public void getPictureType() {
     }
