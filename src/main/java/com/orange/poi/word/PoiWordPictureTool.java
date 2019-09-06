@@ -70,7 +70,7 @@ public class PoiWordPictureTool {
     }
 
     /**
-     * 添加图片，当图片实际宽高超出内容区域的宽高时，对图片进行等比缩放。当图片溢出的时候，不通过重绘图片来缩小图片尺寸
+     * 添加图片，当图片实际宽高超出内容区域的宽高时，对图片进行等比缩放。当图片溢出的时候，不通过重绘图片来缩小图片尺寸。缩放时，锁定原始长宽比例
      *
      * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件
@@ -82,7 +82,7 @@ public class PoiWordPictureTool {
     }
 
     /**
-     * 添加图片，当图片实际宽高超出内容区域的宽高时，对图片进行等比缩放
+     * 添加图片，当图片实际宽高超出内容区域的宽高时，对图片进行等比缩放。缩放时，锁定原始长宽比例
      *
      * @param paragraph        {@link XWPFParagraph}
      * @param imgFile          图片文件
@@ -97,11 +97,12 @@ public class PoiWordPictureTool {
         }
         final int actualWidth = image.getWidth();
         final int actualHeight = image.getHeight();
-        return addPictureWithResize(paragraph, imgFile, actualWidth, actualHeight, redrawOnOverflow);
+        // 使用原始长宽时，不需要再次指定 “锁定原始长宽比例”
+        return addPictureWithResize(paragraph, imgFile, actualWidth, actualHeight, redrawOnOverflow, false);
     }
 
     /**
-     * 添加图片，并指定宽高。当指定的宽高超出内容区域的宽高时，根据指定的宽高，对图片进行等比缩放
+     * 添加图片，并指定宽高。当指定的宽高超出内容区域的宽高时，根据指定的宽高，对图片进行等比缩放。缩放时，锁定原始长宽比例
      *
      * @param paragraph        {@link XWPFParagraph}
      * @param imgFile          图片文件
@@ -112,6 +113,22 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow) throws IOException {
+        return addPictureWithResize(paragraph, imgFile, width, height, redrawOnOverflow, true);
+    }
+
+    /**
+     * 添加图片，并指定宽高。当指定的宽高超出内容区域的宽高时，根据指定的宽高，对图片进行等比缩放
+     *
+     * @param paragraph         {@link XWPFParagraph}
+     * @param imgFile           图片文件
+     * @param width             宽度，单位：像素
+     * @param height            高度，单位：像素
+     * @param redrawOnOverflow  当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     * @param lockOriginalScale 是否锁定原始长宽比例
+     * @return {@link XWPFPicture}
+     * @throws IOException
+     */
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow, boolean lockOriginalScale) throws IOException {
         XWPFDocument doc = paragraph.getDocument();
         CTSectPr sectPr = doc.getDocument().getBody().getSectPr();
         if (sectPr == null) {
@@ -128,37 +145,65 @@ public class PoiWordPictureTool {
 
         int contentWidth = PoiUnitTool.dxaToPixel(pageSize.getW().subtract(pageMar.getLeft()).subtract(pageMar.getRight()).longValue());
         int contentHeight = PoiUnitTool.dxaToPixel(pageSize.getH().subtract(pageMar.getTop()).subtract(pageMar.getBottom()).longValue());
-        return addPictureWithResize(paragraph, imgFile, width, height, contentWidth, contentHeight, redrawOnOverflow);
+        return addPictureWithResize(paragraph, imgFile, width, height, contentWidth, contentHeight, redrawOnOverflow, lockOriginalScale);
     }
 
     /**
      * 添加图片，并指定宽高。当指定的宽高超出指定的最大宽高时时，根据指定的宽高，对图片进行等比缩放
      *
-     * @param paragraph        {@link XWPFParagraph}
-     * @param imgFile          图片文件
-     * @param width            宽度，单位：像素
-     * @param height           高度，单位：像素
-     * @param maxWidth         最大宽度，单位：像素
-     * @param maxHeight        最大高度，单位：像素
-     * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     * @param paragraph         {@link XWPFParagraph}
+     * @param imgFile           图片文件
+     * @param width             宽度，单位：像素
+     * @param height            高度，单位：像素
+     * @param maxWidth          最大宽度，单位：像素
+     * @param maxHeight         最大高度，单位：像素
+     * @param redrawOnOverflow  当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     * @param lockOriginalScale 是否锁定原始长宽比例
      * @return {@link XWPFPicture}
      * @throws IOException
      */
-    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, final int maxWidth, final int maxHeight, boolean redrawOnOverflow) throws IOException {
+    public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, final int maxWidth, final int maxHeight, boolean redrawOnOverflow, boolean lockOriginalScale) throws IOException {
         if (redrawOnOverflow) {
             ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, maxWidth, maxHeight);
             return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
         }
+
+        // 长宽比
+        Double originalScale = null;
+        if (lockOriginalScale) {
+            BufferedImage image = ImageTool.readImage(imgFile);
+            if (image == null) {
+                throw new IllegalArgumentException("图片文件不存在： " + imgFile);
+            }
+            final int actualWidth = image.getWidth();
+            final int actualHeight = image.getHeight();
+            originalScale = (double) (1.0f * actualWidth / actualHeight);
+        }
+
         if (width > maxWidth || height > maxHeight) {
+
             // 通过指定宽高，强制缩放图片
             final double scaleW = (double) width / maxWidth;
             final double scaleH = (double) height / maxHeight;
             if (scaleW > scaleH) {
-                return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (height / scaleW));
+                // 按照宽度缩放
+                if (originalScale == null) {
+                    return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (height / scaleW));
+                } else {
+                    return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (maxWidth / originalScale));
+                }
             }
-            return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (maxWidth / scaleH), maxHeight);
+            if (originalScale == null) {
+                return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (width / scaleH), maxHeight);
+            } else {
+                return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (maxHeight * originalScale), maxHeight);
+            }
         }
-        return addPicture(paragraph, imgFile.getAbsolutePath(), width, height);
+        if (originalScale == null) {
+            return addPicture(paragraph, imgFile.getAbsolutePath(), width, height);
+        } else {
+            return addPicture(paragraph, imgFile.getAbsolutePath(), width, (int) (width / originalScale));
+        }
     }
 
     /**

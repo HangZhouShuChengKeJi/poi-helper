@@ -66,6 +66,12 @@ public class PoiWordPictureToolTest {
         // 添加图片
         PoiWordPictureTool.addPictureWithResize(paragraph, img1, false);
 
+        // 添加图片
+        PoiWordPictureTool.addPictureWithResize(paragraph, img1, 1000, 1000, false);
+
+        // 添加图片
+        PoiWordPictureTool.addPictureWithResize(paragraph, img1, 500, 500, false);
+
         File wordFile = TempFileUtil.createTempFile("docx");
 
         System.out.println(wordFile);
