@@ -64,5 +64,6 @@ public class App {
 ```
 
 # 版权
-[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) Copyright (C) [杭州数橙科技有限公司](https://github.com/HangZhouShuChengKeJi)
+
+Poi-helper is under the Apache 2.0 license. See the [License](https://github.com/yyhan/YuGong-Admin/blob/master/LICENSE) file for details.
 
