@@ -1,11 +1,18 @@
 package com.orange.poi.util;
 
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.opencv.opencv_core.Mat;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 
 /**
  * 图片处理工具
@@ -14,6 +21,28 @@ import java.io.InputStream;
  * @date 2019/6/3 23:29
  */
 public class ImageTool {
+
+    /**
+     * jpeg 文件魔数，第 0 位
+     */
+    public static final byte JPEG_MAGIC_CODE_0           = (byte) 0xFF;
+    public static final byte JPEG_MAGIC_CODE_1           = (byte) 0xD8;
+    /**
+     * 水平和垂直方向的像素密度单位：无单位
+     */
+    public static final byte JPEG_UNIT_OF_DENSITIES_NONE = 0x00;
+    /**
+     * 水平和垂直方向的像素密度单位：点数/英寸
+     */
+    public static final byte JPEG_UNIT_OF_DENSITIES_INCH = 0x01;
+    /**
+     * 水平和垂直方向的像素密度单位：点数/厘米
+     */
+    public static final byte UJPEG_NIT_OF_DENSITIES_CM   = 0x02;
+
+    public static final byte DPI_120 = 0x78;
+    public static final byte DPI_96  = 0x60;
+    public static final byte DPI_72  = 0x48;
 
     /**
      * 读取图片文件
@@ -32,78 +61,63 @@ public class ImageTool {
         return ImageIO.read(inputStream);
     }
 
-    /**
-     * 等比例缩放图片
-     *
-     * @param imgFile   图片文件
-     * @param maxWidth  缩放后的最大宽度，单位：像素
-     * @param maxHeight 缩放后的最大高度，单位：像素
-     *
-     * @return 图片信息 {@link ImageInfo}
-     *
-     * @throws IOException
-     */
-    public static ImageInfo resizeImage(File imgFile, final int maxWidth, final int maxHeight) throws IOException {
-        final BufferedImage image = readImage(imgFile);
-        if (image == null) {
-            throw new IllegalArgumentException("图片文件不存在： " + imgFile.getAbsolutePath());
-        }
-        final int actualWidth = image.getWidth();
-        final int actualHeight = image.getHeight();
-        if (actualWidth > maxWidth || actualHeight > maxHeight) {
-            // 注意计算过程的精度问题
-            final double scaleW = (double) actualWidth / maxWidth;
-            final double scaleH = (double) actualHeight / maxHeight;
-            final int newWidth;
-            final int newHeight;
-            if (scaleW > scaleH) {
-                newWidth = maxWidth;
-                newHeight = (int) (actualHeight / scaleW);
-            } else {
-                newWidth = (int) (actualWidth / scaleH);
-                newHeight = maxHeight;
-            }
-
-            final String imgEx = UrlUtil.getExNameFromUrl(imgFile.getAbsolutePath());
-
-            final BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
-            newImage.getGraphics().drawImage(image, 0, 0, newWidth, newHeight, null);
-
-            File newImgFile = TempFileUtil.createTempFile(imgEx);
-
-            try (FileOutputStream fileOutputStream = new FileOutputStream(newImgFile)) {
-                ImageIO.write(newImage, imgEx, fileOutputStream);
-                return new ImageInfo(newImgFile, newWidth, newHeight);
-            }
-        }
-        // 返回原始数据
-        return new ImageInfo(imgFile, actualWidth, actualHeight);
+    public static boolean isJpeg(BytePointer bytePointer) {
+        return bytePointer.get(0) == JPEG_MAGIC_CODE_0 && bytePointer.get(1) == JPEG_MAGIC_CODE_1;
     }
 
     /**
-     * 图片信息
+     * 是否指定了正确的像素密度单位（仅适用于 jpeg）：
+     * <ul>
+     * <li>密度单位：点数/英寸</li>
+     * <li>水平和垂直方向的像素密度：120</li>
+     * </ul>
      */
-    public static class ImageInfo {
-        private File imgFile;
-        private int  width;
-        private int  height;
+    public static boolean isRightUnitOfDensities(BytePointer bytePointer) {
+        return bytePointer.get(13) == JPEG_UNIT_OF_DENSITIES_INCH
+                && bytePointer.get(14) == 0x00 && bytePointer.get(15) == DPI_120
+                && bytePointer.get(16) == 0x00 && bytePointer.get(17) == DPI_120;
+    }
 
-        public ImageInfo(File imgFile, int width, int height) {
-            this.imgFile = imgFile;
-            this.width = width;
-            this.height = height;
+    /**
+     * 重置像素密度
+     */
+    public static void resetDensity(BytePointer bytePointer) {
+        // 设置水平和垂直方向密度单位：1 点数/英寸
+        bytePointer.put(13, JPEG_UNIT_OF_DENSITIES_INCH);
+        // 设置水平方向像素密度：120
+        bytePointer.put(14, (byte) 0);
+        bytePointer.put(15, DPI_96);
+        // 设置垂直方向像素密度：120
+        bytePointer.put(16, (byte) 0);
+        bytePointer.put(17, DPI_96);
+    }
+
+    /**
+     * 图片转换为 jpeg
+     */
+    public static File convertToJpeg(File imgFile) throws IOException {
+        Mat srcMat = imread(imgFile.getAbsolutePath());
+
+        BytePointer srcBytePointer = srcMat.data();
+        if (isJpeg(srcBytePointer)) {
+            if (isRightUnitOfDensities(srcBytePointer)) {
+                // 原样返回
+                return imgFile;
+            }
+        } else {
+            srcBytePointer = new BytePointer();
+            // 转换为 jpg
+            imencode(".jpg", srcMat, srcBytePointer);
         }
 
-        public File getImgFile() {
-            return imgFile;
-        }
+        // 重置像素密度信息
+        resetDensity(srcBytePointer);
 
-        public int getWidth() {
-            return width;
+        // 生成新的图片文件
+        File dstImgFile = TempFileUtil.createTempFile("jpg");
+        try (OutputStream outputStream = new FileOutputStream(dstImgFile)) {
+            outputStream.write(srcBytePointer.getStringBytes());
         }
-
-        public int getHeight() {
-            return height;
-        }
+        return dstImgFile;
     }
 }

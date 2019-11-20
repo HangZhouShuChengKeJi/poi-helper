@@ -164,8 +164,7 @@ public class PoiWordPictureTool {
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, final int maxWidth, final int maxHeight, boolean redrawOnOverflow, boolean lockOriginalScale) throws IOException {
         if (redrawOnOverflow) {
-            ImageTool.ImageInfo imageInfo = ImageTool.resizeImage(imgFile, maxWidth, maxHeight);
-            return addPicture(paragraph, imageInfo.getImgFile().getAbsolutePath(), imageInfo.getWidth(), imageInfo.getHeight());
+            imgFile = ImageTool.convertToJpeg(imgFile);
         }
 
         // 长宽比
@@ -259,7 +258,9 @@ public class PoiWordPictureTool {
         XWPFPicture picture = null;
 
         try (InputStream is = FileUtil.readFile(new File(imgFile))) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU((int) (width * 0.8)), Units.pixelToEMU((int) (height * 0.8)));
+            picture.getCTPicture().getSpPr().addNewNoFill();
+            picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {
         }
         return picture;
@@ -282,6 +283,8 @@ public class PoiWordPictureTool {
 
         try (InputStream is = FileUtil.readFile(imgFile)) {
             picture = paragraphRun.addPicture(is, getPictureType(imgFile.getAbsolutePath()), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+            picture.getCTPicture().getSpPr().addNewNoFill();
+            picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {
         }
         return picture;

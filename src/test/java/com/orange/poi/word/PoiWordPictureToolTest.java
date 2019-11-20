@@ -28,22 +28,15 @@ public class PoiWordPictureToolTest {
 
     @Test
     public void addPicture() throws IOException, URISyntaxException {
-        File img1 = new File(getClass().getResource("/img/linux_1.jpg").toURI());
-        File img2 = new File(getClass().getResource("/img/linux_2.jpg").toURI());
-        File img3 = new File(getClass().getResource("/img/linux_3.png").toURI());
+        File img1 = new File(getClass().getResource("/img/1.jpg").toURI());
 
         XWPFDocument doc =  PoiWordTool.createDocForA4();
 
-        XWPFParagraph titleParagraph = doc.createParagraph();
-        PoiWordParagraphTool.addTxt(titleParagraph, "背景图片测试", defaultFontFamily , 25, defaultColor,
+        PoiWordParagraphTool.addTxt(doc.createParagraph(), "新的", defaultFontFamily , 25, defaultColor,
                 true, false);
 
-        // 设置行高
-        PoiWordParagraphTool.setLineHeightExact(titleParagraph, PoiUnitTool.pixelToPoint(200));
-
         // 设置背景图
-        XWPFPicture picture = PoiWordPictureTool.addPicture(titleParagraph, img1);
-        PoiWordPictureTool.setPicturePositionOfParagraph(titleParagraph, 0, 0, false);
+        XWPFPicture picture = PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), img1, 500, 100, false);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
@@ -60,17 +53,23 @@ public class PoiWordPictureToolTest {
 
         XWPFDocument doc =  PoiWordTool.createDocForA4();
 
-        File img1 = new File(getClass().getResource("/img/1.jpg").toURI());
-        XWPFParagraph paragraph = doc.createParagraph();
+        // 添加图片
+        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), true);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
 
         // 添加图片
-        PoiWordPictureTool.addPictureWithResize(paragraph, img1, false);
+        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), 1000, 1000, true);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
 
-        // 添加图片
-        PoiWordPictureTool.addPictureWithResize(paragraph, img1, 1000, 1000, false);
+        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), 500, 500, true);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
 
-        // 添加图片
-        PoiWordPictureTool.addPictureWithResize(paragraph, img1, 500, 500, false);
+        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1_500.jpg").toURI()), true);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
