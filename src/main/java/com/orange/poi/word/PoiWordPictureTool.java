@@ -258,7 +258,7 @@ public class PoiWordPictureTool {
         XWPFPicture picture = null;
 
         try (InputStream is = FileUtil.readFile(new File(imgFile))) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU((int) (width * 0.8)), Units.pixelToEMU((int) (height * 0.8)));
+            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
             picture.getCTPicture().getSpPr().addNewNoFill();
             picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {
