@@ -2,14 +2,22 @@ package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
 import com.orange.poi.paper.PaperSize;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocGrid;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPrDefault;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocGrid;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 
 import java.math.BigInteger;
 
@@ -285,5 +293,48 @@ public class PoiWordTool {
 
         CTProperties ctProperties = extendedProperties.getUnderlyingProperties();
         ctProperties.setCompany(company);
+    }
+
+    /**
+     * 设置文档默认样式
+     *
+     * @param doc          文档 {@link XWPFDocument}
+     * @param defaultFont  默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont 东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize     默认字体大小
+     * @param color        文字颜色
+     */
+    public static CTStyles setDefaultStyle(XWPFDocument doc, String defaultFont, String eastAsiaFont, Integer fontSize, String color) {
+        StylesDocument stylesDoc = StylesDocument.Factory.newInstance();
+        CTStyles ctStyles = stylesDoc.addNewStyles();
+        CTDocDefaults docDefaults = ctStyles.addNewDocDefaults();
+
+        CTRPrDefault ctrPrDefault = docDefaults.addNewRPrDefault();
+        CTRPr ctrPr = ctrPrDefault.addNewRPr();
+        if (StringUtils.isNotBlank(color)) {
+            ctrPr.addNewColor().setVal(color);
+        }
+        if (fontSize != null) {
+            ctrPr.addNewSz().setVal(new BigInteger(Integer.toString(fontSize)).multiply(new BigInteger("2")));
+        }
+
+        CTFonts ctFonts = null;
+        if (StringUtils.isNotBlank(defaultFont)) {
+            ctFonts = ctrPr.addNewRFonts();
+            ctFonts.setAscii(defaultFont);
+            ctFonts.setHAnsi(defaultFont);
+            ctFonts.setCs(defaultFont);
+            ctFonts.setEastAsia(eastAsiaFont);
+        }
+
+        if (StringUtils.isNotBlank(eastAsiaFont)) {
+            if (ctFonts == null) {
+                ctFonts = ctrPr.addNewRFonts();
+            }
+            ctFonts.setEastAsia(eastAsiaFont);
+        }
+        XWPFStyles xwpfStyles = doc.createStyles();
+        xwpfStyles.setStyles(ctStyles);
+        return ctStyles;
     }
 }

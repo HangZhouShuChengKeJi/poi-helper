@@ -88,6 +88,19 @@ public class PoiWordParagraphTool {
      *
      * @param document   {@link XWPFDocument}
      * @param plainTxt   文本内容
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt) {
+        return createParagraph(document, plainTxt, null, null, null, false, false,
+                ParagraphAlignment.LEFT, TextAlignment.CENTER);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document   {@link XWPFDocument}
+     * @param plainTxt   文本内容
      * @param fontFamily 字体
      * @param fontSize   字号
      *
@@ -165,6 +178,33 @@ public class PoiWordParagraphTool {
     }
 
     /**
+     * 创建段落
+     *
+     * @param document           {@link XWPFDocument}
+     * @param plainTxt           文本内容
+     * @param defaultFont        默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont       东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize           字号
+     * @param color              颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold               是否加粗
+     * @param underline          是否增加下划线
+     * @param paragraphAlignment 段落对齐方式
+     * @param textAlignment      文本对齐方式
+     * @param snapToGrid         true: 如果定义了文档网格，则对齐到网格
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
+                                                String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                                                boolean bold, boolean underline,
+                                                ParagraphAlignment paragraphAlignment, TextAlignment textAlignment,
+                                                boolean snapToGrid) {
+        XWPFParagraph paragraph = createParagraph(document, paragraphAlignment, textAlignment, snapToGrid);
+        addTxt(paragraph, plainTxt, defaultFont, eastAsiaFont, fontSize, color, bold, underline);
+        return paragraph;
+    }
+
+    /**
      * 设置文本对齐方式
      *
      * @param paragraph          段落 {@link XWPFDocument}
@@ -182,6 +222,18 @@ public class PoiWordParagraphTool {
      */
     public static void setTextAlignment(XWPFParagraph paragraph, TextAlignment textAlignment) {
         paragraph.setVerticalAlignment(textAlignment);
+    }
+
+    /**
+     * 添加文本内容（没有任何样式）
+     *
+     * @param paragraph  段落 {@link XWPFParagraph}
+     * @param plainTxt   文本内容
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static void addTxt(XWPFParagraph paragraph, String plainTxt) {
+        addTxt(paragraph, plainTxt, null, null, null, false, false);
     }
 
     /**
@@ -227,13 +279,40 @@ public class PoiWordParagraphTool {
     public static void addTxt(XWPFParagraph paragraph, String plainTxt,
                               String fontFamily, Integer fontSize, String color,
                               boolean bold, boolean underline) {
+        addTxt(paragraph, plainTxt, fontFamily, fontFamily, fontSize, color, bold, underline);
+    }
+
+
+    /**
+     * 添加文本内容
+     *
+     * @param paragraph    段落 {@link XWPFParagraph}
+     * @param plainTxt     文本内容
+     * @param defaultFont  默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont 东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize     字号
+     * @param color        颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold         是否加粗
+     * @param underline    是否增加下划线
+     */
+    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+                              String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                              boolean bold, boolean underline) {
         if (paragraph == null) {
             return;
         }
         XWPFRun paragraphRun = paragraph.createRun();
         paragraphRun.setText(plainTxt);
-        if (StringUtils.isNotBlank(fontFamily)) {
-            paragraphRun.setFontFamily(fontFamily);
+        if (StringUtils.isNotBlank(defaultFont)) {
+            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.ascii);
+            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.cs);
+            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.hAnsi);
+        }
+        if (StringUtils.isNotBlank(eastAsiaFont)) {
+            paragraphRun.setFontFamily(eastAsiaFont, XWPFRun.FontCharRange.eastAsia);
+        } else if (StringUtils.isNotBlank(defaultFont)) {
+            // 中文使用默认字体
+            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.eastAsia);
         }
         if (fontSize != null) {
             paragraphRun.setFontSize(fontSize);
@@ -246,7 +325,6 @@ public class PoiWordParagraphTool {
             paragraphRun.setUnderline(UnderlinePatterns.SINGLE);
         }
     }
-
 
     /**
      * 添加下角标

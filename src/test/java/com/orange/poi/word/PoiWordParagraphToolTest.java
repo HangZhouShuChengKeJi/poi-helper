@@ -1,15 +1,21 @@
 package com.orange.poi.word;
 
 import com.orange.poi.util.TempFileUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * @author 小天
@@ -24,7 +30,7 @@ public class PoiWordParagraphToolTest {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir") + "\\poiTest");
+        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir"));
     }
 
     @After
@@ -71,17 +77,42 @@ public class PoiWordParagraphToolTest {
     }
 
     @Test
-    public void addSubscript() throws IOException {
+    public void addSubscript() throws IOException, URISyntaxException, InvalidFormatException {
         XWPFDocument doc = PoiWordTool.createDocForA4();
-        XWPFParagraph paragraph;
+        XWPFParagraph paragraph = PoiWordParagraphTool.createParagraph(doc);;
 
-        paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
-        PoiWordParagraphTool.addSubscript(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "y = log", defaultFontFamily, defaultFontSize, defaultColor);
+//        PoiWordParagraphTool.addSubscript(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
+//
+//        paragraph = PoiWordParagraphTool.createParagraph(doc);
+//        PoiWordParagraphTool.addTxt(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
+//        PoiWordParagraphTool.addSuperscript(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
 
-        paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
-        PoiWordParagraphTool.addSuperscript(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
+
+        File picFileIS = new File(getClass().getResource("/img/1.jpg").toURI());
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);;
+        XWPFRun paragraphRun = paragraph.createRun();
+        paragraphRun.addPicture(new FileInputStream(picFileIS), XWPFDocument.PICTURE_TYPE_PNG, "123", 16, 26);
+        if (StringUtils.isNotBlank(defaultFontFamily)) {
+            paragraphRun.setFontFamily(defaultFontFamily);
+        }
+//        if (defaultFontSize != null) {
+//            paragraphRun.setFontSize(defaultFontSize);
+//        }
+//        if (StringUtils.isNotBlank(color)) {
+//            paragraphRun.setColor(color);
+//        }
+//        if (bold) {
+//            paragraphRun.setBold(bold);
+//        }
+        paragraphRun.setSubscript(VerticalAlign.SUBSCRIPT);
+
+
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);;
+        PoiWordParagraphTool.addTxt(paragraph, " x", defaultFontFamily, defaultFontSize, defaultColor);
+
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
@@ -160,6 +191,7 @@ public class PoiWordParagraphToolTest {
         paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段前 1.5 倍行距，段后 1.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 1.5f, 1.5f);
+
 
         File wordFile = TempFileUtil.createTempFile("docx");
 

@@ -1,6 +1,5 @@
 package com.orange.poi.word;
 
-import com.orange.poi.PoiUnitTool;
 import com.orange.poi.paper.PaperSize;
 import com.orange.poi.util.TempFileUtil;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -45,6 +44,24 @@ public class PoiWordToolTest {
 
         System.out.println(PaperSize.B5.width_point);
         System.out.println(PaperSize.B5.height_point);
+    }
+
+
+    @Test
+    public void createDoc() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+
+        PoiWordTool.setDefaultStyle(doc, "Arial", "思源黑体 CN Light", 14, "FF0000");
+
+        PoiWordParagraphTool.createParagraph(doc, "中文 ABC ______");
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 
     @Test
