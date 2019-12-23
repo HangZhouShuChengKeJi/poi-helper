@@ -1,6 +1,8 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import com.orange.poi.util.FileTypeEnum;
+import com.orange.poi.util.FileTypeTool;
 import com.orange.poi.util.FileUtil;
 import com.orange.poi.util.ImageTool;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -44,7 +46,9 @@ public class PoiWordPictureTool {
      *
      * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件绝对地址
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile) throws IOException {
@@ -56,7 +60,9 @@ public class PoiWordPictureTool {
      *
      * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile) throws IOException {
@@ -74,7 +80,9 @@ public class PoiWordPictureTool {
      *
      * @param paragraph {@link XWPFParagraph}
      * @param imgFile   图片文件
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile) throws IOException {
@@ -87,7 +95,9 @@ public class PoiWordPictureTool {
      * @param paragraph        {@link XWPFParagraph}
      * @param imgFile          图片文件
      * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, boolean redrawOnOverflow) throws IOException {
@@ -109,7 +119,9 @@ public class PoiWordPictureTool {
      * @param width            宽度，单位：像素
      * @param height           高度，单位：像素
      * @param redrawOnOverflow 当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow) throws IOException {
@@ -125,7 +137,9 @@ public class PoiWordPictureTool {
      * @param height            高度，单位：像素
      * @param redrawOnOverflow  当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
      * @param lockOriginalScale 是否锁定原始长宽比例
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, boolean redrawOnOverflow, boolean lockOriginalScale) throws IOException {
@@ -159,7 +173,9 @@ public class PoiWordPictureTool {
      * @param maxHeight         最大高度，单位：像素
      * @param redrawOnOverflow  当图片溢出的时候，是否通过重绘图片来缩小图片尺寸
      * @param lockOriginalScale 是否锁定原始长宽比例
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, final int maxWidth, final int maxHeight, boolean redrawOnOverflow, boolean lockOriginalScale) throws IOException {
@@ -209,37 +225,47 @@ public class PoiWordPictureTool {
      * 获取图片类型
      *
      * @param imgFile 图片文件名称
+     *
      * @return 图片类型
+     *
      * @see Document
      */
-    public static Integer getPictureType(String imgFile) {
-        if (imgFile.endsWith(".jpg") || imgFile.endsWith(".jpeg")) {
-            return XWPFDocument.PICTURE_TYPE_JPEG;
-        } else if (imgFile.endsWith(".png")) {
-            return XWPFDocument.PICTURE_TYPE_PNG;
-        } else if (imgFile.endsWith(".emf")) {
+    public static Integer getPictureType(File imgFile) {
+        FileTypeEnum fileTypeEnum = FileTypeTool.getInstance().detect(imgFile);
+        if (fileTypeEnum != null) {
+            switch (fileTypeEnum) {
+                case JPEG:
+                    return XWPFDocument.PICTURE_TYPE_JPEG;
+                case PNG:
+                    return XWPFDocument.PICTURE_TYPE_PNG;
+                case GIF:
+                    return XWPFDocument.PICTURE_TYPE_GIF;
+                case BMP:
+                case BMP_16:
+                case BMP_24:
+                case BMP_256:
+                    return XWPFDocument.PICTURE_TYPE_BMP;
+                default:
+            }
+        }
+        String fileName = imgFile.getName();
+        if (fileName.endsWith(".emf")) {
             return XWPFDocument.PICTURE_TYPE_EMF;
-        } else if (imgFile.endsWith(".wmf")) {
+        } else if (fileName.endsWith(".wmf")) {
             return XWPFDocument.PICTURE_TYPE_WMF;
-        } else if (imgFile.endsWith(".pict")) {
+        } else if (fileName.endsWith(".pict")) {
             return XWPFDocument.PICTURE_TYPE_PICT;
-        } else if (imgFile.endsWith(".dib")) {
+        } else if (fileName.endsWith(".dib")) {
             return XWPFDocument.PICTURE_TYPE_DIB;
-        } else if (imgFile.endsWith(".gif")) {
-            return XWPFDocument.PICTURE_TYPE_GIF;
-        } else if (imgFile.endsWith(".tiff")) {
+        } else if (fileName.endsWith(".tiff")) {
             return XWPFDocument.PICTURE_TYPE_TIFF;
-        } else if (imgFile.endsWith(".eps")) {
+        } else if (fileName.endsWith(".eps")) {
             return XWPFDocument.PICTURE_TYPE_EPS;
-        } else if (imgFile.endsWith(".bmp")) {
-            return XWPFDocument.PICTURE_TYPE_BMP;
-        } else if (imgFile.endsWith(".wpg")) {
+        } else if (fileName.endsWith(".wpg")) {
             return XWPFDocument.PICTURE_TYPE_WPG;
         } else {
-//            throw new IllegalArgumentException("Unsupported picture: " + imgFile +
-//                    ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
-            // 默认作为 jpeg 处理
-            return XWPFDocument.PICTURE_TYPE_JPEG;
+            throw new IllegalArgumentException("不支持的文件格式: " + imgFile +
+                    ". 仅支持以下格式： jpeg|png|gif|bmp|emf|wmf|pict|dib|tiff|eps|wpg");
         }
     }
 
@@ -250,15 +276,18 @@ public class PoiWordPictureTool {
      * @param imgFile   图片文件绝对地址
      * @param width     图片宽度（单位： 像素）
      * @param height    图片高度（单位： 像素）
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile, int width, int height) throws IOException {
         XWPFRun paragraphRun = paragraph.createRun();
         XWPFPicture picture = null;
 
-        try (InputStream is = FileUtil.readFile(new File(imgFile))) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+        File file = new File(imgFile);
+        try (InputStream is = FileUtil.readFile(file)) {
+            picture = paragraphRun.addPicture(is, getPictureType(file), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
             picture.getCTPicture().getSpPr().addNewNoFill();
             picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {
@@ -274,7 +303,9 @@ public class PoiWordPictureTool {
      * @param imgFile   图片文件绝对地址
      * @param width     图片宽度（单位： 像素）
      * @param height    图片高度（单位： 像素）
+     *
      * @return {@link XWPFPicture}
+     *
      * @throws IOException
      */
     public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, int width, int height) throws IOException {
@@ -282,7 +313,7 @@ public class PoiWordPictureTool {
         XWPFPicture picture = null;
 
         try (InputStream is = FileUtil.readFile(imgFile)) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile.getAbsolutePath()), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
             picture.getCTPicture().getSpPr().addNewNoFill();
             picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {
