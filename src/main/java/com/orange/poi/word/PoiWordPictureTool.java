@@ -273,7 +273,7 @@ public class PoiWordPictureTool {
      * 添加图片（只负责基本的绘制操作，不做其他任何处理）
      *
      * @param paragraph {@link XWPFParagraph}
-     * @param imgFile   图片文件绝对地址
+     * @param filePath  图片文件绝对地址
      * @param width     图片宽度（单位： 像素）
      * @param height    图片高度（单位： 像素）
      *
@@ -281,26 +281,15 @@ public class PoiWordPictureTool {
      *
      * @throws IOException
      */
-    public static XWPFPicture addPicture(XWPFParagraph paragraph, String imgFile, int width, int height) throws IOException {
-        XWPFRun paragraphRun = paragraph.createRun();
-        XWPFPicture picture = null;
-
-        File file = new File(imgFile);
-        try (InputStream is = FileUtil.readFile(file)) {
-            picture = paragraphRun.addPicture(is, getPictureType(file), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
-            picture.getCTPicture().getSpPr().addNewNoFill();
-            picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
-        } catch (InvalidFormatException ignore) {
-        }
-        return picture;
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, String filePath, int width, int height) throws IOException {
+        return addPicture(paragraph, new File(filePath), width, height);
     }
-
 
     /**
      * 添加图片（只负责基本的绘制操作，不做其他任何处理）
      *
      * @param paragraph {@link XWPFParagraph}
-     * @param imgFile   图片文件绝对地址
+     * @param imgFile   图片文件
      * @param width     图片宽度（单位： 像素）
      * @param height    图片高度（单位： 像素）
      *
@@ -312,8 +301,15 @@ public class PoiWordPictureTool {
         XWPFRun paragraphRun = paragraph.createRun();
         XWPFPicture picture = null;
 
+        Integer pictureType = getPictureType(imgFile);
+        if (XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
+            File tempFile = ImageTool.resetPhysOfPNG(imgFile);
+            if (tempFile != null) {
+                imgFile = tempFile;
+            }
+        }
         try (InputStream is = FileUtil.readFile(imgFile)) {
-            picture = paragraphRun.addPicture(is, getPictureType(imgFile), "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+            picture = paragraphRun.addPicture(is, pictureType, "", Units.pixelToEMU(width), Units.pixelToEMU(height));
             picture.getCTPicture().getSpPr().addNewNoFill();
             picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {

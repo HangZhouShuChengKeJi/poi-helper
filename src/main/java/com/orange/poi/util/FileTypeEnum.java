@@ -18,7 +18,7 @@ public enum FileTypeEnum {
     /**
      * PNG
      */
-    PNG("PNG", "89504E47"),
+    PNG("PNG", "89504E470D0A1A0A"),
 
     /**
      * GIF

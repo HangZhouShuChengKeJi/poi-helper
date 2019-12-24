@@ -36,6 +36,17 @@ public class PoiUnitTool {
     }
 
     /**
+     * 厘米 转换为 像素
+     *
+     * @param cm 厘米
+     *
+     * @return 像素
+     */
+    public static long centimeterToPixel(double cm) {
+        return pointToPixel(centimeterToPoint(cm));
+    }
+
+    /**
      * 磅（像素点数） 转换为 像素
      *
      * @param point 像素点数

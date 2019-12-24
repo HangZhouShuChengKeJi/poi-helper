@@ -44,16 +44,14 @@ public class FileTypeTool {
             if (typeEnum.magicCode != null && typeEnum.magicCode.length() > 0) {
                 fileTypeEnumMap.put(typeEnum.magicCode, typeEnum);
 
-                int byteLen = typeEnum.magicCode.length() / 2;
-                lengthSet.add(byteLen);
-                if (byteLen > maxByteSize) {
-                    maxByteSize = byteLen;
-                }
+                lengthSet.add(typeEnum.magicCode.length());
             }
         }
         lengthMenu = new LinkedList<>(lengthSet);
         // 降序排列
         lengthMenu.sort(Collections.reverseOrder(Integer::compareTo));
+
+        maxByteSize = lengthMenu.get(0) / 2;
     }
 
     /**
@@ -87,7 +85,7 @@ public class FileTypeTool {
         if (!file.isFile()) {
             return null;
         }
-        try (FileInputStream fileInputStream = new FileInputStream(file)){
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             byte[] byteArr = new byte[maxByteSize];
             int readByteSize = fileInputStream.read(byteArr);
             if (readByteSize == -1) {

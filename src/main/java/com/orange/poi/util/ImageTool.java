@@ -1,15 +1,25 @@
 package com.orange.poi.util;
 
+import com.orange.poi.PoiUnitTool;
+import com.sun.imageio.plugins.png.PNGImageReader;
+import com.sun.imageio.plugins.png.PNGMetadata;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.opencv.opencv_core.Mat;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Iterator;
 
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
@@ -43,6 +53,11 @@ public class ImageTool {
     public static final byte DPI_120 = 0x78;
     public static final byte DPI_96  = 0x60;
     public static final byte DPI_72  = 0x48;
+
+    /**
+     * png 图片 pHYs 块，像素密度单位 / 每米
+     */
+    public static final int PNG_pHYs_pixelsPerUnit = (int) PoiUnitTool.centimeterToPixel(100);
 
     /**
      * 读取图片文件
@@ -120,4 +135,71 @@ public class ImageTool {
         }
         return dstImgFile;
     }
+
+    /**
+     * 重置 png 图片的 pHYs 信息，以修复 wps 在 win10 下打印图片缺失的 bug
+     *
+     * @param imageFile 源文件
+     *
+     * @return 新的文件，null：处理失败
+     *
+     * @throws IOException
+     */
+    public static File resetPhysOfPNG(File imageFile) throws IOException {
+        ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile);
+
+        ImageReader reader = getImageReader(imageInputStream);
+        if (reader == null) {
+            return null;
+        }
+        if (!(reader instanceof PNGImageReader)) {
+            return null;
+        }
+        reader.setInput(imageInputStream, true, false);
+        BufferedImage bufferedImage;
+        try {
+            bufferedImage = reader.read(0, reader.getDefaultReadParam());
+        } finally {
+            reader.dispose();
+            imageInputStream.close();
+        }
+
+        PNGMetadata metadata = (PNGMetadata) reader.getImageMetadata(0);
+        if (metadata.pHYs_unitSpecifier != 1) {
+            metadata.pHYs_pixelsPerUnitXAxis = PNG_pHYs_pixelsPerUnit;
+            metadata.pHYs_pixelsPerUnitYAxis = PNG_pHYs_pixelsPerUnit;
+            metadata.pHYs_unitSpecifier = 1;
+            metadata.pHYs_present = true;
+        }
+
+        ImageOutputStream imageOutputStream = null;
+        ImageWriter imageWriter = null;
+        try {
+            File dstImgFile = TempFileUtil.createTempFile("jpg");
+
+            imageOutputStream = ImageIO.createImageOutputStream(dstImgFile);
+
+            imageWriter = ImageIO.getImageWriter(reader);
+            imageWriter.setOutput(imageOutputStream);
+            imageWriter.write(new IIOImage(bufferedImage, Collections.emptyList(), metadata));
+
+            return dstImgFile;
+        } finally {
+            if (imageWriter != null) {
+                imageWriter.dispose();
+            }
+            if (imageWriter != null) {
+                imageOutputStream.flush();
+            }
+        }
+    }
+
+    private static ImageReader getImageReader(ImageInputStream stream) {
+        Iterator iter = ImageIO.getImageReaders(stream);
+        if (!iter.hasNext()) {
+            return null;
+        }
+        return (ImageReader) iter.next();
+    }
+
 }
