@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.*;
@@ -25,7 +26,7 @@ public class FileTypeToolTest {
     }
 
     @Test
-    public void detect() throws URISyntaxException {
+    public void detect() throws URISyntaxException, IOException {
         FileTypeTool fileTypeTool = FileTypeTool.getInstance();
         Assert.assertEquals(FileTypeEnum.PNG, fileTypeTool.detect(new File(getClass().getResource("/img/1_png.jpg").toURI())));
         Assert.assertEquals(FileTypeEnum.PNG, fileTypeTool.detect(new File(getClass().getResource("/img/1_png.png").toURI())));
