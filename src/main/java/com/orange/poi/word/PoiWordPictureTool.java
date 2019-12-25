@@ -224,13 +224,14 @@ public class PoiWordPictureTool {
     /**
      * 获取图片类型
      *
-     * @param imgFile 图片文件名称
+     * @param imgFile 图片文件
+     * @param imgPath 图片路径
      *
      * @return 图片类型
      *
      * @see Document
      */
-    public static Integer getPictureType(File imgFile) {
+    public static Integer getPictureType(File imgFile, String imgPath) throws IOException {
         FileTypeEnum fileTypeEnum = FileTypeTool.getInstance().detect(imgFile);
         if (fileTypeEnum != null) {
             switch (fileTypeEnum) {
@@ -248,25 +249,8 @@ public class PoiWordPictureTool {
                 default:
             }
         }
-        String fileName = imgFile.getName();
-        if (fileName.endsWith(".emf")) {
-            return XWPFDocument.PICTURE_TYPE_EMF;
-        } else if (fileName.endsWith(".wmf")) {
-            return XWPFDocument.PICTURE_TYPE_WMF;
-        } else if (fileName.endsWith(".pict")) {
-            return XWPFDocument.PICTURE_TYPE_PICT;
-        } else if (fileName.endsWith(".dib")) {
-            return XWPFDocument.PICTURE_TYPE_DIB;
-        } else if (fileName.endsWith(".tiff")) {
-            return XWPFDocument.PICTURE_TYPE_TIFF;
-        } else if (fileName.endsWith(".eps")) {
-            return XWPFDocument.PICTURE_TYPE_EPS;
-        } else if (fileName.endsWith(".wpg")) {
-            return XWPFDocument.PICTURE_TYPE_WPG;
-        } else {
-            throw new IllegalArgumentException("不支持的文件格式: " + imgFile +
-                    ". 仅支持以下格式： jpeg|png|gif|bmp|emf|wmf|pict|dib|tiff|eps|wpg");
-        }
+        throw new IllegalArgumentException("不支持的文件格式: " + imgPath +
+                ". 仅支持以下格式的图片： jpeg,png,gif,bmp");
     }
 
     /**
@@ -301,15 +285,19 @@ public class PoiWordPictureTool {
         XWPFRun paragraphRun = paragraph.createRun();
         XWPFPicture picture = null;
 
-        Integer pictureType = getPictureType(imgFile);
-        if (XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
-            File tempFile = ImageTool.resetPhysOfPNG(imgFile);
-            if (tempFile != null) {
-                imgFile = tempFile;
-            }
-        }
+        Integer pictureType = getPictureType(imgFile, imgFile.getAbsolutePath());
         try (InputStream is = FileUtil.readFile(imgFile)) {
-            picture = paragraphRun.addPicture(is, pictureType, "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+            File tempFile = null;
+            if (XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
+                tempFile = ImageTool.resetPhysOfPNG(imgFile);
+            }
+            if (tempFile != null) {
+                try (InputStream tempInputStream = FileUtil.readFile(tempFile)) {
+                    picture = paragraphRun.addPicture(tempInputStream, pictureType, "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+                }
+            } else {
+                picture = paragraphRun.addPicture(is, pictureType, "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+            }
             picture.getCTPicture().getSpPr().addNewNoFill();
             picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
         } catch (InvalidFormatException ignore) {

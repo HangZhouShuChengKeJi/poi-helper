@@ -147,6 +147,9 @@ public class ImageTool {
      */
     public static File resetPhysOfPNG(File imageFile) throws IOException {
         ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile);
+        if (imageInputStream == null) {
+            return null;
+        }
 
         ImageReader reader = getImageReader(imageInputStream);
         if (reader == null) {

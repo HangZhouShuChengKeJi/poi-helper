@@ -3,8 +3,8 @@ package com.orange.poi.util;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -75,19 +75,32 @@ public class FileTypeTool {
      *
      * @return {@link FileTypeEnum}，检测不到时，返回 null
      */
-    public FileTypeEnum detect(File file) {
+    public FileTypeEnum detect(File file) throws IOException {
         if (file == null) {
             return null;
         }
-        if (!file.exists()) {
+        try (InputStream fileInputStream = FileUtil.readFile(file)) {
+            return detect(fileInputStream);
+        }
+    }
+
+    /**
+     * 检测文件类型
+     *
+     * @param inputStream 输入流
+     *
+     * @return {@link FileTypeEnum}，检测不到时，返回 null
+     */
+    public FileTypeEnum detect(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
             return null;
         }
-        if (!file.isFile()) {
-            return null;
+        if (inputStream.markSupported()) {
+            inputStream.mark(maxByteSize);
         }
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+        try {
             byte[] byteArr = new byte[maxByteSize];
-            int readByteSize = fileInputStream.read(byteArr);
+            int readByteSize = inputStream.read(byteArr);
             if (readByteSize == -1) {
                 throw new IllegalArgumentException("文件内容为空");
             }
@@ -101,10 +114,11 @@ public class FileTypeTool {
                     return fileTypeEnum;
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            return null;
+        } finally {
+            if (inputStream.markSupported()) {
+                inputStream.reset();
+            }
         }
-        return null;
     }
-
 }
