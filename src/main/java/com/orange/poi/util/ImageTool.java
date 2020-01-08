@@ -178,7 +178,7 @@ public class ImageTool {
         ImageOutputStream imageOutputStream = null;
         ImageWriter imageWriter = null;
         try {
-            File dstImgFile = TempFileUtil.createTempFile("jpg");
+            File dstImgFile = TempFileUtil.createTempFile("png");
 
             imageOutputStream = ImageIO.createImageOutputStream(dstImgFile);
 
