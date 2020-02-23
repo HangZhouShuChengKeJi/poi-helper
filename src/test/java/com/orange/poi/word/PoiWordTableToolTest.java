@@ -36,7 +36,7 @@ public class PoiWordTableToolTest {
     @Before
     public void setUp() throws Exception {
 
-        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir") + "\\poiTest");
+//        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir") + "\\poiTest");
     }
 
     @After
@@ -99,6 +99,35 @@ public class PoiWordTableToolTest {
 
     @Test
     public void setTableCellWidth() {
+    }
+
+    @Test
+    public void setTableCell() throws IOException {
+
+        // 单元格宽度自适应
+
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+
+        XWPFTable table = PoiWordTableTool.addTable(doc, 2, 3, true);
+
+        // 第 1 行
+        PoiWordTableTool.setTableCell(table, 0,0, "111", true);
+        PoiWordTableTool.setTableCell(table, 0,1, "222", true);
+        PoiWordTableTool.setTableCell(table, 0,2, "333", true);
+        PoiWordTableTool.setTableCell(table, 1,0, "长江长又长", true);
+        PoiWordTableTool.setTableCell(table, 1,1, "word", true);
+        PoiWordTableTool.setTableCell(table, 1,2, "How dirty the tables are! They need___.", true);
+
+        // 添加空行
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 
     @Test

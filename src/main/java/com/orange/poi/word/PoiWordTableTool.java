@@ -483,6 +483,77 @@ public class PoiWordTableTool {
     }
 
     /**
+     * 获取单元格
+     *
+     * @param table   表格 {@link XWPFTable }
+     * @param rowPos  行号（从 0 开始）
+     * @param cellPos 列号（从 0 开始）
+     */
+    public static XWPFTableCell getTableCell(XWPFTable table, int rowPos, int cellPos) {
+        XWPFTableRow tableRowOne = table.getRow(rowPos);
+        while (tableRowOne == null) {
+            // 创建截止到当前位置，缺少的行
+            table.createRow();
+            tableRowOne = table.getRow(rowPos);
+        }
+        XWPFTableCell cell = tableRowOne.getCell(cellPos);
+        while (cell == null) {
+            // 创建截止到当前位置，缺少的列
+            tableRowOne.addNewTableCell();
+            cell = tableRowOne.getCell(cellPos);
+        }
+        return cell;
+    }
+
+    /**
+     * 设置单元格文字，对齐方式：左对齐；垂直居中
+     *
+     * @param table     表格 {@link XWPFTable }
+     * @param rowPos    行号（从 0 开始）
+     * @param cellPos   列号（从 0 开始）
+     * @param text      文本
+     * @param autoWidth 宽度自适应
+     */
+    public static void setTableCell(XWPFTable table, int rowPos, int cellPos, String text, boolean autoWidth) {
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
+        setTableCell(tableCell, text, autoWidth, STJc.LEFT, STVerticalJc.CENTER);
+    }
+
+    /**
+     * 设置单元格文字
+     *
+     * @param table           表格 {@link XWPFTable }
+     * @param rowPos          行号（从 0 开始）
+     * @param cellPos         列号（从 0 开始）
+     * @param text            文本
+     * @param autoWidth       宽度自适应
+     * @param horizontalAlign 水平对齐方式
+     * @param verticalAlign   垂直对齐方式
+     */
+    public static void setTableCell(XWPFTable table, int rowPos, int cellPos, String text, boolean autoWidth, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
+        setTableCell(tableCell, text, autoWidth, horizontalAlign, verticalAlign);
+
+    }
+
+    /**
+     * 设置单元格文字
+     *
+     * @param cell            单元格
+     * @param text            单元格
+     * @param autoWidth       宽度自适应
+     * @param horizontalAlign 水平对齐方式
+     * @param verticalAlign   垂直对齐方式
+     */
+    public static void setTableCell(XWPFTableCell cell, String text, boolean autoWidth, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+        cell.setText(text);
+        setTableCellAlign(cell, horizontalAlign, verticalAlign);
+        if (autoWidth) {
+            setTableCellWidthOfAuto(cell);
+        }
+    }
+
+    /**
      * 设置单元格文字
      *
      * @param cell            单元格
@@ -504,6 +575,15 @@ public class PoiWordTableTool {
     public static void setTableCellWidth(XWPFTableCell tableCell, long width) {
         tableCell.setWidth(String.valueOf(width));
         tableCell.setWidthType(TableWidthType.DXA);
+    }
+
+    /**
+     * 设置单元格宽度自适应
+     *
+     * @param tableCell 单元格
+     */
+    public static void setTableCellWidthOfAuto(XWPFTableCell tableCell) {
+        tableCell.setWidthType(TableWidthType.AUTO);
     }
 
     /**
