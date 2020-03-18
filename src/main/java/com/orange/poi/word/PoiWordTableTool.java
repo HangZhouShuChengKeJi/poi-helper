@@ -3,6 +3,7 @@ package com.orange.poi.word;
 import com.orange.poi.PoiUnitTool;
 import org.apache.poi.xwpf.usermodel.TableWidthType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
@@ -480,6 +481,22 @@ public class PoiWordTableTool {
         CTHeight ctHeight = trPr.sizeOfTrHeightArray() == 0 ? trPr.addNewTrHeight() : trPr.getTrHeightArray(0);
         ctHeight.setHRule(STHeightRule.EXACT);
         ctHeight.setVal(BigInteger.valueOf(PoiUnitTool.pixelToDXA(pixel)));
+    }
+
+    /**
+     * 获取单元格的第一个段落元素
+     *
+     * @param table   表格 {@link XWPFTable }
+     * @param rowPos  行号（从 0 开始）
+     * @param cellPos 列号（从 0 开始）
+     */
+    public static XWPFParagraph getTableCellParagraph(XWPFTable table, int rowPos, int cellPos) {
+        XWPFTableCell tableCell = getTableCell(table, rowPos, cellPos);
+        List<XWPFParagraph> paragraphs = tableCell.getParagraphs();
+        if (paragraphs.size() == 0) {
+            return tableCell.addParagraph();
+        }
+        return paragraphs.get(0);
     }
 
     /**
