@@ -3,6 +3,7 @@ package com.orange.poi.word;
 import com.orange.poi.PoiUnitTool;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.TextAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
@@ -86,8 +87,8 @@ public class PoiWordParagraphTool {
     /**
      * 创建段落
      *
-     * @param document   {@link XWPFDocument}
-     * @param plainTxt   文本内容
+     * @param document {@link XWPFDocument}
+     * @param plainTxt 文本内容
      *
      * @return {@link XWPFParagraph}
      */
@@ -227,8 +228,8 @@ public class PoiWordParagraphTool {
     /**
      * 添加文本内容（没有任何样式）
      *
-     * @param paragraph  段落 {@link XWPFParagraph}
-     * @param plainTxt   文本内容
+     * @param paragraph 段落 {@link XWPFParagraph}
+     * @param plainTxt  文本内容
      *
      * @return {@link XWPFParagraph}
      */
@@ -543,13 +544,41 @@ public class PoiWordParagraphTool {
     }
 
     /**
-     * 添加回车符（不产生新的段落）
+     * 添加回车符（不产生新的段落，实际上是添加了一个类型为 {@link BreakType#TEXT_WRAPPING} 的回车符）
      *
      * @param paragraph {@link XWPFParagraph}
      */
     public static void addBreak(XWPFParagraph paragraph) {
+        addBreak(paragraph, BreakType.TEXT_WRAPPING);
+    }
+
+    /**
+     * 添加回车符（不产生新的段落）
+     *
+     * @param paragraph 段落（{@link XWPFParagraph}）
+     * @param breakType 类型（{@link BreakType}）
+     */
+    public static void addBreak(XWPFParagraph paragraph, BreakType breakType) {
         XWPFRun paragraphRun = getXWPFRun(paragraph);
-        paragraphRun.addBreak();
+        paragraphRun.addBreak(breakType);
+    }
+
+    /**
+     * 在段落末尾添加分页符（实际上是添加了一个类型为 {@link BreakType#PAGE} 的回车符）
+     *
+     * @param paragraph 段落（{@link XWPFParagraph}）
+     */
+    public static void addPageBreak(XWPFParagraph paragraph) {
+        addBreak(paragraph, BreakType.PAGE);
+    }
+
+    /**
+     * 在文档当前位置添加分页符（增加一个新的段落，内容为：一个类型为 {@link BreakType#PAGE} 的回车符）
+     *
+     * @param document 文档（{@link XWPFDocument}）
+     */
+    public static void addPageBreak(XWPFDocument document) {
+        addBreak(document.createParagraph(), BreakType.PAGE);
     }
 
     /**

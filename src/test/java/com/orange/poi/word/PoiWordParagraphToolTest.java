@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -192,6 +193,31 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addTxt(paragraph, "段前 1.5 倍行距，段后 1.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 1.5f, 1.5f);
 
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
+    @Test
+    public void addBreak() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+        XWPFParagraph paragraph;
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+
+        PoiWordParagraphTool.addTxt(paragraph, "第一行");
+        PoiWordParagraphTool.addBreak(paragraph);
+        PoiWordParagraphTool.addTxt(paragraph, "第二行");
+        PoiWordParagraphTool.addPageBreak(paragraph);
+        PoiWordParagraphTool.addTxt(paragraph, "第二页，第一行");
+        PoiWordParagraphTool.addPageBreak(doc);
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "第三页，第一行");
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
