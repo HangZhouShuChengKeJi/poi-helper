@@ -290,18 +290,15 @@ public class PoiWordTableTool {
             table.setWidth(String.valueOf(tableWidth));
         }
 
-        if (rows > 1) {
-            for (int i = 1; i < rows; i++) {
-                table.createRow();
-            }
+        while (table.getRows().size() < rows) {
+            table.createRow();
         }
 
         if (cols > 1) {
             XWPFTableRow tableRowOne = table.getRow(0);
 
             BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
-
-            for (int i = 1; i < cols; i++) {
+            while (tableRowOne.getTableCells().size() < cols) {
                 tableRowOne.addNewTableCell();
             }
 
