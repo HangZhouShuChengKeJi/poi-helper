@@ -492,6 +492,15 @@ public class PoiWordTableTool {
      */
     public static XWPFParagraph getTableCellParagraph(XWPFTable table, int rowPos, int cellPos) {
         XWPFTableCell tableCell = getTableCell(table, rowPos, cellPos);
+        return getTableCellParagraph(tableCell);
+    }
+
+    /**
+     * 获取单元格的第一个段落元素
+     *
+     * @param tableCell 单元格
+     */
+    public static XWPFParagraph getTableCellParagraph(XWPFTableCell tableCell) {
         List<XWPFParagraph> paragraphs = tableCell.getParagraphs();
         if (paragraphs.size() == 0) {
             return tableCell.addParagraph();
@@ -550,7 +559,6 @@ public class PoiWordTableTool {
     public static void setTableCell(XWPFTable table, int rowPos, int cellPos, String text, boolean autoWidth, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
         XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
         setTableCell(tableCell, text, autoWidth, horizontalAlign, verticalAlign);
-
     }
 
     /**
@@ -581,6 +589,114 @@ public class PoiWordTableTool {
     public static void setTableCellText(XWPFTableCell cell, String text, STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
         cell.setText(text);
         setTableCellAlign(cell, horizontalAlign, verticalAlign);
+    }
+
+    /**
+     * 设置单元格文字（文字不加粗，无下划线，单元格水平方向左对齐，垂直方向居中对齐）
+     *
+     * @param table           表格 {@link XWPFTable }
+     * @param rowPos          行号（从 0 开始）
+     * @param cellPos         列号（从 0 开始）
+     * @param text            文本
+     * @param fontFamily      字体
+     * @param fontSize        字号（单位：磅）
+     * @param color           字体颜色
+     */
+    public static void setTableCellText(XWPFTable table, int rowPos, int cellPos, String text, String fontFamily, Integer fontSize, String color) {
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
+        setTableCellText(tableCell, text, fontFamily, fontSize, color);
+    }
+
+    /**
+     * 设置单元格文字（单元格水平方向左对齐，垂直方向居中对齐）
+     *
+     * @param table           表格 {@link XWPFTable }
+     * @param rowPos          行号（从 0 开始）
+     * @param cellPos         列号（从 0 开始）
+     * @param text            文本
+     * @param fontFamily      字体
+     * @param fontSize        字号（单位：磅）
+     * @param color           字体颜色
+     * @param bold            是否加粗
+     * @param underline       是否加下划线
+     */
+    public static void setTableCellText(XWPFTable table, int rowPos, int cellPos, String text, String fontFamily, Integer fontSize, String color,
+                                        boolean bold, boolean underline) {
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
+        setTableCellText(tableCell, text, fontFamily, fontSize, color, bold, underline);
+    }
+
+    /**
+     * 设置单元格文字
+     *
+     * @param table           表格 {@link XWPFTable }
+     * @param rowPos          行号（从 0 开始）
+     * @param cellPos         列号（从 0 开始）
+     * @param text            文本
+     * @param fontFamily      字体
+     * @param fontSize        字号（单位：磅）
+     * @param color           字体颜色
+     * @param bold            是否加粗
+     * @param underline       是否加下划线
+     * @param horizontalAlign 单元格水平对齐方式
+     * @param verticalAlign   单元格垂直对齐方式
+     */
+    public static void setTableCellText(XWPFTable table, int rowPos, int cellPos, String text, String fontFamily, Integer fontSize, String color,
+                                        boolean bold, boolean underline,
+                                        STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
+        setTableCellText(tableCell, text, fontFamily, fontSize, color, bold, underline, horizontalAlign, verticalAlign);
+    }
+
+    /**
+     * 设置单元格文字（文字不加粗，无下划线，单元格水平方向左对齐，垂直方向居中对齐）
+     *
+     * @param tableCell       单元格
+     * @param text            文本
+     * @param fontFamily      字体
+     * @param fontSize        字号（单位：磅）
+     * @param color           字体颜色
+     */
+    public static void setTableCellText(XWPFTableCell tableCell, String text, String fontFamily, Integer fontSize, String color) {
+        setTableCellText(tableCell, text, fontFamily, fontSize, color, false, false, STJc.LEFT, STVerticalJc.CENTER);
+    }
+
+    /**
+     * 设置单元格文字（单元格水平方向左对齐，垂直方向居中对齐）
+     *
+     * @param tableCell       单元格
+     * @param text            文本
+     * @param fontFamily      字体
+     * @param fontSize        字号（单位：磅）
+     * @param color           字体颜色
+     * @param bold            是否加粗
+     * @param underline       是否加下划线
+     */
+    public static void setTableCellText(XWPFTableCell tableCell, String text, String fontFamily, Integer fontSize, String color,
+                                        boolean bold, boolean underline) {
+        setTableCellText(tableCell, text, fontFamily, fontSize, color, bold, underline, STJc.LEFT, STVerticalJc.CENTER);
+    }
+
+    /**
+     * 设置单元格文字
+     *
+     * @param tableCell       单元格
+     * @param text            文本
+     * @param fontFamily      字体
+     * @param fontSize        字号（单位：磅）
+     * @param color           字体颜色
+     * @param bold            是否加粗
+     * @param underline       是否加下划线
+     * @param horizontalAlign 单元格水平对齐方式
+     * @param verticalAlign   单元格垂直对齐方式
+     */
+    public static void setTableCellText(XWPFTableCell tableCell, String text,
+                                        String fontFamily, Integer fontSize, String color,
+                                        boolean bold, boolean underline,
+                                        STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
+        XWPFParagraph paragraph = getTableCellParagraph(tableCell);
+        PoiWordParagraphTool.addTxt(paragraph, text, fontFamily, fontSize, color, bold, underline);
+        setTableCellAlign(tableCell, horizontalAlign, verticalAlign);
     }
 
     /**
