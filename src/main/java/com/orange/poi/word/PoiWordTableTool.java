@@ -594,13 +594,13 @@ public class PoiWordTableTool {
     /**
      * 设置单元格文字（文字不加粗，无下划线，单元格水平方向左对齐，垂直方向居中对齐）
      *
-     * @param table           表格 {@link XWPFTable }
-     * @param rowPos          行号（从 0 开始）
-     * @param cellPos         列号（从 0 开始）
-     * @param text            文本
-     * @param fontFamily      字体
-     * @param fontSize        字号（单位：磅）
-     * @param color           字体颜色
+     * @param table      表格 {@link XWPFTable }
+     * @param rowPos     行号（从 0 开始）
+     * @param cellPos    列号（从 0 开始）
+     * @param text       文本
+     * @param fontFamily 字体
+     * @param fontSize   字号（单位：磅）
+     * @param color      字体颜色
      */
     public static void setTableCellText(XWPFTable table, int rowPos, int cellPos, String text, String fontFamily, Integer fontSize, String color) {
         XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, rowPos, cellPos);
@@ -610,15 +610,15 @@ public class PoiWordTableTool {
     /**
      * 设置单元格文字（单元格水平方向左对齐，垂直方向居中对齐）
      *
-     * @param table           表格 {@link XWPFTable }
-     * @param rowPos          行号（从 0 开始）
-     * @param cellPos         列号（从 0 开始）
-     * @param text            文本
-     * @param fontFamily      字体
-     * @param fontSize        字号（单位：磅）
-     * @param color           字体颜色
-     * @param bold            是否加粗
-     * @param underline       是否加下划线
+     * @param table      表格 {@link XWPFTable }
+     * @param rowPos     行号（从 0 开始）
+     * @param cellPos    列号（从 0 开始）
+     * @param text       文本
+     * @param fontFamily 字体
+     * @param fontSize   字号（单位：磅）
+     * @param color      字体颜色
+     * @param bold       是否加粗
+     * @param underline  是否加下划线
      */
     public static void setTableCellText(XWPFTable table, int rowPos, int cellPos, String text, String fontFamily, Integer fontSize, String color,
                                         boolean bold, boolean underline) {
@@ -651,11 +651,11 @@ public class PoiWordTableTool {
     /**
      * 设置单元格文字（文字不加粗，无下划线，单元格水平方向左对齐，垂直方向居中对齐）
      *
-     * @param tableCell       单元格
-     * @param text            文本
-     * @param fontFamily      字体
-     * @param fontSize        字号（单位：磅）
-     * @param color           字体颜色
+     * @param tableCell  单元格
+     * @param text       文本
+     * @param fontFamily 字体
+     * @param fontSize   字号（单位：磅）
+     * @param color      字体颜色
      */
     public static void setTableCellText(XWPFTableCell tableCell, String text, String fontFamily, Integer fontSize, String color) {
         setTableCellText(tableCell, text, fontFamily, fontSize, color, false, false, STJc.LEFT, STVerticalJc.CENTER);
@@ -664,13 +664,13 @@ public class PoiWordTableTool {
     /**
      * 设置单元格文字（单元格水平方向左对齐，垂直方向居中对齐）
      *
-     * @param tableCell       单元格
-     * @param text            文本
-     * @param fontFamily      字体
-     * @param fontSize        字号（单位：磅）
-     * @param color           字体颜色
-     * @param bold            是否加粗
-     * @param underline       是否加下划线
+     * @param tableCell  单元格
+     * @param text       文本
+     * @param fontFamily 字体
+     * @param fontSize   字号（单位：磅）
+     * @param color      字体颜色
+     * @param bold       是否加粗
+     * @param underline  是否加下划线
      */
     public static void setTableCellText(XWPFTableCell tableCell, String text, String fontFamily, Integer fontSize, String color,
                                         boolean bold, boolean underline) {
@@ -708,6 +708,28 @@ public class PoiWordTableTool {
     public static void setTableCellWidth(XWPFTableCell tableCell, long width) {
         tableCell.setWidth(String.valueOf(width));
         tableCell.setWidthType(TableWidthType.DXA);
+    }
+
+    /**
+     * 设置单元格背景色
+     *
+     * @param table   表格 {@link XWPFTable }
+     * @param rowPos  行号（从 0 开始）
+     * @param cellPos 列号（从 0 开始）
+     * @param color   背景颜色
+     */
+    public static void setTableCellBackground(XWPFTable table, int rowPos, int cellPos, String color) {
+        setTableCellBackground(getTableCell(table, rowPos, cellPos), color);
+    }
+
+    /**
+     * 设置单元格背景色
+     *
+     * @param tableCell 单元格
+     * @param color     背景颜色
+     */
+    public static void setTableCellBackground(XWPFTableCell tableCell, String color) {
+        tableCell.setColor(color);
     }
 
     /**

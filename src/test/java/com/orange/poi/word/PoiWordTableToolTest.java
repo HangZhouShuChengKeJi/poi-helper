@@ -181,4 +181,35 @@ public class PoiWordTableToolTest {
         doc.write(out);
         out.close();
     }
+
+    @Test
+    public void setTableBorder() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+        XWPFTable table = PoiWordTableTool.addTable(doc, 5, 4, false);
+
+        // 仅设置水平方向的线条
+        table.setBottomBorder(XWPFTable.XWPFBorderType.SINGLE, 1, 0, "000000");
+        table.setTopBorder(XWPFTable.XWPFBorderType.SINGLE, 1, 0, "000000");
+        table.setInsideHBorder(XWPFTable.XWPFBorderType.SINGLE, 1, 0, "000000");
+        table.setInsideVBorder(XWPFTable.XWPFBorderType.NONE, 1, 0, "000000");
+        table.setLeftBorder(XWPFTable.XWPFBorderType.NONE, 1, 0, "000000");
+        table.setRightBorder(XWPFTable.XWPFBorderType.NONE, 1, 0, "000000");
+
+        for (int i = 0; i < 5; i++) {
+            for (int i1 = 0; i1 < 4; i1++) {
+                PoiWordTableTool.setTableCellText(table, i, i1, i + "_" + i1, "微软雅黑", 10, "000000");
+                if(i % 2 == 1) {
+                    PoiWordTableTool.setTableCellBackground(table, i, i1, "EDEDED");
+                }
+            }
+        }
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
 }
