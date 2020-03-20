@@ -7,6 +7,7 @@ import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
@@ -112,46 +113,6 @@ public class PoiWordTool {
         initDocSize(doc, PaperSize.B5, margin);
     }
 
-//    /**
-//     * 初始化文档尺寸
-//     *
-//     * @param doc    文档 {@link XWPFDocument}
-//     * @param width  页面宽度，单位：毫米
-//     * @param height 页面高度，单位：毫米
-//     * @param margin 页边距，单位：毫米
-//     */
-//    public static void initDocSize(XWPFDocument doc, int width, int height, int margin) {
-//
-//        final long widthDxa = PoiUnitTool.centimeterToDXA(width / 10.f);
-//        final long heightDxa = PoiUnitTool.centimeterToDXA(height / 10.f);
-//
-//        final long marginTopDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
-//        final long marginBottomDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
-//        final long marginLeftDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
-//        final long marginRightDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
-//
-//        CTSectPr sectPr = doc.getDocument().getBody().addNewSectPr();
-//        CTPageSz pageSize = sectPr.addNewPgSz();
-//        pageSize.setW(BigInteger.valueOf(widthDxa));
-//        pageSize.setH(BigInteger.valueOf(heightDxa));
-//
-//        CTPageMar pageMar = sectPr.addNewPgMar();
-//        pageMar.setTop(BigInteger.valueOf(marginTopDxa));
-//        pageMar.setRight(BigInteger.valueOf(marginBottomDxa));
-//        pageMar.setBottom(BigInteger.valueOf(marginLeftDxa));
-//        pageMar.setLeft(BigInteger.valueOf(marginRightDxa));
-//
-//        /**
-//         *  docGrid 的 type 设置为 STDocGrid.LINES，linePitch 设置为 312 被证明在 A4 版面中，用于设置文字在行中居中。
-//         *
-//         *  todo 这两个值是 通过对比 office 和 wps 生成的文档得出的结论，尚不清楚具体意思
-//         */
-//        CTDocGrid docGrid = sectPr.addNewDocGrid();
-//        docGrid.setType(STDocGrid.LINES);
-//        // 线间距，单位：dxa
-//        docGrid.setLinePitch(BigInteger.valueOf(312));
-//    }
-
     /**
      * 初始化文档尺寸
      *
@@ -160,8 +121,13 @@ public class PoiWordTool {
      * @param margin    页边距，单位：毫米
      */
     public static void initDocSize(XWPFDocument doc, PaperSize paperSize, int margin) {
-        CTSectPr sectPr = doc.getDocument().getBody().addNewSectPr();
-        CTPageSz pageSize = sectPr.addNewPgSz();
+        CTSectPr sectPr = getSectPr(doc);
+        CTPageSz pageSize;
+        if (sectPr.isSetPaperSrc()) {
+            pageSize = sectPr.getPgSz();
+        } else {
+            pageSize = sectPr.addNewPgSz();
+        }
         pageSize.setW(BigInteger.valueOf(paperSize.width_dxa));
         pageSize.setH(BigInteger.valueOf(paperSize.height_dxa));
         final long marginTopDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
@@ -169,11 +135,7 @@ public class PoiWordTool {
         final long marginLeftDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
         final long marginRightDxa = PoiUnitTool.centimeterToDXA(margin / 10.f);
 
-        CTPageMar pageMar = sectPr.addNewPgMar();
-        pageMar.setTop(BigInteger.valueOf(marginTopDxa));
-        pageMar.setRight(BigInteger.valueOf(marginBottomDxa));
-        pageMar.setBottom(BigInteger.valueOf(marginLeftDxa));
-        pageMar.setLeft(BigInteger.valueOf(marginRightDxa));
+        setPageMargin(doc, marginTopDxa, marginBottomDxa, marginLeftDxa, marginRightDxa);
 
         /**
          *  docGrid 的 type 设置为 STDocGrid.LINES，linePitch 设置为 312 被证明在 A4 版面中，用于设置文字在行中居中。
@@ -184,6 +146,65 @@ public class PoiWordTool {
         docGrid.setType(STDocGrid.LINES);
         // 线间距，单位：dxa
         docGrid.setLinePitch(BigInteger.valueOf(312));
+    }
+
+    public static CTSectPr getSectPr(XWPFDocument doc) {
+        CTBody body = doc.getDocument().getBody();
+        if (body.isSetSectPr()) {
+            return body.getSectPr();
+        } else {
+            return body.addNewSectPr();
+        }
+    }
+
+    public static CTPageMar getPageMar(XWPFDocument doc) {
+        CTSectPr sectPr = getSectPr(doc);
+        if (sectPr.isSetPgMar()) {
+            return sectPr.getPgMar();
+        } else {
+            return sectPr.addNewPgMar();
+        }
+    }
+
+    /**
+     * 设置页边距
+     *
+     * @param doc             文档 ({@link XWPFDocument})
+     * @param marginTopDxa    上边距（单位：dxa）
+     * @param marginBottomDxa 下边距（单位：dxa）
+     * @param marginLeftDxa   左边距（单位：dxa）
+     * @param marginRightDxa  右边距（单位：dxa）
+     */
+    public static void setPageMargin(XWPFDocument doc,
+                                     long marginTopDxa, long marginBottomDxa,
+                                     long marginLeftDxa, long marginRightDxa) {
+        CTPageMar pageMar = getPageMar(doc);
+        pageMar.setTop(BigInteger.valueOf(marginTopDxa));
+        pageMar.setRight(BigInteger.valueOf(marginBottomDxa));
+        pageMar.setBottom(BigInteger.valueOf(marginLeftDxa));
+        pageMar.setLeft(BigInteger.valueOf(marginRightDxa));
+    }
+
+    /**
+     * 设置页眉距离顶部的距离
+     *
+     * @param doc       文档 ({@link XWPFDocument})
+     * @param marginTop 页眉距离顶部的距离（单位：dxa）
+     */
+    public static void setHeaderMargin(XWPFDocument doc, long marginTop) {
+        CTPageMar pageMar = getPageMar(doc);
+        pageMar.setHeader(BigInteger.valueOf(marginTop));
+    }
+
+    /**
+     * 设置页脚距离底部的距离
+     *
+     * @param doc          文档 ({@link XWPFDocument})
+     * @param marginBottom 设置页脚距离底部的距离（单位：dxa）
+     */
+    public static void setFooterMargin(XWPFDocument doc, long marginBottom) {
+        CTPageMar pageMar = getPageMar(doc);
+        pageMar.setFooter(BigInteger.valueOf(marginBottom));
     }
 
     /**

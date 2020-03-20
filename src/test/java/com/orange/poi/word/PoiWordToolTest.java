@@ -1,8 +1,12 @@
 package com.orange.poi.word;
 
+import com.orange.poi.PoiUnitTool;
 import com.orange.poi.paper.PaperSize;
 import com.orange.poi.util.TempFileUtil;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
+import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.After;
 import org.junit.Before;
@@ -161,5 +165,36 @@ public class PoiWordToolTest {
 
     @Test
     public void setTableCellBgColor() {
+    }
+
+    @Test
+    public void setPageMargin() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        PoiWordTool.initDocForA4(doc);
+
+        // 设置页眉的位置
+        PoiWordTool.setHeaderMargin(doc, PoiUnitTool.centimeterToDXA(0.6000f));
+        // 设置页脚的位置
+        PoiWordTool.setFooterMargin(doc, PoiUnitTool.centimeterToDXA(0.5000f));
+        XWPFParagraph paragraph;
+
+        XWPFHeader header = doc.createHeader(HeaderFooterType.DEFAULT);
+        paragraph = header.createParagraph();
+        PoiWordParagraphTool.addTxt(paragraph, "页眉", defaultFontFamily, defaultFontSize, defaultColor);
+
+        XWPFFooter footer = doc.createFooter(HeaderFooterType.DEFAULT);
+        paragraph = footer.createParagraph();
+        PoiWordParagraphTool.addTxt(paragraph, "页脚", defaultFontFamily, defaultFontSize, defaultColor);
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addTxt(paragraph, "文档内容", defaultFontFamily, defaultFontSize, defaultColor);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
     }
 }
