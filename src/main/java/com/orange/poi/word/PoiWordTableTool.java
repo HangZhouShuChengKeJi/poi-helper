@@ -7,7 +7,9 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.xmlbeans.SchemaType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.impl.CTDecimalNumberImpl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -529,6 +531,25 @@ public class PoiWordTableTool {
     }
 
     /**
+     * 获取单元格
+     *
+     * @param table   表格 {@link XWPFTable }
+     * @param rowPos  行号（从 0 开始）
+     * @param cellPos 列号（从 0 开始）
+     * @param create  不存在时，是否创建单元格
+     */
+    public static XWPFTableCell getTableCell(XWPFTable table, int rowPos, int cellPos, boolean create) {
+        if (create) {
+            return getTableCell(table, rowPos, cellPos);
+        }
+        XWPFTableRow tableRowOne = table.getRow(rowPos);
+        if (tableRowOne == null) {
+            return null;
+        }
+        return tableRowOne.getCell(cellPos);
+    }
+
+    /**
      * 设置单元格文字，对齐方式：左对齐；垂直居中
      *
      * @param table     表格 {@link XWPFTable }
@@ -747,6 +768,38 @@ public class PoiWordTableTool {
     public static void setTableCellWidthOfPoint(XWPFTableCell tableCell, double width) {
         tableCell.setWidth(String.valueOf(PoiUnitTool.pointToDXA(width)));
         tableCell.setWidthType(TableWidthType.DXA);
+    }
+
+    /**
+     * 设置单元格横跨的列数
+     *
+     * @param cell 单元格
+     * @param col  横跨的列数
+     */
+    public static void setGridSpan(XWPFTableCell cell, int col) {
+        CTTc ctTc = cell.getCTTc();
+        CTTcPr tcPr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
+        CTDecimalNumber gridSpan = tcPr.isSetGridSpan() ? tcPr.getGridSpan() : tcPr.addNewGridSpan();
+        gridSpan.setVal(BigInteger.valueOf(col));
+    }
+
+    /**
+     * 获取单元格横跨的列数
+     *
+     * @param cell 单元格
+     *
+     * @return 横跨的列数，null：表示未设置
+     */
+    public static Integer getGridSpan(XWPFTableCell cell) {
+        CTTc ctTc = cell.getCTTc();
+        if (ctTc.isSetTcPr()) {
+            CTTcPr tcPr = ctTc.getTcPr();
+            if (tcPr.isSetGridSpan()) {
+                CTDecimalNumber gridSpan = tcPr.getGridSpan();
+                return gridSpan.getVal().intValue();
+            }
+        }
+        return null;
     }
 
     /**
