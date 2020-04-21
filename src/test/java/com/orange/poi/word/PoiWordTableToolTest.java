@@ -15,6 +15,7 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFro
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
@@ -203,6 +204,13 @@ public class PoiWordTableToolTest {
                 }
             }
         }
+
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, 1, 2);
+        PoiWordTableTool.setVMerge(tableCell, STMerge.RESTART);
+        tableCell = PoiWordTableTool.getTableCell(table, 2, 2);
+        PoiWordTableTool.setVMerge(tableCell, STMerge.CONTINUE);
+        tableCell = PoiWordTableTool.getTableCell(table, 3, 2);
+        PoiWordTableTool.setVMerge(tableCell, STMerge.CONTINUE);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 

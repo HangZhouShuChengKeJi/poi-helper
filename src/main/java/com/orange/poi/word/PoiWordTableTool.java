@@ -803,6 +803,19 @@ public class PoiWordTableTool {
     }
 
     /**
+     * 设置单元格竖跨的方式
+     *
+     * @param cell 单元格
+     * @param mergeValue  横跨的列数
+     */
+    public static void setVMerge(XWPFTableCell cell, STMerge.Enum mergeValue) {
+        CTTc ctTc = cell.getCTTc();
+        CTTcPr tcPr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
+        CTVMerge vMerge = tcPr.isSetVMerge() ? tcPr.getVMerge() : tcPr.addNewVMerge();
+        vMerge.setVal(mergeValue);
+    }
+
+    /**
      * 设置单元格对齐方式
      *
      * @param cell            单元格
