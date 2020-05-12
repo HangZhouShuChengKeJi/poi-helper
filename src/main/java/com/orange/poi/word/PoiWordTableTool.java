@@ -47,7 +47,7 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable addTableWithoutBorder(XWPFTableCell tableCell, int rows, int cols) {
-        return addTable(tableCell, rows, cols, tableCell.getWidth(), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
+        return addTable(tableCell, rows, cols, getTableCellContentWidth(tableCell), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF");
     }
 
 
@@ -93,7 +93,7 @@ public class PoiWordTableTool {
     }
 
     /**
-     * 创建没有边框的表格
+     * 创建有边框的表格
      *
      * @param document  {@link XWPFDocument}
      * @param rows      行数
@@ -113,7 +113,7 @@ public class PoiWordTableTool {
     }
 
     /**
-     * 在单元格内创建没有边框的表格
+     * 在单元格内创建有边框的表格
      *
      * @param tableCell {@link XWPFTableCell}
      * @param rows      行数
@@ -128,7 +128,7 @@ public class PoiWordTableTool {
         if (isAutoFit) {
             initTable(table, rows, cols, 0, XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.AUTOFIT);
         } else {
-            initTable(table, rows, cols, tableCell.getWidth(), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
+            initTable(table, rows, cols, getTableCellContentWidth(tableCell), XWPFTable.XWPFBorderType.NONE, 0, "FFFFFF", STTblLayoutType.FIXED);
         }
         return table;
     }
@@ -216,7 +216,7 @@ public class PoiWordTableTool {
      * @return {@link XWPFTable}
      */
     public static XWPFTable addTable(XWPFTableCell tableCell, int rows, int cols, XWPFTable.XWPFBorderType borderType, int borderSize, String borderColor) {
-        return addTable(tableCell, rows, cols, tableCell.getWidth(), borderType, borderSize, borderColor);
+        return addTable(tableCell, rows, cols, getTableCellContentWidth(tableCell), borderType, borderSize, borderColor);
     }
 
     /**
@@ -439,6 +439,103 @@ public class PoiWordTableTool {
         ctTblPPr.setBottomFromText(BigInteger.valueOf(bottomFromText));
         ctTblPPr.setLeftFromText(BigInteger.valueOf(leftFromText));
     }
+
+    /**
+     * 获取表格中设置的单元格上边距
+     *
+     * @param table 表格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableMarginOfTop(XWPFTable table) {
+        return getTableCellMarginInternal(table, "top");
+    }
+
+    /**
+     * 获取表格中设置的单元格右边距
+     *
+     * @param table 表格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableMarginOfRight(XWPFTable table) {
+        return getTableCellMarginInternal(table, "right");
+    }
+
+    /**
+     * 获取表格中设置的单元格下边距
+     *
+     * @param table 表格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableMarginOfBottom(XWPFTable table) {
+        return getTableCellMarginInternal(table, "bottom");
+    }
+
+    /**
+     * 获取表格中设置的单元格左边距
+     *
+     * @param table 表格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableMarginOfLeft(XWPFTable table) {
+        return getTableCellMarginInternal(table, "left");
+    }
+
+    /**
+     * 获取表格中设置的单元格各个方向的边距（内部方法）
+     *
+     * @param table 表格
+     * @param type      类型：top：上；right：右；bottom：下；left：左
+     *
+     * @return 左边距大小，单位：dxa
+     */
+    private static Long getTableCellMarginInternal(XWPFTable table, String type) {
+        CTTbl ctTbl = table.getCTTbl();
+        CTTblPr ctTblPr;
+        if ((ctTblPr = ctTbl.getTblPr()) == null) {
+            ctTblPr = ctTbl.addNewTblPr();
+        }
+        CTTblCellMar ctTblCellMar;
+        if ((ctTblCellMar = ctTblPr.getTblCellMar()) == null) {
+            return null;
+        }
+        CTTblWidth ctTblWidth;
+        switch (type) {
+            case "top":
+                ctTblWidth = ctTblCellMar.getTop();
+                break;
+            case "right":
+                ctTblWidth = ctTblCellMar.getRight();
+                break;
+            case "bottom":
+                ctTblWidth = ctTblCellMar.getBottom();
+                break;
+            case "left":
+                ctTblWidth = ctTblCellMar.getLeft();
+                break;
+            default:
+                throw new IllegalArgumentException("type 参数错误");
+        }
+        if (ctTblWidth == null) {
+            // 未设置宽度时，返回 null
+            return null;
+        }
+        STTblWidth.Enum widthType = ctTblWidth.getType();
+        if (widthType != STTblWidth.DXA) {
+            // 未设置宽度时，返回 null
+            return null;
+        }
+        BigInteger width;
+        if ((width = ctTblWidth.getW()) == null) {
+            // 未设置宽度时，返回 null
+            return null;
+        }
+        return width.longValue();
+    }
+
 
     /**
      * 设置表格行高
@@ -805,8 +902,8 @@ public class PoiWordTableTool {
     /**
      * 设置单元格竖跨的方式
      *
-     * @param cell 单元格
-     * @param mergeValue  横跨的列数
+     * @param cell       单元格
+     * @param mergeValue 横跨的列数
      */
     public static void setVMerge(XWPFTableCell cell, STMerge.Enum mergeValue) {
         CTTc ctTc = cell.getCTTc();
@@ -985,5 +1082,125 @@ public class PoiWordTableTool {
      */
     public static void setTableCellBgColor(XWPFTableCell cell, String bgColor) {
         cell.setColor(bgColor);
+    }
+
+    /**
+     * 获取单元格上边距
+     *
+     * @param tableCell 单元格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableCellMarginOfTop(XWPFTableCell tableCell) {
+        return getTableCellMarginInternal(tableCell, "top");
+    }
+
+    /**
+     * 获取单元格右边距
+     *
+     * @param tableCell 单元格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableCellMarginOfRight(XWPFTableCell tableCell) {
+        return getTableCellMarginInternal(tableCell, "right");
+    }
+
+    /**
+     * 获取单元格下边距
+     *
+     * @param tableCell 单元格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableCellMarginOfBottom(XWPFTableCell tableCell) {
+        return getTableCellMarginInternal(tableCell, "bottom");
+    }
+
+    /**
+     * 获取单元格左边距
+     *
+     * @param tableCell 单元格
+     *
+     * @return 边距大小，单位：dxa
+     */
+    public static Long getTableCellMarginOfLeft(XWPFTableCell tableCell) {
+        return getTableCellMarginInternal(tableCell, "left");
+    }
+
+    /**
+     * 获取单元格各个方向的边距（内部方法）
+     *
+     * @param tableCell 单元格
+     * @param type      类型：top：上；right：右；bottom：下；left：左
+     *
+     * @return 左边距大小，单位：dxa
+     */
+    private static Long getTableCellMarginInternal(XWPFTableCell tableCell, String type) {
+        CTTc ctTc = tableCell.getCTTc();
+        CTTcPr ctTcPr;
+        if ((ctTcPr = ctTc.getTcPr()) == null) {
+            // 未设置宽度时，通过表格属性获取
+            return getTableCellMarginInternal(tableCell.getTableRow().getTable(), type);
+        }
+        CTTcMar ctTcMar;
+        if ((ctTcMar = ctTcPr.getTcMar()) == null) {
+            // 未设置宽度时，通过表格属性获取
+            return getTableCellMarginInternal(tableCell.getTableRow().getTable(), type);
+        }
+        CTTblWidth ctTblWidth;
+        switch (type) {
+            case "top":
+                ctTblWidth = ctTcMar.getTop();
+                break;
+            case "right":
+                ctTblWidth = ctTcMar.getRight();
+                break;
+            case "bottom":
+                ctTblWidth = ctTcMar.getBottom();
+                break;
+            case "left":
+                ctTblWidth = ctTcMar.getLeft();
+                break;
+            default:
+                throw new IllegalArgumentException("type 参数错误");
+        }
+        if (ctTblWidth == null) {
+            // 未设置宽度时，通过表格属性获取
+            return getTableCellMarginInternal(tableCell.getTableRow().getTable(), type);
+        }
+        STTblWidth.Enum widthType = ctTblWidth.getType();
+        if (widthType != STTblWidth.DXA) {
+            // 未设置宽度时，返回 null
+            return null;
+        }
+        BigInteger width;
+        if ((width = ctTblWidth.getW()) == null) {
+            // 未设置宽度时，返回 null
+            return null;
+        }
+        return width.longValue();
+    }
+
+    /**
+     * 获取单元格内容宽度（总宽度减去左右边距）
+     * @param tableCell 单元格
+     * @return
+     */
+    public static Long getTableCellContentWidth(XWPFTableCell tableCell) {
+        Long leftMar = getTableCellMarginOfLeft(tableCell);
+        Long rightMar = getTableCellMarginOfRight(tableCell);
+        long width = tableCell.getWidth();
+        if (leftMar != null) {
+            width -= leftMar;
+        } else {
+            width -= 20;
+        }
+        if (rightMar != null) {
+            width -= rightMar;
+        } else {
+            width -= 20;
+        }
+        return width;
     }
 }

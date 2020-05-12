@@ -51,12 +51,24 @@ public class PoiWordTableToolTest {
         XWPFParagraph paragraph;
 
         XWPFTable table = PoiWordTableTool.addTable(doc, 1, 3, XWPFTable.XWPFBorderType.SINGLE, 2, "000000");
+        // 表格边距
+        table.setCellMargins(100,100,100,100);
         XWPFTableRow tableRowOne = table.getRow(0);
         // 设置表格高度
         PoiWordTableTool.setTableRowHeightOfPixel(tableRowOne, 40);
 
         XWPFTableCell tableCell = tableRowOne.getCell(0);
         PoiWordTableTool.setTableCellText(tableCell, "对齐测试", STJc.LEFT, STVerticalJc.CENTER);
+
+        Long width = PoiWordTableTool.getTableCellContentWidth(tableCell);
+
+        // 嵌套表格
+        XWPFTable childTable = PoiWordTableTool.addTable(tableCell, 2, 2, width);
+
+        // 嵌套表格时，内部表格后面增加一个空段落，否则 word 打开会报错
+        XWPFTableCell parentTableCell = tableCell;
+        parentTableCell.addParagraph();
+
 
         tableCell = tableRowOne.getCell(1);
         PoiWordTableTool.setTableCellText(tableCell, "对齐测试测试", STJc.LEFT, STVerticalJc.CENTER);
