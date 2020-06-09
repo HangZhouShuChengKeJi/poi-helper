@@ -11,13 +11,18 @@ import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRuby;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STRubyAlign;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -629,5 +634,91 @@ public class PoiWordParagraphTool {
             pr = run.addNewRPr();
         }
         return pr;
+    }
+
+    /**
+     * 添加加拼音的文字
+     *
+     * @param paragraph          段落
+     * @param baseText           基准文字
+     * @param rubyText           拼音文字
+     * @param baseTextFontFamily 基准文字字体
+     * @param baseTextFontSize   基准文字字体大小（单位：磅）
+     * @param baseTextColor      基准文字字体颜色
+     * @param rubyTextFontFamily 拼音文字字体
+     * @param rubyTextFontSize   拼音文字字体大小（单位：磅）
+     * @param rubyTextColor      拼音文字字体颜色
+     * @param spaceToBaseText    拼音文字和基准文字的间距（单位：磅）
+     */
+    public static void addRuby(XWPFParagraph paragraph, String baseText, String rubyText,
+                               String baseTextFontFamily, int baseTextFontSize, String baseTextColor,
+                               String rubyTextFontFamily, int rubyTextFontSize, String rubyTextColor,
+                               int spaceToBaseText) {
+
+        BigInteger realBaseTextFontSize = BigInteger.valueOf(baseTextFontSize).multiply(new BigInteger("2"));
+        BigInteger realRubyTextFontSize = BigInteger.valueOf(rubyTextFontSize).multiply(new BigInteger("2"));
+
+        XWPFRun run = paragraph.createRun();
+        CTR ctr = run.getCTR();
+
+        CTRPr ctrPr = ctr.addNewRPr();
+        // 设置字体
+        CTFonts font = ctrPr.addNewRFonts();
+        font.setAscii(baseTextFontFamily);
+        font.setEastAsia(baseTextFontFamily);
+        font.setHAnsi(baseTextFontFamily);
+        // 设置字体大小
+        ctrPr.addNewSz().setVal(realBaseTextFontSize);
+        ctrPr.addNewSzCs().setVal(realBaseTextFontSize);
+        // 设置颜色
+        ctrPr.addNewColor().setVal(baseTextColor);
+
+
+        CTRuby ruby = ctr.addNewRuby();
+
+        CTRubyPr rubyPr = ruby.addNewRubyPr();
+        // 拼音以居中的方式显示
+        rubyPr.addNewRubyAlign().setVal(STRubyAlign.CENTER);
+        // 汉字的字体大小
+        rubyPr.addNewHpsBaseText().setVal(realBaseTextFontSize);
+        // 拼音的字体大小
+        rubyPr.addNewHps().setVal(realRubyTextFontSize);
+        // 拼音与汉字的垂直间距
+        rubyPr.addNewHpsRaise().setVal(BigInteger.valueOf(baseTextFontSize + spaceToBaseText - 1).multiply(new BigInteger("2")));
+        // 文字类型（一般是中文）
+        rubyPr.addNewLid().setVal("zh-CN");
+
+        // 汉字
+        CTRubyContent rubyBaseContent = ruby.addNewRubyBase();
+        CTR rubyBaseCtr = rubyBaseContent.addNewR();
+        rubyBaseCtr.addNewT().setStringValue(baseText);
+        CTRPr rubyBaseCtrpr = rubyBaseCtr.addNewRPr();
+        // 设置字体
+        CTFonts rubyBaseFont = rubyBaseCtrpr.addNewRFonts();
+        rubyBaseFont.setAscii(baseTextFontFamily);
+        rubyBaseFont.setEastAsia(baseTextFontFamily);
+        rubyBaseFont.setHAnsi(baseTextFontFamily);
+        // 设置字体大小
+        rubyBaseCtrpr.addNewSz().setVal(realBaseTextFontSize);
+        rubyBaseCtrpr.addNewSzCs().setVal(realBaseTextFontSize);
+        // 设置颜色
+        rubyBaseCtrpr.addNewColor().setVal(baseTextColor);
+
+        // 拼音
+        CTRubyContent rubyRtContent = ruby.addNewRt();
+        CTR rubyRtCtr = rubyRtContent.addNewR();
+        rubyRtCtr.addNewT().setStringValue(rubyText);
+        CTRPr rubyRtCtrpr = rubyRtCtr.addNewRPr();
+        // 设置字体
+        CTFonts rubyRtFont = rubyRtCtrpr.addNewRFonts();
+        rubyRtFont.setAscii(rubyTextFontFamily);
+        rubyRtFont.setEastAsia(rubyTextFontFamily);
+        rubyRtFont.setHAnsi(rubyTextFontFamily);
+        // 设置字体大小
+        rubyRtCtrpr.addNewSz().setVal(realRubyTextFontSize);
+        // 【注意】这里是汉字的字体大小
+        rubyRtCtrpr.addNewSzCs().setVal(realBaseTextFontSize);
+        // 设置颜色
+        rubyRtCtrpr.addNewColor().setVal(rubyTextColor);
     }
 }
