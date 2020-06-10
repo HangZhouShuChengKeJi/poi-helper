@@ -637,7 +637,7 @@ public class PoiWordParagraphTool {
     }
 
     /**
-     * 添加加拼音的文字
+     * 添加加拼音的文字（针对中文语言）
      *
      * @param paragraph          段落
      * @param baseText           基准文字
@@ -654,6 +654,28 @@ public class PoiWordParagraphTool {
                                String baseTextFontFamily, int baseTextFontSize, String baseTextColor,
                                String rubyTextFontFamily, int rubyTextFontSize, String rubyTextColor,
                                int spaceToBaseText) {
+        addRuby(paragraph, baseText, rubyText, baseTextFontFamily, baseTextFontSize, baseTextColor, rubyTextFontFamily, rubyTextFontSize, rubyTextColor, spaceToBaseText, "zh-CN");
+    }
+
+    /**
+     * 添加加拼音的文字
+     *
+     * @param paragraph          段落
+     * @param baseText           基准文字
+     * @param rubyText           拼音文字
+     * @param baseTextFontFamily 基准文字字体
+     * @param baseTextFontSize   基准文字字体大小（单位：磅）
+     * @param baseTextColor      基准文字字体颜色
+     * @param rubyTextFontFamily 拼音文字字体
+     * @param rubyTextFontSize   拼音文字字体大小（单位：磅）
+     * @param rubyTextColor      拼音文字字体颜色
+     * @param spaceToBaseText    拼音文字和基准文字的间距（单位：磅）
+     * @param lang               语言
+     */
+    public static void addRuby(XWPFParagraph paragraph, String baseText, String rubyText,
+                               String baseTextFontFamily, int baseTextFontSize, String baseTextColor,
+                               String rubyTextFontFamily, int rubyTextFontSize, String rubyTextColor,
+                               int spaceToBaseText, String lang) {
 
         BigInteger realBaseTextFontSize = BigInteger.valueOf(baseTextFontSize).multiply(new BigInteger("2"));
         BigInteger realRubyTextFontSize = BigInteger.valueOf(rubyTextFontSize).multiply(new BigInteger("2"));
@@ -685,8 +707,8 @@ public class PoiWordParagraphTool {
         rubyPr.addNewHps().setVal(realRubyTextFontSize);
         // 拼音与汉字的垂直间距
         rubyPr.addNewHpsRaise().setVal(BigInteger.valueOf(baseTextFontSize + spaceToBaseText - 1).multiply(new BigInteger("2")));
-        // 文字类型（一般是中文）
-        rubyPr.addNewLid().setVal("zh-CN");
+        // 语言
+        rubyPr.addNewLid().setVal(lang);
 
         // 汉字
         CTRubyContent rubyBaseContent = ruby.addNewRubyBase();

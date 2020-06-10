@@ -247,12 +247,12 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addRuby(paragraph, "中", "zhong",
                 "微软雅黑", 16, "000000",
                 "微软雅黑", 8, "FF0000",
-                5);
+                5, "zh-CN");
 
         PoiWordParagraphTool.addRuby(paragraph, "国", "guo",
                 "微软雅黑", 16, "000000",
                 "微软雅黑", 8, "FF0000",
-                5);
+                5, "zh-CN");
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
