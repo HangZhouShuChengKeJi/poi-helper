@@ -1,11 +1,20 @@
 package com.orange.poi.word;
 
+import com.orange.poi.util.OfficeMathMLUtil;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlToken;
+import org.dom4j.DocumentException;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTF;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
+import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMathPara;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+
+import javax.xml.transform.TransformerException;
+
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 /**
  * apache poi word 数学公式工具类
@@ -14,6 +23,15 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
  * @date 2019/7/5 23:01
  */
 public class PoiWordMathTool {
+
+    public static void addMathML(XWPFParagraph paragraph, String mathML) throws XmlException, TransformerException, DocumentException {
+        // 转换为 office mathml
+        String officeMathML = OfficeMathMLUtil.convertMmlToOmml(mathML);
+        XmlToken xmlToken = XmlToken.Factory.parse(officeMathML, DEFAULT_XML_OPTIONS);
+
+        CTOMathPara ctoMathPara = paragraph.getCTP().addNewOMathPara();
+        ctoMathPara.set(xmlToken);
+    }
 
 
     /**
