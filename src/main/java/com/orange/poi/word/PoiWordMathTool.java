@@ -26,7 +26,7 @@ public class PoiWordMathTool {
 
     public static void addMathML(XWPFParagraph paragraph, String mathML) throws XmlException, TransformerException, DocumentException {
         // 转换为 office mathml
-        String officeMathML = OfficeMathMLUtil.convertMmlToOmml(mathML);
+        String officeMathML = OfficeMathMLUtil.getInstance().convertMmlToOmml(mathML);
         XmlToken xmlToken = XmlToken.Factory.parse(officeMathML, DEFAULT_XML_OPTIONS);
 
         CTOMathPara ctoMathPara = paragraph.getCTP().addNewOMathPara();

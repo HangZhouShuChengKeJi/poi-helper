@@ -21,7 +21,7 @@ public class OfficeMathMLUtilTest {
                 "</mfrac>" +
                 "</math>";
         try {
-            System.out.println(OfficeMathMLUtil.convertMmlToOmml(text));
+            System.out.println(OfficeMathMLUtil.getInstance().convertMmlToOmml(text));
         } catch (DocumentException e) {
             e.printStackTrace();
         } catch (TransformerException e) {

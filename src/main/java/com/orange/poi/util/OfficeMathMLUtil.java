@@ -7,6 +7,7 @@ import org.dom4j.io.DocumentResult;
 import org.dom4j.io.DocumentSource;
 
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
@@ -19,10 +20,30 @@ import javax.xml.transform.stream.StreamSource;
  */
 public class OfficeMathMLUtil {
 
-    public static String MML2OMML_XSL;
 
-    static {
-        MML2OMML_XSL = OfficeMathMLUtil.class.getResource("/MML2OMML.XSl").getFile();
+    private TransformerFactory transformerFactory;
+    private Transformer transformer;
+
+    private OfficeMathMLUtil() throws TransformerConfigurationException {
+        transformerFactory = TransformerFactory.newInstance();
+
+        StreamSource streamSource = new StreamSource(OfficeMathMLUtil.class.getClassLoader().getResourceAsStream("MML2OMML.XSL"));
+        transformer = transformerFactory.newTransformer(streamSource);
+    }
+
+    private static class SingleInstanceHolder {
+        private static volatile OfficeMathMLUtil instance;
+        static {
+            try {
+                instance = new OfficeMathMLUtil();
+            } catch (TransformerConfigurationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static OfficeMathMLUtil getInstance() {
+        return SingleInstanceHolder.instance;
     }
 
     /**
@@ -35,18 +56,14 @@ public class OfficeMathMLUtil {
      * @throws DocumentException
      * @throws TransformerException
      */
-    public static String convertMmlToOmml(String mathML) throws DocumentException, TransformerException {
+    public String convertMmlToOmml(String mathML) throws DocumentException, TransformerException {
 
-        Document sourceDoc = DocumentHelper.parseText(mathML);
+        Document srcDoc = DocumentHelper.parseText(mathML);
 
-        // todo 检查是否包含 namespace： http://www.w3.org/1998/Math/MathML
+        DocumentSource srcDocSource = new DocumentSource(srcDoc);
 
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer(new StreamSource(MML2OMML_XSL));
-
-        DocumentSource sourceDocSource = new DocumentSource(sourceDoc);
         DocumentResult result = new DocumentResult();
-        transformer.transform(sourceDocSource, result);
+        transformer.transform(srcDocSource, result);
 
         Document transformedDoc = result.getDocument();
         return transformedDoc.asXML();
