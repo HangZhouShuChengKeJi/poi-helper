@@ -7,7 +7,7 @@
     <dependency>
         <groupId>com.orange.opensource</groupId>
         <artifactId>poi-helper</artifactId>
-        <version>${eventframework.version}</version>
+        <version>0.0.4-SNAPSHOT</version>
     </dependency>
 ```
 
@@ -65,5 +65,5 @@ public class App {
 
 # 版权
 
-Poi-helper is under the Apache 2.0 license. See the [License](https://github.com/yyhan/YuGong-Admin/blob/master/LICENSE) file for details.
+Licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html) license.
 
