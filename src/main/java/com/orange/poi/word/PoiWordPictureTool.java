@@ -183,41 +183,50 @@ public class PoiWordPictureTool {
             imgFile = ImageTool.convertToJpeg(imgFile);
         }
 
-        // 长宽比
-        Double originalScale = null;
-        if (lockOriginalScale) {
-            BufferedImage image = ImageTool.readImage(imgFile);
-            if (image == null) {
-                throw new IllegalArgumentException("图片文件不存在： " + imgFile);
-            }
-            final int actualWidth = image.getWidth();
-            final int actualHeight = image.getHeight();
-            originalScale = (double) (1.0f * actualWidth / actualHeight);
+        BufferedImage image = ImageTool.readImage(imgFile);
+        if (image == null) {
+            throw new IllegalArgumentException("图片文件不存在： " + imgFile);
+        }
+        final int actualWidth = image.getWidth();
+        final int actualHeight = image.getHeight();
+
+        int customizeWidth = width;
+        int customizeHeight = height;
+        // 宽高比例
+        Double originalScale = (double) (1.0f * actualWidth / actualHeight);
+
+        if(customizeWidth > 0 && customizeHeight <= 0) {
+            // 当仅指定宽度时，根据原图宽高比例计算高度
+            customizeHeight = (int)(customizeWidth / originalScale);
         }
 
-        if (width > maxWidth || height > maxHeight) {
+        if (!lockOriginalScale) {
+            originalScale = null;
+        }
+
+        if (customizeWidth > maxWidth || customizeHeight > maxHeight) {
 
             // 通过指定宽高，强制缩放图片
-            final double scaleW = (double) width / maxWidth;
-            final double scaleH = (double) height / maxHeight;
+            final double scaleW = (double) customizeWidth / maxWidth;
+            final double scaleH = (double) customizeHeight / maxHeight;
             if (scaleW > scaleH) {
                 // 按照宽度缩放
                 if (originalScale == null) {
-                    return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (height / scaleW));
+                    return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (customizeHeight / scaleW));
                 } else {
                     return addPicture(paragraph, imgFile.getAbsolutePath(), maxWidth, (int) (maxWidth / originalScale));
                 }
             }
             if (originalScale == null) {
-                return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (width / scaleH), maxHeight);
+                return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (customizeWidth / scaleH), maxHeight);
             } else {
                 return addPicture(paragraph, imgFile.getAbsolutePath(), (int) (maxHeight * originalScale), maxHeight);
             }
         }
         if (originalScale == null) {
-            return addPicture(paragraph, imgFile.getAbsolutePath(), width, height);
+            return addPicture(paragraph, imgFile.getAbsolutePath(), customizeWidth, customizeHeight);
         } else {
-            return addPicture(paragraph, imgFile.getAbsolutePath(), width, (int) (width / originalScale));
+            return addPicture(paragraph, imgFile.getAbsolutePath(), customizeWidth, (int) (customizeWidth / originalScale));
         }
     }
 

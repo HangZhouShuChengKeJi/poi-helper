@@ -28,7 +28,7 @@ public class PoiWordPictureToolTest {
 
     @Test
     public void addPicture() throws IOException, URISyntaxException {
-        File img1 = new File(getClass().getResource("/img/1.jpg").toURI());
+        File img1 = new File(getClass().getResource("/img/1.png").toURI());
 
         XWPFDocument doc =  PoiWordTool.createDocForA4();
 
@@ -36,7 +36,9 @@ public class PoiWordPictureToolTest {
                 true, false);
 
         // 设置背景图
-        XWPFPicture picture = PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), img1, 500, 100, false);
+        XWPFPicture picture1 = PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), img1, false);
+        XWPFPicture picture2 = PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), img1, 500, 100, false);
+        XWPFPicture picture3 = PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), img1, 300, -1, false);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
