@@ -55,21 +55,21 @@ public class PoiWordPictureToolTest {
 
         XWPFDocument doc =  PoiWordTool.createDocForA4();
 
-        // 添加图片
-        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), true);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
+//        // 添加图片
+//        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), true);
+//        PoiWordParagraphTool.addBlankLine(doc);
+//        PoiWordParagraphTool.addBlankLine(doc);
+//
+//        // 添加图片
+//        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), 1000, 1000, true);
+//        PoiWordParagraphTool.addBlankLine(doc);
+//        PoiWordParagraphTool.addBlankLine(doc);
+//
+//        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), 500, 500, true);
+//        PoiWordParagraphTool.addBlankLine(doc);
+//        PoiWordParagraphTool.addBlankLine(doc);
 
-        // 添加图片
-        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), 1000, 1000, true);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-
-        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1.jpg").toURI()), 500, 500, true);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-
-        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/1_500.jpg").toURI()), true);
+        PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), new File(getClass().getResource("/img/3_1.jpg").toURI()), true);
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
 

@@ -1,28 +1,27 @@
 package com.orange.poi.util;
 
 import com.orange.poi.PoiUnitTool;
-import com.sun.imageio.plugins.png.PNGImageReader;
+import com.sun.imageio.plugins.jpeg.JPEG;
+import com.sun.imageio.plugins.jpeg.JPEGImageReader;
+import com.sun.imageio.plugins.jpeg.JPEGMetadata;
 import com.sun.imageio.plugins.png.PNGMetadata;
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.opencv.opencv_core.Mat;
+import org.w3c.dom.Node;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Iterator;
-
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imencode;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 
 /**
  * 图片处理工具
@@ -48,7 +47,7 @@ public class ImageTool {
     /**
      * 水平和垂直方向的像素密度单位：点数/厘米
      */
-    public static final byte UJPEG_NIT_OF_DENSITIES_CM   = 0x02;
+    public static final byte JPEG_NIT_OF_DENSITIES_CM    = 0x02;
 
     public static final byte DPI_120 = 0x78;
     public static final byte DPI_96  = 0x60;
@@ -76,68 +75,8 @@ public class ImageTool {
         return ImageIO.read(inputStream);
     }
 
-    public static boolean isJpeg(BytePointer bytePointer) {
-        return bytePointer.get(0) == JPEG_MAGIC_CODE_0 && bytePointer.get(1) == JPEG_MAGIC_CODE_1;
-    }
-
     /**
-     * 是否指定了正确的像素密度单位（仅适用于 jpeg）：
-     * <ul>
-     * <li>密度单位：点数/英寸</li>
-     * <li>水平和垂直方向的像素密度：120</li>
-     * </ul>
-     */
-    public static boolean isRightUnitOfDensities(BytePointer bytePointer) {
-        return bytePointer.get(13) == JPEG_UNIT_OF_DENSITIES_INCH
-                && bytePointer.get(14) == 0x00 && bytePointer.get(15) == DPI_120
-                && bytePointer.get(16) == 0x00 && bytePointer.get(17) == DPI_120;
-    }
-
-    /**
-     * 重置像素密度
-     */
-    public static void resetDensity(BytePointer bytePointer) {
-        // 设置水平和垂直方向密度单位：1 点数/英寸
-        bytePointer.put(13, JPEG_UNIT_OF_DENSITIES_INCH);
-        // 设置水平方向像素密度：120
-        bytePointer.put(14, (byte) 0);
-        bytePointer.put(15, DPI_96);
-        // 设置垂直方向像素密度：120
-        bytePointer.put(16, (byte) 0);
-        bytePointer.put(17, DPI_96);
-    }
-
-    /**
-     * 图片转换为 jpeg
-     */
-    public static File convertToJpeg(File imgFile) throws IOException {
-        Mat srcMat = imread(imgFile.getAbsolutePath());
-
-        BytePointer srcBytePointer = srcMat.data();
-        if (isJpeg(srcBytePointer)) {
-            if (isRightUnitOfDensities(srcBytePointer)) {
-                // 原样返回
-                return imgFile;
-            }
-        } else {
-            srcBytePointer = new BytePointer();
-            // 转换为 jpg
-            imencode(".jpg", srcMat, srcBytePointer);
-        }
-
-        // 重置像素密度信息
-        resetDensity(srcBytePointer);
-
-        // 生成新的图片文件
-        File dstImgFile = TempFileUtil.createTempFile("jpg");
-        try (OutputStream outputStream = new FileOutputStream(dstImgFile)) {
-            outputStream.write(srcBytePointer.getStringBytes());
-        }
-        return dstImgFile;
-    }
-
-    /**
-     * 重置 png 图片的 pHYs 信息，以修复 wps 在 win10 下打印图片缺失的 bug
+     * 重置图片的像素密度信息（默认重置为 96），以修复 wps 在 win10 下打印图片缺失的 bug
      *
      * @param imageFile 源文件
      *
@@ -145,7 +84,7 @@ public class ImageTool {
      *
      * @throws IOException
      */
-    public static File resetPhysOfPNG(File imageFile) throws IOException {
+    public static File resetDensity(File imageFile) throws IOException {
         ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile);
         if (imageInputStream == null) {
             return null;
@@ -155,10 +94,31 @@ public class ImageTool {
         if (reader == null) {
             return null;
         }
-        if (!(reader instanceof PNGImageReader)) {
+        if (!(reader instanceof JPEGImageReader)) {
             return null;
         }
         reader.setInput(imageInputStream, true, false);
+
+        IIOMetadata metadata = reader.getImageMetadata(0);
+        if (metadata instanceof JPEGMetadata) {
+            JPEGMetadata jpegMetadata = (JPEGMetadata) metadata;
+            Integer resUnits = getResUnits(jpegMetadata);
+            if (resUnits != null && resUnits != 0) {
+                // 已指定了像素密度时，不再继续处理
+                return null;
+            }
+            resetDensity(jpegMetadata);
+        } else if (metadata instanceof PNGMetadata) {
+            PNGMetadata pngMetadata = (PNGMetadata) metadata;
+            if (pngMetadata.pHYs_unitSpecifier != 0) {
+                // 已指定了像素密度时，不再继续处理
+                return null;
+            }
+            resetDensity(pngMetadata);
+        } else {
+            throw new IllegalArgumentException("不支持的图片格式");
+        }
+
         BufferedImage bufferedImage;
         try {
             bufferedImage = reader.read(0, reader.getDefaultReadParam());
@@ -167,18 +127,10 @@ public class ImageTool {
             imageInputStream.close();
         }
 
-        PNGMetadata metadata = (PNGMetadata) reader.getImageMetadata(0);
-        if (metadata.pHYs_unitSpecifier != 1) {
-            metadata.pHYs_pixelsPerUnitXAxis = PNG_pHYs_pixelsPerUnit;
-            metadata.pHYs_pixelsPerUnitYAxis = PNG_pHYs_pixelsPerUnit;
-            metadata.pHYs_unitSpecifier = 1;
-            metadata.pHYs_present = true;
-        }
-
         ImageOutputStream imageOutputStream = null;
         ImageWriter imageWriter = null;
         try {
-            File dstImgFile = TempFileUtil.createTempFile("png");
+            File dstImgFile = TempFileUtil.createTempFile("jpg");
 
             imageOutputStream = ImageIO.createImageOutputStream(dstImgFile);
 
@@ -197,12 +149,152 @@ public class ImageTool {
         }
     }
 
+    private static void resetDensity(JPEGMetadata metadata) throws IIOInvalidTreeException {
+        final IIOMetadataNode newRootNode = new IIOMetadataNode(JPEG.nativeImageMetadataFormatName);
+
+        // 方法一
+        final IIOMetadataNode mergeJFIFsubNode = new IIOMetadataNode("mergeJFIFsubNode");
+        IIOMetadataNode jfifNode = new IIOMetadataNode("jfif");
+        jfifNode.setAttribute("majorVersion", null);
+        jfifNode.setAttribute("minorVersion", null);
+        jfifNode.setAttribute("thumbWidth", null);
+        jfifNode.setAttribute("thumbHeight", null);
+
+        // 重置像素密度单位
+        jfifNode.setAttribute("resUnits", "1");
+        jfifNode.setAttribute("Xdensity", "96");
+        jfifNode.setAttribute("Ydensity", "96");
+        mergeJFIFsubNode.appendChild(jfifNode);
+
+        newRootNode.appendChild(mergeJFIFsubNode);
+        newRootNode.appendChild(new IIOMetadataNode("mergeSequenceSubNode"));
+        metadata.mergeTree(JPEG.nativeImageMetadataFormatName, newRootNode);
+
+        // 方法二
+//        final IIOMetadataNode dimensionNode = new IIOMetadataNode("Dimension");
+//        final IIOMetadataNode horizontalPixelSizeNode = new IIOMetadataNode("HorizontalPixelSize");
+//        horizontalPixelSizeNode.setAttribute("value", String.valueOf(25.4f / 96));
+//        final IIOMetadataNode verticalPixelSizeNode = new IIOMetadataNode("VerticalPixelSize");
+//        verticalPixelSizeNode.setAttribute("value", String.valueOf(25.4f / 96));
+//        dimensionNode.appendChild(horizontalPixelSizeNode);
+//        dimensionNode.appendChild(verticalPixelSizeNode);
+//        newRootNode.appendChild(dimensionNode);
+//        metadata.mergeTree(IIOMetadataFormatImpl.standardMetadataFormatName, newRootNode);
+    }
+
+    private static void resetDensity(PNGMetadata metadata) throws IIOInvalidTreeException {
+        metadata.pHYs_pixelsPerUnitXAxis = PNG_pHYs_pixelsPerUnit;
+        metadata.pHYs_pixelsPerUnitYAxis = PNG_pHYs_pixelsPerUnit;
+        metadata.pHYs_unitSpecifier = 1;
+        metadata.pHYs_present = true;
+    }
+
+    /**
+     * 获取 jpg 图片的像素密度类型
+     *
+     * @param metadata
+     *
+     * @return
+     */
+    private static Integer getResUnits(JPEGMetadata metadata) {
+        String value = getJfifAttr(metadata, "resUnits");
+        if (value == null) {
+            return null;
+        }
+        return Integer.parseInt(value);
+    }
+
+    /**
+     * 获取 jpg 图片的像素密度类型
+     *
+     * @param metadata
+     *
+     * @return
+     */
+    private static String getJfifAttr(JPEGMetadata metadata, String attrName) {
+        Node metadataNode = metadata.getAsTree(JPEG.nativeImageMetadataFormatName);
+
+        if (metadataNode != null) {
+            Node child = metadataNode.getFirstChild();
+            while (child != null) {
+                if (child.getNodeName().equals("JPEGvariety")) {
+                    Node subChild = child.getFirstChild();
+                    while (subChild != null) {
+                        if ("app0JFIF".equals(subChild.getNodeName())) {
+                            Node valueNode = subChild.getAttributes().getNamedItem(attrName);
+                            if (valueNode != null) {
+                                return valueNode.getNodeValue();
+                            }
+                            break;
+                        }
+                        subChild = subChild.getNextSibling();
+                    }
+                    break;
+                }
+                child = child.getNextSibling();
+            }
+        }
+        return null;
+    }
+
     private static ImageReader getImageReader(ImageInputStream stream) {
         Iterator iter = ImageIO.getImageReaders(stream);
         if (!iter.hasNext()) {
             return null;
         }
         return (ImageReader) iter.next();
+    }
+
+    /**
+     * 获取像素密度
+     *
+     * @param imageFile 源文件
+     *
+     * @return 像素密度
+     *
+     * @throws IOException
+     */
+    public static Integer getDensity(File imageFile) throws IOException {
+        ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile);
+        if (imageInputStream == null) {
+            return null;
+        }
+
+        ImageReader reader = getImageReader(imageInputStream);
+        if (reader == null) {
+            return null;
+        }
+        if (!(reader instanceof JPEGImageReader)) {
+            return null;
+        }
+        reader.setInput(imageInputStream, true, false);
+
+        IIOMetadata metadata = reader.getImageMetadata(0);
+        if (metadata instanceof JPEGMetadata) {
+            JPEGMetadata jpegMetadata = (JPEGMetadata) metadata;
+            Integer resUnits = getResUnits(jpegMetadata);
+            if (resUnits == null) {
+                return null;
+            }
+            if (resUnits == 1) {
+                // 暂时只支持 resUnits == 1 等情况
+                String value = getJfifAttr(jpegMetadata, "Xdensity");
+                if (value == null) {
+                    return null;
+                }
+                return Integer.parseInt(value);
+            }
+            return null;
+        } else if (metadata instanceof PNGMetadata) {
+            PNGMetadata pngMetadata = (PNGMetadata) metadata;
+            if (pngMetadata.pHYs_unitSpecifier == 1) {
+                // 暂时只支持 pHYs_unitSpecifier == 1 等情况
+                return pngMetadata.pHYs_pixelsPerUnitXAxis;
+            }
+            return null;
+        } else {
+            throw new IllegalArgumentException("不支持的图片格式");
+        }
     }
 
 }

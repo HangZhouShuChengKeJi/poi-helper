@@ -179,10 +179,6 @@ public class PoiWordPictureTool {
      * @throws IOException
      */
     public static XWPFPicture addPictureWithResize(XWPFParagraph paragraph, File imgFile, final int width, final int height, final int maxWidth, final int maxHeight, boolean redrawOnOverflow, boolean lockOriginalScale) throws IOException {
-        if (redrawOnOverflow) {
-            imgFile = ImageTool.convertToJpeg(imgFile);
-        }
-
         BufferedImage image = ImageTool.readImage(imgFile);
         if (image == null) {
             throw new IllegalArgumentException("图片文件不存在： " + imgFile);
@@ -195,9 +191,9 @@ public class PoiWordPictureTool {
         // 宽高比例
         Double originalScale = (double) (1.0f * actualWidth / actualHeight);
 
-        if(customizeWidth > 0 && customizeHeight <= 0) {
+        if (customizeWidth > 0 && customizeHeight <= 0) {
             // 当仅指定宽度时，根据原图宽高比例计算高度
-            customizeHeight = (int)(customizeWidth / originalScale);
+            customizeHeight = (int) (customizeWidth / originalScale);
         }
 
         if (!lockOriginalScale) {
@@ -295,17 +291,30 @@ public class PoiWordPictureTool {
         XWPFPicture picture = null;
 
         Integer pictureType = getPictureType(imgFile, imgFile.getAbsolutePath());
-        try (InputStream is = FileUtil.readFile(imgFile)) {
-            File tempFile = null;
-            if (XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
-                tempFile = ImageTool.resetPhysOfPNG(imgFile);
-            }
-            if (tempFile != null) {
-                try (InputStream tempInputStream = FileUtil.readFile(tempFile)) {
-                    picture = paragraphRun.addPicture(tempInputStream, pictureType, "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+        try {
+            int width_emu = Units.pixelToEMU(width);
+            int height_emu = Units.pixelToEMU(height);
+            if (XWPFDocument.PICTURE_TYPE_JPEG == pictureType || XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
+                File tempFile = ImageTool.resetDensity(imgFile);
+                if (tempFile == null) {
+                    Integer density = ImageTool.getDensity(imgFile);
+                    if (density != null && density == 150) {
+                        // 像素密度为 150 时，需要将图片缩放
+                        width_emu = (int) (width_emu * (96.0f / 150));
+                        height_emu = (int) (height_emu * (96.0f / 150));
+                    }
+                    try (InputStream tempInputStream = FileUtil.readFile(imgFile)) {
+                        picture = paragraphRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                    }
+                } else {
+                    try (InputStream tempInputStream = FileUtil.readFile(tempFile)) {
+                        picture = paragraphRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                    }
                 }
             } else {
-                picture = paragraphRun.addPicture(is, pictureType, "", Units.pixelToEMU(width), Units.pixelToEMU(height));
+                try (InputStream tempInputStream = FileUtil.readFile(imgFile)) {
+                    picture = paragraphRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                }
             }
             picture.getCTPicture().getSpPr().addNewNoFill();
             picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
