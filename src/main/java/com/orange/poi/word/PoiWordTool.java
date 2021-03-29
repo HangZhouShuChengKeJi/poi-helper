@@ -38,11 +38,11 @@ public class PoiWordTool {
     /**
      * A4 纸页边距，单位：毫米
      */
-    public static final int A4_MARGIN = 15;
+    public static final int A4_MARGIN = 12;
     /**
      * B5 纸页边距，单位：毫米
      */
-    public static final int B5_MARGIN = 15;
+    public static final int B5_MARGIN = 12;
 
 
     /**
