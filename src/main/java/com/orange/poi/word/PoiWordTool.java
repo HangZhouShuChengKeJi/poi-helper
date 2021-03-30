@@ -326,7 +326,7 @@ public class PoiWordTool {
      * @param color        文字颜色
      */
     public static CTStyles setDefaultStyle(XWPFDocument doc, String defaultFont, String eastAsiaFont, Integer fontSize, String color) {
-        StylesDocument stylesDoc = StylesDocument.Factory.newInstance();
+        StylesDocument stylesDoc = (StylesDocument) StylesDocument.Factory.newInstance();
         CTStyles ctStyles = stylesDoc.addNewStyles();
         CTDocDefaults docDefaults = ctStyles.addNewDocDefaults();
 

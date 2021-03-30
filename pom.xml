@@ -21,8 +21,7 @@
         <!-- 指定源代码的编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <poi.version>4.1.0</poi.version>
-
+        <poi.version>4.1.2</poi.version>
     </properties>
 
     <dependencies>
@@ -41,6 +40,17 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
             <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>10.3</version>
         </dependency>
 
         <dependency>
