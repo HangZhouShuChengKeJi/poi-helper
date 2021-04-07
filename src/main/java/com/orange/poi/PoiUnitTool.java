@@ -114,4 +114,15 @@ public class PoiUnitTool {
         return Units.pixelToPoints(pixel);
     }
 
+    /**
+     * emu 转换为 像素
+     *
+     * @param emu emu
+     *
+     * @return 像素
+     */
+    public static int emuToPixel(long emu) {
+        return pointToPixel(Units.toPoints(emu));
+    }
+
 }

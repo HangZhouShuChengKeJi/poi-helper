@@ -1,5 +1,6 @@
 package com.orange.poi.word;
 
+import com.orange.poi.util.OfficeMathMLUtil;
 import com.orange.poi.util.TempFileUtil;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -79,5 +80,18 @@ public class PoiWordMathToolTest {
         FileOutputStream out = new FileOutputStream(wordFile);
         doc.write(out);
         out.close();
+    }
+
+    @Test
+    public void convertMmlToOmml() throws TransformerException, DocumentException {
+
+        String mathml = "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n  <mfrac>\n    <mn>1</mn>\n    <mn>2</mn>\n  </mfrac>\n</math>";
+        String oMathML = OfficeMathMLUtil.getInstance().convertMmlToOmml(mathml);
+        System.out.println(oMathML);
+    }
+
+    @Test
+    public void convertOmmlToMml() {
+
     }
 }

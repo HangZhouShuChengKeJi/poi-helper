@@ -7,9 +7,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.apache.xmlbeans.SchemaType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.impl.CTDecimalNumberImpl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -488,7 +486,7 @@ public class PoiWordTableTool {
      * 获取表格中设置的单元格各个方向的边距（内部方法）
      *
      * @param table 表格
-     * @param type      类型：top：上；right：右；bottom：下；left：左
+     * @param type  类型：top：上；right：右；bottom：下；left：左
      *
      * @return 左边距大小，单位：dxa
      */
@@ -913,6 +911,24 @@ public class PoiWordTableTool {
     }
 
     /**
+     * 设置单元格竖跨的方式
+     *
+     * @param cell 单元格
+     *
+     * @return 竖跨的方式
+     */
+    public static STMerge.Enum getVMerge(XWPFTableCell cell) {
+        CTTc ctTc = cell.getCTTc();
+        if (ctTc.isSetTcPr()) {
+            CTTcPr tcPr = ctTc.getTcPr();
+            if (tcPr.isSetVMerge()) {
+                return tcPr.getVMerge().getVal();
+            }
+        }
+        return null;
+    }
+
+    /**
      * 设置单元格对齐方式
      *
      * @param cell            单元格
@@ -1184,7 +1200,9 @@ public class PoiWordTableTool {
 
     /**
      * 获取单元格内容宽度（总宽度减去左右边距）
+     *
      * @param tableCell 单元格
+     *
      * @return
      */
     public static Long getTableCellContentWidth(XWPFTableCell tableCell) {

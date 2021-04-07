@@ -22,13 +22,17 @@ public class OfficeMathMLUtil {
 
 
     private TransformerFactory transformerFactory;
-    private Transformer transformer;
+    private Transformer        mml2ommlTransformer;
+    private Transformer        omml2mmlTransformer;
 
     private OfficeMathMLUtil() throws TransformerConfigurationException {
         transformerFactory = TransformerFactory.newInstance();
 
-        StreamSource streamSource = new StreamSource(OfficeMathMLUtil.class.getClassLoader().getResourceAsStream("MML2OMML.XSL"));
-        transformer = transformerFactory.newTransformer(streamSource);
+        StreamSource streamSource1 = new StreamSource(OfficeMathMLUtil.class.getClassLoader().getResourceAsStream("MML2OMML.XSL"));
+        mml2ommlTransformer = transformerFactory.newTransformer(streamSource1);
+
+        StreamSource streamSource2 = new StreamSource(OfficeMathMLUtil.class.getClassLoader().getResourceAsStream("OMML2MML.XSL"));
+        omml2mmlTransformer = transformerFactory.newTransformer(streamSource2);
     }
 
     private static class SingleInstanceHolder {
@@ -63,7 +67,30 @@ public class OfficeMathMLUtil {
         DocumentSource srcDocSource = new DocumentSource(srcDoc);
 
         DocumentResult result = new DocumentResult();
-        transformer.transform(srcDocSource, result);
+        mml2ommlTransformer.transform(srcDocSource, result);
+
+        Document transformedDoc = result.getDocument();
+        return transformedDoc.asXML();
+    }
+
+    /**
+     * Office MathML 转换为 MathML
+     *
+     * @param omml Office MathML
+     *
+     * @return Office MathML
+     *
+     * @throws DocumentException
+     * @throws TransformerException
+     */
+    public String convertOmmlToMml(String omml) throws DocumentException, TransformerException {
+
+        Document srcDoc = DocumentHelper.parseText(omml);
+
+        DocumentSource srcDocSource = new DocumentSource(srcDoc);
+
+        DocumentResult result = new DocumentResult();
+        omml2mmlTransformer.transform(srcDocSource, result);
 
         Document transformedDoc = result.getDocument();
         return transformedDoc.asXML();
