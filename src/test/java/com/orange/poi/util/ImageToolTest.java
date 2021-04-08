@@ -15,6 +15,6 @@ public class ImageToolTest {
     @Test
     public void resetDensityTest() throws URISyntaxException, IOException {
         File img = new File(getClass().getResource("/img/9.jpg").toURI());
-        ImageTool.resetDensity(img);
+        File file = ImageTool.resetDensity(img);
     }
 }

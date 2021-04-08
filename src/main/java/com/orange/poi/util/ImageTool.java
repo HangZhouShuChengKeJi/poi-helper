@@ -142,7 +142,7 @@ public class ImageTool {
             if (writeParam instanceof JPEGImageWriteParam) {
                 ((JPEGImageWriteParam) writeParam).setOptimizeHuffmanTables(true);
             }
-            imageWriter.write(null, new IIOImage(bufferedImage, Collections.emptyList(), metadata), writeParam);
+            imageWriter.write(metadata, new IIOImage(bufferedImage, Collections.emptyList(), metadata), writeParam);
 
             return dstImgFile;
         } finally {
