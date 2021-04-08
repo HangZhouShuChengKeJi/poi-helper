@@ -10,10 +10,12 @@ import org.w3c.dom.Node;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
@@ -136,7 +138,11 @@ public class ImageTool {
 
             imageWriter = ImageIO.getImageWriter(reader);
             imageWriter.setOutput(imageOutputStream);
-            imageWriter.write(new IIOImage(bufferedImage, Collections.emptyList(), metadata));
+            ImageWriteParam writeParam = imageWriter.getDefaultWriteParam();
+            if (writeParam instanceof JPEGImageWriteParam) {
+                ((JPEGImageWriteParam) writeParam).setOptimizeHuffmanTables(true);
+            }
+            imageWriter.write(null, new IIOImage(bufferedImage, Collections.emptyList(), metadata), writeParam);
 
             return dstImgFile;
         } finally {
