@@ -474,10 +474,10 @@ public class PoiWordParagraphTool {
 
             if (ppr.isSetSnapToGrid()) {
                 CTOnOff ctOnOff = ppr.getSnapToGrid();
-                ctOnOff.setVal(STOnOff.X_1);
+                ctOnOff.setVal(true);
             } else {
                 CTOnOff ctOnOff = ppr.addNewSnapToGrid();
-                ctOnOff.setVal(STOnOff.X_1);
+                ctOnOff.setVal(true);
             }
         } else {
 
@@ -485,10 +485,10 @@ public class PoiWordParagraphTool {
 
             if (ppr.isSetSnapToGrid()) {
                 CTOnOff ctOnOff = ppr.getSnapToGrid();
-                ctOnOff.setVal(STOnOff.X_0);
+                ctOnOff.setVal(false);
             } else {
                 CTOnOff ctOnOff = ppr.addNewSnapToGrid();
-                ctOnOff.setVal(STOnOff.X_0);
+                ctOnOff.setVal(false);
             }
         }
     }
@@ -524,8 +524,9 @@ public class PoiWordParagraphTool {
         spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(before)));
         spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(after)));
         // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
-        spacing.setBeforeLines(BigInteger.valueOf((long) ((double) spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
-        spacing.setAfterLines(BigInteger.valueOf((long) ((double) spacing.getBefore().intValue() * 100 / LINE_HEIGHT_DXA)));
+        int spaceBefore = ((BigInteger) spacing.getBefore()).intValue();
+        spacing.setBeforeLines(BigInteger.valueOf(spaceBefore * 100 / LINE_HEIGHT_DXA));
+        spacing.setAfterLines(BigInteger.valueOf(spaceBefore * 100 / LINE_HEIGHT_DXA));
     }
 
     /**

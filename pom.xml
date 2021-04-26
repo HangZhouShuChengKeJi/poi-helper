@@ -6,7 +6,7 @@
 
     <groupId>com.orange.opensource</groupId>
     <artifactId>poi-helper</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <description>apache poi 辅助工具</description>
@@ -21,36 +21,55 @@
         <!-- 指定源代码的编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <poi.version>4.1.2</poi.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
+            <version>5.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi-ooxml-lite</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.rototor.pdfbox</groupId>
+                    <artifactId>graphics2d</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.virtuald</groupId>
+                    <artifactId>curvesapi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-full</artifactId>
+            <version>5.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
             <version>1.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>Saxon-HE</artifactId>
-            <version>10.3</version>
         </dependency>
 
         <dependency>

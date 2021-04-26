@@ -39,7 +39,8 @@ public class PoiWordParagraphToolTest {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir"));
+        File outputDir = new File("output");
+        System.setProperty("java.io.tmpdir", outputDir.getAbsolutePath());
     }
 
     @After
@@ -99,7 +100,7 @@ public class PoiWordParagraphToolTest {
 //        PoiWordParagraphTool.addSuperscript(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
 
 
-        File picFileIS = new File(getClass().getResource("/img/1.jpg").toURI());
+        File picFileIS = new File(getClass().getResource("/img/1.png").toURI());
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
         ;

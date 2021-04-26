@@ -422,14 +422,26 @@ public class PoiWordTableTool {
         if (xAlign == null) {
             ctTblPPr.setTblpX(BigInteger.valueOf(leftOffset));
         } else {
-            ctTblPPr.setTblpXSpec(xAlign);
+            if (xAlign == STXAlign.CENTER) {
+                ctTblPPr.setTblpXSpec(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign.CENTER);
+            } else if (xAlign == STXAlign.LEFT) {
+                ctTblPPr.setTblpXSpec(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign.LEFT);
+            } else if (xAlign == STXAlign.RIGHT) {
+                ctTblPPr.setTblpXSpec(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign.RIGHT);
+            }
         }
 
         ctTblPPr.setVertAnchor(vertAnchor);
         if (yAlign == null) {
             ctTblPPr.setTblpY(BigInteger.valueOf(topOffset));
         } else {
-            ctTblPPr.setTblpYSpec(yAlign);
+            if (yAlign == STYAlign.CENTER) {
+                ctTblPPr.setTblpY(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign.CENTER);
+            } else if (yAlign == STYAlign.TOP) {
+                ctTblPPr.setTblpY(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign.TOP);
+            } else if (yAlign == STYAlign.BOTTOM) {
+                ctTblPPr.setTblpY(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign.BOTTOM);
+            }
         }
 
         ctTblPPr.setTopFromText(BigInteger.valueOf(topFromText));
@@ -527,7 +539,7 @@ public class PoiWordTableTool {
             return null;
         }
         BigInteger width;
-        if ((width = ctTblWidth.getW()) == null) {
+        if ((width = (BigInteger) ctTblWidth.getW()) == null) {
             // 未设置宽度时，返回 null
             return null;
         }
@@ -577,30 +589,6 @@ public class PoiWordTableTool {
         ctHeight.setVal(BigInteger.valueOf(PoiUnitTool.pixelToDXA(pixel)));
     }
 
-    /**
-     * 获取单元格的第一个段落元素
-     *
-     * @param table   表格 {@link XWPFTable }
-     * @param rowPos  行号（从 0 开始）
-     * @param cellPos 列号（从 0 开始）
-     */
-    public static XWPFParagraph getTableCellParagraph(XWPFTable table, int rowPos, int cellPos) {
-        XWPFTableCell tableCell = getTableCell(table, rowPos, cellPos);
-        return getTableCellParagraph(tableCell);
-    }
-
-    /**
-     * 获取单元格的第一个段落元素
-     *
-     * @param tableCell 单元格
-     */
-    public static XWPFParagraph getTableCellParagraph(XWPFTableCell tableCell) {
-        List<XWPFParagraph> paragraphs = tableCell.getParagraphs();
-        if (paragraphs.size() == 0) {
-            return tableCell.addParagraph();
-        }
-        return paragraphs.get(0);
-    }
 
     /**
      * 获取单元格
@@ -807,7 +795,7 @@ public class PoiWordTableTool {
                                         String fontFamily, Integer fontSize, String color,
                                         boolean bold, boolean underline,
                                         STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
-        XWPFParagraph paragraph = getTableCellParagraph(tableCell);
+        XWPFParagraph paragraph = getFirstParagraph(tableCell);
         PoiWordParagraphTool.addTxt(paragraph, text, fontFamily, fontSize, color, bold, underline);
         setTableCellAlign(tableCell, horizontalAlign, verticalAlign);
     }
@@ -1191,7 +1179,7 @@ public class PoiWordTableTool {
             return null;
         }
         BigInteger width;
-        if ((width = ctTblWidth.getW()) == null) {
+        if ((width = (BigInteger) ctTblWidth.getW()) == null) {
             // 未设置宽度时，返回 null
             return null;
         }
@@ -1220,5 +1208,63 @@ public class PoiWordTableTool {
             width -= 20;
         }
         return width;
+    }
+
+    /**
+     * 获取单元格中的第一个段落（如果为 null，会创建一个段落）
+     *
+     * @param tableCell 单元格
+     *
+     * @return 第一个段落
+     */
+    public static XWPFParagraph getFirstParagraph(XWPFTableCell tableCell) {
+        XWPFParagraph paragraph = tableCell.getParagraphArray(0);
+        if (paragraph == null) {
+            paragraph = tableCell.addParagraph();
+        }
+        return paragraph;
+    }
+
+    /**
+     * 获取单元格的第一个段落元素（如果为 null，会创建一个段落）
+     *
+     * @param table   表格 {@link XWPFTable }
+     * @param rowPos  行号（从 0 开始）
+     * @param cellPos 列号（从 0 开始）
+     *
+     * @return 第一个段落
+     */
+    public static XWPFParagraph getFirstParagraph(XWPFTable table, int rowPos, int cellPos) {
+        XWPFTableCell tableCell = getTableCell(table, rowPos, cellPos);
+        return getFirstParagraph(tableCell);
+    }
+
+    /**
+     * 获取单元格的最后一个段落元素（如果为 null，会创建一个段落）
+     *
+     * @param tableCell 单元格
+     *
+     * @return 最后一个段落
+     */
+    public static XWPFParagraph getLastParagraph(XWPFTableCell tableCell) {
+        List<XWPFParagraph> paragraphs = tableCell.getParagraphs();
+        if (paragraphs.size() == 0) {
+            return tableCell.addParagraph();
+        }
+        return paragraphs.get(paragraphs.size() - 1);
+    }
+
+    /**
+     * 获取单元格的最后一个段落元素（如果为 null，会创建一个段落）
+     *
+     * @param table   表格 {@link XWPFTable }
+     * @param rowPos  行号（从 0 开始）
+     * @param cellPos 列号（从 0 开始）
+     *
+     * @return 最后一个段落
+     */
+    public static XWPFParagraph getLastParagraph(XWPFTable table, int rowPos, int cellPos) {
+        XWPFTableCell tableCell = getTableCell(table, rowPos, cellPos);
+        return getLastParagraph(tableCell);
     }
 }

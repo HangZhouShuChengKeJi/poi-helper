@@ -28,6 +28,8 @@ public class PoiWordToolTest {
 
     @Before
     public void setUp() throws Exception {
+        File outputDir = new File("output");
+        System.setProperty("java.io.tmpdir", outputDir.getAbsolutePath());
     }
 
     @After
@@ -176,6 +178,11 @@ public class PoiWordToolTest {
         PoiWordTool.setHeaderMargin(doc, PoiUnitTool.centimeterToDXA(0.6000f));
         // 设置页脚的位置
         PoiWordTool.setFooterMargin(doc, PoiUnitTool.centimeterToDXA(0.5000f));
+
+
+        System.out.println(PoiWordTool.getContentWidthOfDxa(doc));
+
+
         XWPFParagraph paragraph;
 
         XWPFHeader header = doc.createHeader(HeaderFooterType.DEFAULT);
@@ -188,6 +195,9 @@ public class PoiWordToolTest {
 
         paragraph = doc.createParagraph();
         PoiWordParagraphTool.addTxt(paragraph, "文档内容", defaultFontFamily, defaultFontSize, defaultColor);
+
+
+
 
         File wordFile = TempFileUtil.createTempFile("docx");
 

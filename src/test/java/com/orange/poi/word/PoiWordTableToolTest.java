@@ -36,8 +36,8 @@ public class PoiWordTableToolTest {
 
     @Before
     public void setUp() throws Exception {
-
-//        System.setProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir") + "\\poiTest");
+        File outputDir = new File("output");
+        System.setProperty("java.io.tmpdir", outputDir.getAbsolutePath());
     }
 
     @After
@@ -75,7 +75,7 @@ public class PoiWordTableToolTest {
 
         // 第三列
         tableCell = tableRowOne.getCell(2);
-        paragraph = tableCell.getParagraphArray(0);
+        paragraph = PoiWordTableTool.getFirstParagraph(tableCell);
 
         PoiWordParagraphTool.addTxt(paragraph, "对齐测试测", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordTableTool.setTableCellAlign(tableCell, STJc.LEFT, STVerticalJc.CENTER);

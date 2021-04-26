@@ -5,6 +5,7 @@ import com.orange.poi.util.TempFileUtil;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -21,6 +22,12 @@ public class PoiWordPictureToolTest {
     private String defaultFontFamily = "宋体";
     private int    defaultFontSize   = 14;
     private String defaultColor      = "000000";
+
+    @Before
+    public void setUp() throws Exception {
+        File outputDir = new File("output");
+        System.setProperty("java.io.tmpdir", outputDir.getAbsolutePath());
+    }
 
     @Test
     public void createPicture() {

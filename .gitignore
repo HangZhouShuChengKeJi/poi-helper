@@ -2,3 +2,6 @@
 .idea
 .settings
 target
+
+# 单元测试输出目录
+output

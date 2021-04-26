@@ -234,7 +234,7 @@ public class PoiWordTool {
      * @return 页面宽度
      */
     public static long getWidthOfDxa(XWPFDocument doc) {
-        return getPageSize(doc).getW().longValue();
+        return ((BigInteger)getPageSize(doc).getW()).longValue();
     }
 
     /**
@@ -245,7 +245,7 @@ public class PoiWordTool {
      * @return 页面宽度
      */
     public static long getHeightOfDxa(XWPFDocument doc) {
-        return getPageSize(doc).getH().longValue();
+        return ((BigInteger)getPageSize(doc).getH()).longValue();
     }
 
     /**
@@ -268,7 +268,19 @@ public class PoiWordTool {
         if (pageMar == null) {
             throw new IllegalStateException("未设置页边距");
         }
-        return pageSize.getW().subtract(pageMar.getLeft()).subtract(pageMar.getRight()).longValue();
+        return ((BigInteger)pageSize.getW()).subtract((BigInteger)pageMar.getLeft()).subtract((BigInteger)pageMar.getRight()).longValue();
+    }
+
+    /**
+     * 获取页面内容宽度，单位：dxa
+     *
+     * @param pageSize {@link CTPageSz}
+     * @param pageMar {@link CTPageMar}
+     *
+     * @return 页面内容宽度
+     */
+    public static long getContentWidthOfDxa(CTPageSz pageSize, CTPageMar pageMar) {
+        return ((BigInteger)pageSize.getW()).subtract((BigInteger)pageMar.getLeft()).subtract((BigInteger)pageMar.getRight()).longValue();
     }
 
     /**
@@ -291,7 +303,20 @@ public class PoiWordTool {
         if (pageMar == null) {
             throw new IllegalStateException("未设置页边距");
         }
-        return pageSize.getH().subtract(pageMar.getTop()).subtract(pageMar.getBottom()).longValue();
+        return ((BigInteger)pageSize.getH()).subtract((BigInteger)pageMar.getTop()).subtract((BigInteger)pageMar.getBottom()).longValue();
+    }
+
+
+    /**
+     * 获取页面内容高度，单位：dxa
+     *
+     * @param pageSize {@link CTPageSz}
+     * @param pageMar {@link CTPageMar}
+     *
+     * @return 页面内容高度
+     */
+    public static long getContentHeightOfDxa(CTPageSz pageSize, CTPageMar pageMar) {
+        return ((BigInteger)pageSize.getH()).subtract((BigInteger)pageMar.getTop()).subtract((BigInteger)pageMar.getBottom()).longValue();
     }
 
     /**
