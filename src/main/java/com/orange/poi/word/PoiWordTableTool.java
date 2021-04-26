@@ -7,6 +7,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.math.BigDecimal;
@@ -422,26 +424,14 @@ public class PoiWordTableTool {
         if (xAlign == null) {
             ctTblPPr.setTblpX(BigInteger.valueOf(leftOffset));
         } else {
-            if (xAlign == STXAlign.CENTER) {
-                ctTblPPr.setTblpXSpec(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign.CENTER);
-            } else if (xAlign == STXAlign.LEFT) {
-                ctTblPPr.setTblpXSpec(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign.LEFT);
-            } else if (xAlign == STXAlign.RIGHT) {
-                ctTblPPr.setTblpXSpec(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXAlign.RIGHT);
-            }
+            ctTblPPr.setTblpXSpec(xAlign);
         }
 
         ctTblPPr.setVertAnchor(vertAnchor);
         if (yAlign == null) {
             ctTblPPr.setTblpY(BigInteger.valueOf(topOffset));
         } else {
-            if (yAlign == STYAlign.CENTER) {
-                ctTblPPr.setTblpY(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign.CENTER);
-            } else if (yAlign == STYAlign.TOP) {
-                ctTblPPr.setTblpY(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign.TOP);
-            } else if (yAlign == STYAlign.BOTTOM) {
-                ctTblPPr.setTblpY(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STYAlign.BOTTOM);
-            }
+            ctTblPPr.setTblpY(yAlign);
         }
 
         ctTblPPr.setTopFromText(BigInteger.valueOf(topFromText));

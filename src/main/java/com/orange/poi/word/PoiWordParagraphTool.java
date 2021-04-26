@@ -21,7 +21,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STRubyAlign;
 
 import java.math.BigInteger;
