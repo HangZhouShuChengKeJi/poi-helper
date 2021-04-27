@@ -157,8 +157,8 @@ public class PoiWordPictureTool {
             throw new IllegalStateException("未设置页边距");
         }
 
-        int contentWidth = (int)PoiWordTool.getContentWidthOfDxa(pageSize, pageMar);
-        int contentHeight = (int)PoiWordTool.getContentHeightOfDxa(pageSize, pageMar);
+        int contentWidth = PoiUnitTool.dxaToPixel((int)PoiWordTool.getContentWidthOfDxa(pageSize, pageMar));
+        int contentHeight = PoiUnitTool.dxaToPixel((int)PoiWordTool.getContentHeightOfDxa(pageSize, pageMar));
         return addPictureWithResize(paragraph, imgFile, width, height, contentWidth, contentHeight, redrawOnOverflow, lockOriginalScale);
     }
 
