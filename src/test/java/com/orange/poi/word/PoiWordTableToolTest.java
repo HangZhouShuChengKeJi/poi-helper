@@ -121,7 +121,17 @@ public class PoiWordTableToolTest {
 
         XWPFDocument doc = PoiWordTool.createDocForA4();
 
-        XWPFTable table = PoiWordTableTool.addTable(doc, 2, 3, true);
+        long contentWidth = PoiWordTool.getContentWidthOfDxa(doc);
+
+        XWPFTable table = PoiWordTableTool.addTable(doc, 1, 1, contentWidth);
+        // 添加空行
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        table = PoiWordTableTool.addTable(doc, 5, 6, contentWidth);
+        // 添加空行
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        table = PoiWordTableTool.addTable(doc, 2, 3, contentWidth);
 
         // 第 1 行
         PoiWordTableTool.setTableCell(table, 0,0, "111", true);

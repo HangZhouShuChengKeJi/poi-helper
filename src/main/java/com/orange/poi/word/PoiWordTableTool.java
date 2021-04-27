@@ -1,6 +1,7 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.xwpf.usermodel.TableWidthType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -296,19 +297,30 @@ public class PoiWordTableTool {
             table.createRow();
         }
 
-        if (cols > 1) {
-            XWPFTableRow tableRowOne = table.getRow(0);
+        BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
 
-            BigDecimal cellWidth = new BigDecimal(tableWidth).divide(new BigDecimal(cols), 3, RoundingMode.FLOOR);
-            while (tableRowOne.getTableCells().size() < cols) {
-                tableRowOne.addNewTableCell();
+        for (int i = 0; i < rows; i++) {
+            XWPFTableRow tableRowOne = table.getRow(i);
+            for (XWPFTableCell tableCell : tableRowOne.getTableCells()) {
+                if (CollectionUtils.isEmpty(tableCell.getParagraphs())) {
+                    // 默认添加一个段落（poi 5.0.0 版本不会自动创建段落，会导致 word 打开报错）
+                    tableCell.addParagraph();
+                }
             }
-
-            if (layoutType == STTblLayoutType.FIXED) {
-                // 固定宽度时，计算每个单元格宽度
+            for (int j = 0, curSize = tableRowOne.getTableCells().size(); j < cols; j++) {
                 XWPFTableCell tableCell;
-                for (int i = 0; i < cols; i++) {
-                    tableCell = tableRowOne.getCell(i);
+                if(j < curSize) {
+                    tableCell = tableRowOne.getCell(j);
+                } else {
+                    tableCell = tableRowOne.addNewTableCell();
+                }
+                if (CollectionUtils.isEmpty(tableCell.getParagraphs())) {
+                    // 默认添加一个段落（poi 5.0.0 版本不会自动创建段落，会导致 word 打开报错）
+                    tableCell.addParagraph();
+                }
+
+                if (layoutType == STTblLayoutType.FIXED) {
+                    // 固定宽度时，设置每个单元格宽度
                     tableCell.setWidth(String.valueOf(cellWidth.intValue()));
                     tableCell.setWidthType(TableWidthType.DXA);
                 }
