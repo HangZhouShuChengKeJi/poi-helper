@@ -84,7 +84,7 @@ public class PoiWordTableToolTest {
         PoiWordPictureTool.setPicturePosition(paragraph,
                 STRelFromH.MARGIN, PoiUnitTool.pixelToPoint(100), null,
                 STRelFromV.MARGIN, PoiUnitTool.pixelToPoint(5), null,
-                true, true);
+                true, true, null);
 
         // 添加空行
         PoiWordParagraphTool.addBlankLine(doc);

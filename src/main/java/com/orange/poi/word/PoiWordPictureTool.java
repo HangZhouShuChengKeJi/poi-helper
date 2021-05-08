@@ -18,10 +18,12 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTEffect
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTPosH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTPosV;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTWrapSquare;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STAlignV;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromV;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STWrapText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
@@ -157,8 +159,8 @@ public class PoiWordPictureTool {
             throw new IllegalStateException("未设置页边距");
         }
 
-        int contentWidth = PoiUnitTool.dxaToPixel((int)PoiWordTool.getContentWidthOfDxa(pageSize, pageMar));
-        int contentHeight = PoiUnitTool.dxaToPixel((int)PoiWordTool.getContentHeightOfDxa(pageSize, pageMar));
+        int contentWidth = PoiUnitTool.dxaToPixel((int) PoiWordTool.getContentWidthOfDxa(pageSize, pageMar));
+        int contentHeight = PoiUnitTool.dxaToPixel((int) PoiWordTool.getContentHeightOfDxa(pageSize, pageMar));
         return addPictureWithResize(paragraph, imgFile, width, height, contentWidth, contentHeight, redrawOnOverflow, lockOriginalScale);
     }
 
@@ -323,6 +325,119 @@ public class PoiWordPictureTool {
         return picture;
     }
 
+
+    /**
+     * 添加图片（只负责基本的绘制操作，不做其他任何处理）
+     *
+     * @param paragraph             {@link XWPFParagraph}
+     * @param imgFile               图片文件
+     * @param width                 图片宽度（单位： 像素）
+     * @param height                图片高度（单位： 像素）
+     * @param positionHRelativeFrom 水平位置参考方式
+     * @param leftOffset            水平偏移（单位： 磅）
+     * @param alignH                水平位置对齐方式。仅当 positionHRelativeFrom 为 STRelFromH.MARGIN 时有用
+     * @param positionVRelativeFrom 垂直位置参考方式
+     * @param topOffset             垂直偏移（单位： 磅）
+     * @param alignV                垂直位置对齐方式。仅当 positionVRelativeFrom 为 STRelFromV.MARGIN 时有用
+     * @param stWrapText            文字环绕方式
+     *
+     * @return {@link XWPFPicture}
+     *
+     * @throws IOException
+     */
+    public static XWPFPicture addPicture(XWPFParagraph paragraph, File imgFile, int width, int height,
+                                         STRelFromH.Enum positionHRelativeFrom, Double leftOffset, STAlignH.Enum alignH,
+                                         STRelFromV.Enum positionVRelativeFrom, Double topOffset, STAlignV.Enum alignV,
+                                         STWrapText.Enum stWrapText) throws IOException {
+        XWPFRun paragraphRun = paragraph.createRun();
+        XWPFPicture picture = null;
+
+        Integer pictureType = getPictureType(imgFile, imgFile.getAbsolutePath());
+        try {
+            int width_emu = Units.pixelToEMU(width);
+            int height_emu = Units.pixelToEMU(height);
+            if (XWPFDocument.PICTURE_TYPE_JPEG == pictureType || XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
+                File tempFile = ImageTool.resetDensity(imgFile);
+                if (tempFile == null) {
+                    Integer density = ImageTool.getDensity(imgFile);
+                    if (density != null && density == 150) {
+                        // 像素密度为 150 时，需要将图片缩放
+                        width_emu = (int) (width_emu * (96.0f / 150));
+                        height_emu = (int) (height_emu * (96.0f / 150));
+                    }
+                    try (InputStream tempInputStream = FileUtil.readFile(imgFile)) {
+                        picture = paragraphRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                    }
+                } else {
+                    try (InputStream tempInputStream = FileUtil.readFile(tempFile)) {
+                        picture = paragraphRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                    }
+                }
+            } else {
+                try (InputStream tempInputStream = FileUtil.readFile(imgFile)) {
+                    picture = paragraphRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                }
+            }
+            picture.getCTPicture().getSpPr().addNewNoFill();
+            picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
+        } catch (InvalidFormatException ignore) {
+        }
+//        setPicturePosition(paragraphRun,
+//                positionHRelativeFrom, leftOffset, alignH,
+//                positionVRelativeFrom, topOffset, alignV,
+//                false, false, stWrapText);
+        return picture;
+    }
+
+
+    /**
+     * 添加图片（只负责基本的绘制操作，不做其他任何处理）
+     *
+     * @param xwpfRun               {@link XWPFRun}
+     * @param imgFile               图片文件
+     * @param width                 图片宽度（单位： 像素）
+     * @param height                图片高度（单位： 像素）
+     *
+     * @return {@link XWPFPicture}
+     *
+     * @throws IOException
+     */
+    public static XWPFPicture addPicture(XWPFRun xwpfRun, File imgFile, int width, int height) throws IOException {
+        XWPFPicture picture = null;
+
+        Integer pictureType = getPictureType(imgFile, imgFile.getAbsolutePath());
+        try {
+            int width_emu = Units.pixelToEMU(width);
+            int height_emu = Units.pixelToEMU(height);
+            if (XWPFDocument.PICTURE_TYPE_JPEG == pictureType || XWPFDocument.PICTURE_TYPE_PNG == pictureType) {
+                File tempFile = ImageTool.resetDensity(imgFile);
+                if (tempFile == null) {
+                    Integer density = ImageTool.getDensity(imgFile);
+                    if (density != null && density == 150) {
+                        // 像素密度为 150 时，需要将图片缩放
+                        width_emu = (int) (width_emu * (96.0f / 150));
+                        height_emu = (int) (height_emu * (96.0f / 150));
+                    }
+                    try (InputStream tempInputStream = FileUtil.readFile(imgFile)) {
+                        picture = xwpfRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                    }
+                } else {
+                    try (InputStream tempInputStream = FileUtil.readFile(tempFile)) {
+                        picture = xwpfRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                    }
+                }
+            } else {
+                try (InputStream tempInputStream = FileUtil.readFile(imgFile)) {
+                    picture = xwpfRun.addPicture(tempInputStream, pictureType, "", width_emu, height_emu);
+                }
+            }
+            picture.getCTPicture().getSpPr().addNewNoFill();
+            picture.getCTPicture().getSpPr().addNewLn().addNewNoFill();
+        } catch (InvalidFormatException ignore) {
+        }
+        return picture;
+    }
+
     /**
      * 设置图片相对页面的定位
      *
@@ -332,7 +447,7 @@ public class PoiWordPictureTool {
      */
     public static void setPicturePositionOfPage(XWPFParagraph paragraph, double leftOffset, double topOffset) {
         setPicturePosition(paragraph, STRelFromH.PAGE, leftOffset, null, STRelFromV.PAGE, topOffset, null,
-                true, false);
+                true, false, null);
     }
 
     /**
@@ -344,7 +459,7 @@ public class PoiWordPictureTool {
      */
     public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, double leftOffset, double topOffset) {
         setPicturePosition(paragraph, STRelFromH.LEFT_MARGIN, leftOffset, null, STRelFromV.TOP_MARGIN, topOffset, null,
-                true, false);
+                true, false, null);
     }
 
     /**
@@ -356,7 +471,7 @@ public class PoiWordPictureTool {
      */
     public static void setPicturePositionOfPageMargin(XWPFParagraph paragraph, STAlignH.Enum alignH, STAlignV.Enum alignV) {
         setPicturePosition(paragraph, STRelFromH.MARGIN, null, alignH,
-                STRelFromV.MARGIN, null, alignV, true, false);
+                STRelFromV.MARGIN, null, alignV, true, false, null);
     }
 
     /**
@@ -368,7 +483,7 @@ public class PoiWordPictureTool {
      */
     public static void setPicturePositionOfParagraph(XWPFParagraph paragraph, double leftOffset, double topOffset, boolean layoutInCell) {
         setPicturePosition(paragraph, STRelFromH.COLUMN, leftOffset, null,
-                STRelFromV.PARAGRAPH, topOffset, null, true, layoutInCell);
+                STRelFromV.PARAGRAPH, topOffset, null, true, layoutInCell, null);
     }
 
     /**
@@ -383,17 +498,46 @@ public class PoiWordPictureTool {
      * @param alignV                垂直位置对齐方式。仅当 positionVRelativeFrom 为 STRelFromV.MARGIN 时有用
      * @param behindDoc             是否置于文字底部
      * @param layoutInCell          是否在单元格内
+     * @param stWrapText            文字环绕方式
      */
     public static void setPicturePosition(XWPFParagraph paragraph,
                                           STRelFromH.Enum positionHRelativeFrom, Double leftOffset, STAlignH.Enum alignH,
                                           STRelFromV.Enum positionVRelativeFrom, Double topOffset, STAlignV.Enum alignV,
-                                          boolean behindDoc, boolean layoutInCell) {
+                                          boolean behindDoc, boolean layoutInCell,
+                                          STWrapText.Enum stWrapText) {
         List<XWPFRun> runList = paragraph.getRuns();
         if (runList == null || runList.size() == 0) {
             return;
         }
 
         XWPFRun paragraphRun = runList.get(runList.size() - 1);
+        setPicturePosition(paragraphRun,
+                positionHRelativeFrom, leftOffset, alignH,
+                positionVRelativeFrom, topOffset, alignV,
+                behindDoc, layoutInCell,
+                stWrapText);
+    }
+
+
+    /**
+     * 设置图片位置
+     *
+     * @param paragraphRun          {@link XWPFRun}
+     * @param positionHRelativeFrom 水平位置参考方式
+     * @param leftOffset            水平偏移（单位： 磅）
+     * @param alignH                水平位置对齐方式。仅当 positionHRelativeFrom 为 STRelFromH.MARGIN 时有用
+     * @param positionVRelativeFrom 垂直位置参考方式
+     * @param topOffset             垂直偏移（单位： 磅）
+     * @param alignV                垂直位置对齐方式。仅当 positionVRelativeFrom 为 STRelFromV.MARGIN 时有用
+     * @param behindDoc             是否置于文字底部
+     * @param layoutInCell          是否在单元格内
+     * @param stWrapText            文字环绕方式
+     */
+    public static void setPicturePosition(XWPFRun paragraphRun,
+                                          STRelFromH.Enum positionHRelativeFrom, Double leftOffset, STAlignH.Enum alignH,
+                                          STRelFromV.Enum positionVRelativeFrom, Double topOffset, STAlignV.Enum alignV,
+                                          boolean behindDoc, boolean layoutInCell,
+                                          STWrapText.Enum stWrapText) {
         CTDrawing drawing = paragraphRun.getCTR().getDrawingArray(0);
         CTAnchor ctAnchor = drawing.addNewAnchor();
 
@@ -403,6 +547,12 @@ public class PoiWordPictureTool {
         // 以下两个属性必须指定，否则使用 Microsoft Word 打开时，会提示文档已损坏
         ctAnchor.setLocked(false);
         ctAnchor.setLayoutInCell(layoutInCell);
+
+        // 设置环绕方式
+        if (stWrapText != null) {
+            CTWrapSquare wrapSquare = ctAnchor.addNewWrapSquare();
+            wrapSquare.setWrapText(stWrapText);
+        }
 
         // 水平位置
         CTPosH posH;
