@@ -564,7 +564,10 @@ public class PoiWordParagraphTool {
      * @param breakType 类型（{@link BreakType}）
      */
     public static void addBreak(XWPFParagraph paragraph, BreakType breakType) {
-        XWPFRun paragraphRun = getXWPFRun(paragraph);
+        XWPFRun paragraphRun = getLastXWPFRun(paragraph);
+        if (paragraphRun == null) {
+            paragraphRun = paragraph.createRun();
+        }
         paragraphRun.addBreak(breakType);
     }
 
@@ -591,49 +594,12 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFRun}
      */
-    private static XWPFRun getLastXWPFRun(XWPFParagraph paragraph) {
+    public static XWPFRun getLastXWPFRun(XWPFParagraph paragraph) {
         XWPFRun paragraphRun = null;
         if (paragraph.getRuns() != null && paragraph.getRuns().size() > 0) {
             paragraphRun = paragraph.getRuns().get(paragraph.getRuns().size() - 1);
         }
         return paragraphRun;
-    }
-
-    /**
-     * @param paragraph {@link XWPFParagraph}
-     *
-     * @return {@link XWPFRun}
-     */
-    public static XWPFRun getXWPFRun(XWPFParagraph paragraph) {
-        XWPFRun paragraphRun = null;
-        List<XWPFRun> runList;
-        if (CollectionUtils.isNotEmpty(runList = paragraph.getRuns())) {
-            paragraphRun = paragraph.getRuns().get(runList.size() - 1);
-        } else {
-            paragraphRun = paragraph.createRun();
-        }
-        return paragraphRun;
-    }
-
-    /**
-     * 获取段落属性
-     *
-     * @param paragraph {@link XWPFParagraph}
-     * @param create    true: 属性不存在时创建，否则不创建
-     *
-     * @return 段落属性，如果没有或者创建失败时返回 null
-     */
-    public static CTRPr getRunProperties(XWPFParagraph paragraph, boolean create) {
-        XWPFRun paragraphRun = getXWPFRun(paragraph);
-        if (paragraphRun == null) {
-            return null;
-        }
-        CTR run = paragraphRun.getCTR();
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : null;
-        if (create && pr == null) {
-            pr = run.addNewRPr();
-        }
-        return pr;
     }
 
     /**
