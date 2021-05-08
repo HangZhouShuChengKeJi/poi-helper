@@ -393,10 +393,10 @@ public class PoiWordPictureTool {
     /**
      * 添加图片（只负责基本的绘制操作，不做其他任何处理）
      *
-     * @param xwpfRun               {@link XWPFRun}
-     * @param imgFile               图片文件
-     * @param width                 图片宽度（单位： 像素）
-     * @param height                图片高度（单位： 像素）
+     * @param xwpfRun {@link XWPFRun}
+     * @param imgFile 图片文件
+     * @param width   图片宽度（单位： 像素）
+     * @param height  图片高度（单位： 像素）
      *
      * @return {@link XWPFPicture}
      *
@@ -516,6 +516,29 @@ public class PoiWordPictureTool {
                 positionVRelativeFrom, topOffset, alignV,
                 behindDoc, layoutInCell,
                 stWrapText);
+    }
+
+    /**
+     * 设置图片位置
+     *
+     * @param paragraphRun          {@link XWPFRun}
+     * @param positionHRelativeFrom 水平位置参考方式
+     * @param leftOffset            水平偏移（单位： 磅）
+     * @param alignH                水平位置对齐方式。仅当 positionHRelativeFrom 为 STRelFromH.MARGIN 时有用
+     * @param positionVRelativeFrom 垂直位置参考方式
+     * @param topOffset             垂直偏移（单位： 磅）
+     * @param alignV                垂直位置对齐方式。仅当 positionVRelativeFrom 为 STRelFromV.MARGIN 时有用
+     * @param behindDoc             是否置于文字底部
+     * @param layoutInCell          是否在单元格内
+     */
+    public static void setPicturePosition(XWPFRun paragraphRun,
+                                          STRelFromH.Enum positionHRelativeFrom, Double leftOffset, STAlignH.Enum alignH,
+                                          STRelFromV.Enum positionVRelativeFrom, Double topOffset, STAlignV.Enum alignV,
+                                          boolean behindDoc, boolean layoutInCell) {
+        setPicturePosition(paragraphRun,
+                positionHRelativeFrom, leftOffset, alignH,
+                positionVRelativeFrom, topOffset, alignV,
+                behindDoc, layoutInCell, null);
     }
 
 
