@@ -12,6 +12,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
@@ -505,6 +506,56 @@ public class PoiWordParagraphTool {
             return paragraph.getCTP().addNewPPr();
         }
         return ppr;
+    }
+
+
+    /**
+     * 设置段落首行缩进
+     *
+     * @param paragraph      段落
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setInt(XWPFParagraph paragraph, double firstLineChars) {
+        setInt(paragraph, firstLineChars, -1, -1);
+    }
+
+
+    /**
+     * 设置段落左右两侧缩进
+     *
+     * @param paragraph  段落
+     * @param leftChars  左侧缩进字符数量（小于等于 0 时，忽略）
+     * @param rightChars 右侧缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setInt(XWPFParagraph paragraph, double leftChars, double rightChars) {
+        setInt(paragraph, -1, leftChars, rightChars);
+    }
+
+    /**
+     * 设置段落缩进
+     *
+     * @param paragraph      段落
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
+     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setInt(XWPFParagraph paragraph, double firstLineChars, double leftChars, double rightChars) {
+        CTPPr ctpPr = getParagraphProperties(paragraph);
+        CTInd ctInd;
+        if (ctpPr.isSetInd()) {
+            ctInd = ctpPr.getInd();
+        } else {
+            ctInd = ctpPr.addNewInd();
+        }
+        if (firstLineChars > 0) {
+            ctInd.setFirstLineChars(BigInteger.valueOf((long) (firstLineChars * 100)));
+        }
+        if (leftChars > 0) {
+            ctInd.setLeftChars(BigInteger.valueOf((long) (leftChars * 100)));
+        }
+        if (rightChars > 0) {
+            ctInd.setRightChars(BigInteger.valueOf((long) (rightChars * 100)));
+        }
     }
 
     /**
