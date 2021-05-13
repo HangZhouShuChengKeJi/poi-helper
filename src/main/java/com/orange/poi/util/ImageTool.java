@@ -78,7 +78,7 @@ public class ImageTool {
     }
 
     /**
-     * 重置图片的像素密度信息（默认重置为 96），以修复 wps 在 win10 下打印图片缺失的 bug
+     * 重置图片的像素密度信息（默认重置为 96，只支持 jpg 和 png 图片），以修复 wps 在 win10 下打印图片缺失的 bug
      *
      * @param imageFile 源文件
      *
@@ -96,11 +96,10 @@ public class ImageTool {
         if (reader == null) {
             return null;
         }
-        if (!(reader instanceof JPEGImageReader)) {
-            return null;
-        }
+
         reader.setInput(imageInputStream, true, false);
 
+        String exName;
         IIOMetadata metadata = reader.getImageMetadata(0);
         if (metadata instanceof JPEGMetadata) {
             JPEGMetadata jpegMetadata = (JPEGMetadata) metadata;
@@ -110,6 +109,7 @@ public class ImageTool {
                 return null;
             }
             resetDensity(jpegMetadata);
+            exName = "jpg";
         } else if (metadata instanceof PNGMetadata) {
             PNGMetadata pngMetadata = (PNGMetadata) metadata;
             if (pngMetadata.pHYs_unitSpecifier != 0) {
@@ -117,6 +117,7 @@ public class ImageTool {
                 return null;
             }
             resetDensity(pngMetadata);
+            exName = "png";
         } else {
             throw new IllegalArgumentException("不支持的图片格式");
         }
@@ -132,16 +133,18 @@ public class ImageTool {
         ImageOutputStream imageOutputStream = null;
         ImageWriter imageWriter = null;
         try {
-            File dstImgFile = TempFileUtil.createTempFile("jpg");
+            File dstImgFile = TempFileUtil.createTempFile(exName);
 
             imageOutputStream = ImageIO.createImageOutputStream(dstImgFile);
 
             imageWriter = ImageIO.getImageWriter(reader);
             imageWriter.setOutput(imageOutputStream);
+
             ImageWriteParam writeParam = imageWriter.getDefaultWriteParam();
             if (writeParam instanceof JPEGImageWriteParam) {
                 ((JPEGImageWriteParam) writeParam).setOptimizeHuffmanTables(true);
             }
+
             imageWriter.write(metadata, new IIOImage(bufferedImage, Collections.emptyList(), metadata), writeParam);
 
             return dstImgFile;
