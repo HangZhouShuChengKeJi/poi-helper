@@ -115,6 +115,38 @@ public class PoiWordTableToolTest {
     }
 
     @Test
+    public void setTableCellWidthOfPercent() throws IOException {
+
+        // 按照百分比设置单元格宽度
+
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+
+        long contentWidth = PoiWordTool.getContentWidthOfDxa(doc);
+
+        XWPFTable table = PoiWordTableTool.addTable(doc, 1, 3, contentWidth);
+
+        // 第 1 行
+        PoiWordTableTool.setTableCell(table, 0,0, "111", false);
+        PoiWordTableTool.setTableCell(table, 0,1, "222", false);
+        PoiWordTableTool.setTableCell(table, 0,2, "333", false);
+
+        PoiWordTableTool.setTableCellWidthOfPercent(PoiWordTableTool.getTableCell(table,0,0), "20%");
+        PoiWordTableTool.setTableCellWidthOfPercent(PoiWordTableTool.getTableCell(table,0,1), "30%");
+        PoiWordTableTool.setTableCellWidthOfPercent(PoiWordTableTool.getTableCell(table,0,2), "50%");
+
+        // 添加空行
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
+    @Test
     public void setTableCell() throws IOException {
 
         // 单元格宽度自适应

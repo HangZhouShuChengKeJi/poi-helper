@@ -309,7 +309,7 @@ public class PoiWordTableTool {
             }
             for (int j = 0, curSize = tableRowOne.getTableCells().size(); j < cols; j++) {
                 XWPFTableCell tableCell;
-                if(j < curSize) {
+                if (j < curSize) {
                     tableCell = tableRowOne.getCell(j);
                 } else {
                     tableCell = tableRowOne.addNewTableCell();
@@ -853,6 +853,17 @@ public class PoiWordTableTool {
     public static void setTableCellWidthOfPoint(XWPFTableCell tableCell, double width) {
         tableCell.setWidth(String.valueOf(PoiUnitTool.pointToDXA(width)));
         tableCell.setWidthType(TableWidthType.DXA);
+    }
+
+    /**
+     * 设置单元格宽度（百分比）
+     *
+     * @param tableCell 单元格
+     * @param percent   百分比（例如： "20%"）
+     */
+    public static void setTableCellWidthOfPercent(XWPFTableCell tableCell, String percent) {
+        tableCell.setWidth(percent);
+        tableCell.setWidthType(TableWidthType.PCT);
     }
 
     /**
