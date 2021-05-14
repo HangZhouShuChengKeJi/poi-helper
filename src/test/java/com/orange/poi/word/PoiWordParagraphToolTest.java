@@ -193,7 +193,50 @@ public class PoiWordParagraphToolTest {
     }
 
     @Test
-    public void setParagraphSpaceOfPound() {
+    public void setParagraphSpaceOfPound() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+        XWPFParagraph paragraph;
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setParagraphSpaceOfPound(paragraph, 10, 100);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 1.5f);
+
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "==== 分割线 ====", defaultFontFamily, defaultFontSize, defaultColor);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 10pt，段后 100pt，1.5 倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setParagraphSpaceOfPound(paragraph, 10, 50);
+        PoiWordParagraphTool.setLineHeightExact(paragraph, 12f);
+
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "==== 分割线 ====", defaultFontFamily, defaultFontSize, defaultColor);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+
     }
 
     @Test
@@ -202,8 +245,15 @@ public class PoiWordParagraphToolTest {
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距，2倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距，2倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距，2倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距，2倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距，2倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 0.5 倍行距，段后 0.5 倍行距，2倍行间距；", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 0.5f, 0.5f);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 2.0f);
+
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段前 1.0 倍行距，段后 1.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
@@ -212,6 +262,10 @@ public class PoiWordParagraphToolTest {
         paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段前 1.5 倍行距，段后 1.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 1.5f, 1.5f);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "段前 2.5 倍行距，段后 2.5 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 2.5f, 2.5f);
 
 
         File wordFile = TempFileUtil.createTempFile("docx");

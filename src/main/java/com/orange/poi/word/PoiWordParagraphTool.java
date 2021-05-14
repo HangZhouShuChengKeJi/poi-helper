@@ -625,12 +625,22 @@ public class PoiWordParagraphTool {
         if ((spacing = ppr.getSpacing()) == null) {
             spacing = ppr.addNewSpacing();
         }
+
+        BigInteger line;
+        if (spacing.isSetLine()) {
+            line = (BigInteger) spacing.getLine();
+        } else {
+            line = BigInteger.valueOf(LINE_HEIGHT_DXA);
+            spacing.setLine(line);
+        }
+
         spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(before)));
         spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(after)));
         // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
-        int spaceBefore = ((BigInteger) spacing.getBefore()).intValue();
-        spacing.setBeforeLines(BigInteger.valueOf(spaceBefore * 100 / LINE_HEIGHT_DXA));
-        spacing.setAfterLines(BigInteger.valueOf(spaceBefore * 100 / LINE_HEIGHT_DXA));
+        BigInteger spaceBefore = (BigInteger) spacing.getBefore();
+        BigInteger spaceAfter = (BigInteger) spacing.getAfter();
+        spacing.setBeforeLines(spaceBefore.divide(line).multiply(BigInteger.valueOf(100)));
+        spacing.setAfterLines(spaceAfter.divide(line).multiply(BigInteger.valueOf(100)));
     }
 
     /**
@@ -646,8 +656,19 @@ public class PoiWordParagraphTool {
         if ((spacing = ppr.getSpacing()) == null) {
             spacing = ppr.addNewSpacing();
         }
-        spacing.setBefore(BigInteger.valueOf((long) (beforeLines * LINE_HEIGHT_DXA)));
-        spacing.setAfter(BigInteger.valueOf((long) (afterLines * LINE_HEIGHT_DXA)));
+
+        BigInteger line;
+        if (spacing.isSetLine()) {
+            line = (BigInteger) spacing.getLine();
+        } else {
+            line = BigInteger.valueOf(LINE_HEIGHT_DXA);
+            spacing.setLine(line);
+        }
+
+        int lineInt = line.intValue();
+
+        spacing.setBefore(BigInteger.valueOf((long) (beforeLines * lineInt)));
+        spacing.setAfter(BigInteger.valueOf((long) (afterLines * lineInt)));
         // 【特别注意】必须同时设置 beforeLines 和 afterLines，行高的基数为 100
         spacing.setBeforeLines(BigInteger.valueOf((long) (beforeLines * 100)));
         spacing.setAfterLines(BigInteger.valueOf((long) (afterLines * 100)));
