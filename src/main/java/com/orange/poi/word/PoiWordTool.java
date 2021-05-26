@@ -180,9 +180,9 @@ public class PoiWordTool {
                                      long marginLeftDxa, long marginRightDxa) {
         CTPageMar pageMar = getPageMar(doc);
         pageMar.setTop(BigInteger.valueOf(marginTopDxa));
-        pageMar.setRight(BigInteger.valueOf(marginBottomDxa));
-        pageMar.setBottom(BigInteger.valueOf(marginLeftDxa));
-        pageMar.setLeft(BigInteger.valueOf(marginRightDxa));
+        pageMar.setBottom(BigInteger.valueOf(marginBottomDxa));
+        pageMar.setLeft(BigInteger.valueOf(marginLeftDxa));
+        pageMar.setRight(BigInteger.valueOf(marginRightDxa));
     }
 
     /**
