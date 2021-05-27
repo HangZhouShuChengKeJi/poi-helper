@@ -25,7 +25,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTParaRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
@@ -44,14 +43,11 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.UUID;
 
-import static com.orange.poi.word.PoiWordTool.LINE_HEIGHT_DXA;
-
 /**
  * 基于 vml 的文本框
  *
  * @author 小天
  * @date 2021/5/18 10:17
- *
  * @see <a href="https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-introduction">VML Introduction</a>
  */
 public class PoiTextBoxTool {
@@ -224,7 +220,25 @@ public class PoiTextBoxTool {
      */
     public static void setText(CTGroup group, String plainTxt,
                                String asciiFont, String eastAsiaFont, Integer fontSize, String color) {
-        setText(group, plainTxt, asciiFont, eastAsiaFont, fontSize, color, false, false, STJc.LEFT);
+        setText(group, plainTxt, asciiFont, eastAsiaFont, fontSize, color, false, false, null);
+    }
+
+    /**
+     * 设置文本框内容
+     *
+     * @param group        {@link CTGroup}
+     * @param plainTxt     文本内容
+     * @param asciiFont    ascii 文本字体
+     * @param eastAsiaFont 东亚文字字体
+     * @param fontSize     字体大小
+     * @param color        文本颜色
+     * @param bold         是否加粗
+     * @param underline    是否下划线
+     */
+    public static void setText(CTGroup group, String plainTxt,
+                               String asciiFont, String eastAsiaFont, Integer fontSize, String color,
+                               boolean bold, boolean underline) {
+        setText(group, plainTxt, asciiFont, eastAsiaFont, fontSize, color, bold, underline, null);
     }
 
     /**
@@ -244,30 +258,8 @@ public class PoiTextBoxTool {
                                String asciiFont, String eastAsiaFont, Integer fontSize, String color,
                                boolean bold, boolean underline,
                                STJc.Enum stJc) {
-        CTShape ctShape = group.getShapeArray(0);
-        CTTextbox ctTextbox;
-        if (ctShape.sizeOfTextboxArray() > 0) {
-            ctTextbox = ctShape.getTextboxArray(0);
-        } else {
-            ctTextbox = ctShape.addNewTextbox();
-        }
+        CTPPr ctpPr = getCTPPr(group);
 
-        CTTxbxContent ctTxbxContent;
-        if ((ctTxbxContent = ctTextbox.getTxbxContent()) == null) {
-            ctTxbxContent = ctTextbox.addNewTxbxContent();
-        }
-
-        CTP ctp;
-        if (ctTxbxContent.sizeOfPArray() > 0) {
-            ctp = ctTxbxContent.getPArray(0);
-        } else {
-            ctp = ctTxbxContent.addNewP();
-        }
-
-        CTPPr ctpPr;
-        if ((ctpPr = ctp.getPPr()) == null) {
-            ctpPr = ctp.addNewPPr();
-        }
         if (stJc != null) {
             // 水平对齐方式
             CTJc ctJc;
@@ -277,28 +269,8 @@ public class PoiTextBoxTool {
             ctJc.setVal(stJc);
         }
 
-        CTSpacing spacing;
-        if ((spacing = ctpPr.getSpacing()) == null) {
-            spacing = ctpPr.addNewSpacing();
-        }
-        BigInteger line;
-        if (spacing.isSetLine()) {
-            line = (BigInteger) spacing.getLine();
-        } else {
-            line = BigInteger.valueOf(LINE_HEIGHT_DXA);
-            spacing.setLine(line);
-        }
-
-        spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(20)));
-        spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(0)));
-        // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
-        BigInteger spaceBefore = (BigInteger) spacing.getBefore();
-        BigInteger spaceAfter = (BigInteger) spacing.getAfter();
-        spacing.setBeforeLines(spaceBefore.divide(line).multiply(BigInteger.valueOf(100)));
-        spacing.setAfterLines(spaceAfter.divide(line).multiply(BigInteger.valueOf(100)));
-
+        CTP ctp = getCTP(group);
         addText(ctp, plainTxt, asciiFont, eastAsiaFont, fontSize, color, bold, underline);
-
     }
 
 
@@ -338,12 +310,33 @@ public class PoiTextBoxTool {
     /**
      * 设置段落间距（以磅为单位）
      *
-     * @param group  {@link CTGroup}
+     * @param group      {@link CTGroup}
      * @param lineHeight 行高（单位：磅）
-     * @param before 段落前间距（单位：磅）
-     * @param after  段落后间距（单位：磅）
+     * @param before     段落前间距（单位：磅）
+     * @param after      段落后间距（单位：磅）
      */
     public static void setParagraphSpaceOfPound(CTGroup group, double lineHeight, double before, double after) {
+        CTPPr ctpPr = getCTPPr(group);
+
+        CTSpacing spacing;
+        if ((spacing = ctpPr.getSpacing()) == null) {
+            spacing = ctpPr.addNewSpacing();
+        }
+        BigInteger line = BigInteger.valueOf(PoiUnitTool.pointToDXA(lineHeight));
+
+        spacing.setLine(line);
+        spacing.setLineRule(STLineSpacingRule.EXACT);
+
+        spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(before)));
+        spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(after)));
+        // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
+        BigInteger spaceBefore = (BigInteger) spacing.getBefore();
+        BigInteger spaceAfter = (BigInteger) spacing.getAfter();
+        spacing.setBeforeLines(spaceBefore.divide(line).multiply(BigInteger.valueOf(100)));
+        spacing.setAfterLines(spaceAfter.divide(line).multiply(BigInteger.valueOf(100)));
+    }
+
+    public static CTP getCTP(CTGroup group) {
         CTShape ctShape = group.getShapeArray(0);
         CTTextbox ctTextbox;
         if (ctShape.sizeOfTextboxArray() > 0) {
@@ -363,27 +356,28 @@ public class PoiTextBoxTool {
         } else {
             ctp = ctTxbxContent.addNewP();
         }
+        return ctp;
+    }
 
+    public static CTPPr getCTPPr(CTGroup group) {
+        CTP ctp = getCTP(group);
         CTPPr ctpPr;
         if ((ctpPr = ctp.getPPr()) == null) {
             ctpPr = ctp.addNewPPr();
         }
+        return ctpPr;
+    }
 
-        CTSpacing spacing;
-        if ((spacing = ctpPr.getSpacing()) == null) {
-            spacing = ctpPr.addNewSpacing();
-        }
-        BigInteger line = BigInteger.valueOf(PoiUnitTool.pointToDXA(lineHeight));
-
-        spacing.setLine(line);
-        spacing.setLineRule(STLineSpacingRule.EXACT);
-
-        spacing.setBefore(BigInteger.valueOf(PoiUnitTool.pointToDXA(before)));
-        spacing.setAfter(BigInteger.valueOf(PoiUnitTool.pointToDXA(after)));
-        // 【特别注意】必须同时设置 beforeLines 和 afterLines，比例关系为： 100 / LINE_HEIGHT_DXA
-        BigInteger spaceBefore = (BigInteger) spacing.getBefore();
-        BigInteger spaceAfter = (BigInteger) spacing.getAfter();
-        spacing.setBeforeLines(spaceBefore.divide(line).multiply(BigInteger.valueOf(100)));
-        spacing.setAfterLines(spaceAfter.divide(line).multiply(BigInteger.valueOf(100)));
+    /**
+     * 设置段落缩进
+     *
+     * @param group          {@link CTGroup}
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
+     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setInd(CTGroup group, double leftChars, double rightChars, double firstLineChars) {
+        CTP ctp = getCTP(group);
+        PoiWordParagraphTool.setInd(ctp, leftChars, rightChars, firstLineChars);
     }
 }

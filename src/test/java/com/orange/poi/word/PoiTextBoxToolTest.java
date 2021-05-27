@@ -58,7 +58,7 @@ public class PoiTextBoxToolTest {
 
 
         // 创建文本框
-        CTGroup ctGroup = PoiTextBoxTool.createTextBox(width, height, "center");
+        CTGroup ctGroup = PoiTextBoxTool.createTextBox(width, height, "left");
 
         // 设置背景图
         PoiTextBoxTool.setBackgroundImg(xwpfDocument, ctGroup, bgImg, pictureType);
@@ -67,7 +67,7 @@ public class PoiTextBoxToolTest {
                 defaultFontFamily, defaultFontFamily, defaultFontSize, "000000",
                 false, false, STJc.CENTER);
 
-        PoiTextBoxTool.setParagraphSpaceOfPound(ctGroup, 15, 15, 0);
+        PoiTextBoxTool.setParagraphSpaceOfPound(ctGroup, 15, 30, 0);
 
         XWPFParagraph paragraph = PoiWordParagraphTool.createParagraph(xwpfDocument);
         PoiTextBoxTool.addGroup(paragraph, ctGroup);

@@ -76,7 +76,7 @@ public class PoiWordParagraphToolTest {
         paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "测试段落缩进", defaultFontFamily, defaultFontSize, defaultColor);
 
-        PoiWordParagraphTool.setInt(paragraph, -1, 5, -1);
+        PoiWordParagraphTool.setInd(paragraph, -1, 5, -1);
 
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
