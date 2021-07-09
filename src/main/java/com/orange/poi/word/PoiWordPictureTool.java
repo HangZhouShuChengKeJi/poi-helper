@@ -162,7 +162,19 @@ public class PoiWordPictureTool {
         int contentWidth = PoiUnitTool.dxaToPixel((int) PoiWordTool.getContentWidthOfDxa(pageSize, pageMar));
         int contentHeight = PoiUnitTool.dxaToPixel((int) PoiWordTool.getContentHeightOfDxa(pageSize, pageMar));
         // 不能完全以contentWidth和contentHeight作为最大的宽高，需要留一定的空间 不然会出现大长图前一页空白 后一页空白的状况
-        int delta = width > height ? 0 : 40;
+        int delta = 0;
+        if (width < height && height != 0) {
+            float rate = width / (float) height;
+            if (rate < 0.5) {
+                delta = 200;
+            } else if (rate < 0.65) {
+                delta = 130;
+            } else if (rate < 0.7) {
+                delta = 110;
+            } else {
+                delta = 50;
+            }
+        }
         contentWidth -= delta;
         contentHeight -= delta;
         return addPictureWithResize(paragraph, imgFile, width, height, contentWidth, contentHeight, redrawOnOverflow, lockOriginalScale);
