@@ -5,8 +5,11 @@ import com.sun.imageio.plugins.jpeg.JPEG;
 import com.sun.imageio.plugins.jpeg.JPEGImageReader;
 import com.sun.imageio.plugins.jpeg.JPEGMetadata;
 import com.sun.imageio.plugins.png.PNGMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
+import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -32,6 +35,8 @@ import java.util.Iterator;
  * @date 2019/6/3 23:29
  */
 public class ImageTool {
+
+    private final static Logger logger = LoggerFactory.getLogger(ImageTool.class);
 
     /**
      * jpeg 文件魔数，第 0 位
@@ -100,7 +105,13 @@ public class ImageTool {
         reader.setInput(imageInputStream, true, false);
 
         String exName;
-        IIOMetadata metadata = reader.getImageMetadata(0);
+        IIOMetadata metadata;
+        try {
+            metadata = reader.getImageMetadata(0);
+        } catch (IIOException e) {
+            logger.error("imageFile={}", imageFile, e);
+            return null;
+        }
         if (metadata instanceof JPEGMetadata) {
             JPEGMetadata jpegMetadata = (JPEGMetadata) metadata;
             Integer resUnits = getResUnits(jpegMetadata);
@@ -278,7 +289,13 @@ public class ImageTool {
         }
         reader.setInput(imageInputStream, true, false);
 
-        IIOMetadata metadata = reader.getImageMetadata(0);
+        IIOMetadata metadata;
+        try {
+            metadata = reader.getImageMetadata(0);
+        } catch (IIOException e) {
+            logger.error("imageFile={}", imageFile, e);
+            return null;
+        }
         if (metadata instanceof JPEGMetadata) {
             JPEGMetadata jpegMetadata = (JPEGMetadata) metadata;
             Integer resUnits = getResUnits(jpegMetadata);
