@@ -155,9 +155,13 @@ public class ImageTool {
             if (writeParam instanceof JPEGImageWriteParam) {
                 ((JPEGImageWriteParam) writeParam).setOptimizeHuffmanTables(true);
             }
-
-            imageWriter.write(metadata, new IIOImage(bufferedImage, Collections.emptyList(), metadata), writeParam);
-
+            try {
+                imageWriter.write(metadata, new IIOImage(bufferedImage, Collections.emptyList(), metadata), writeParam);
+            } catch (NullPointerException e) {
+                //有些时候会出现LCMS.getProfileSize出现空指针，因为LCMS单例被注销  原因不明 也无法避免  故try catch下
+                logger.error("imageFile={}", imageFile, e);
+                return null;
+            }
             return dstImgFile;
         } finally {
             if (imageWriter != null) {
