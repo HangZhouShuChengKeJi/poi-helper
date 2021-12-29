@@ -63,6 +63,16 @@ public class App {
 }
 ```
 
+# 参考
++ [Office Open XML](http://www.officeopenxml.com/)
++ [ECMA-376 | Office Open XML file formats](https://www.ecma-international.org/publications-and-standards/standards/ecma-376/)
++ [ISO/IEC 29500-1:2016 | Office Open XML File Formats — Part 1: Fundamentals and Markup Language Reference](https://www.iso.org/standard/71691.html)
++ [ISO/IEC 29500-2:2021 | Office Open XML file formats — Part 2: Open packaging conventions](https://www.iso.org/standard/77818.html)
++ [ISO/IEC 29500-3:2015 | Office Open XML File Formats — Part 3: Markup Compatibility and Extensibility](https://www.iso.org/standard/65533.html)
++ [ISO/IEC 29500-4:2016 | Office Open XML File Formats — Part 4: Transitional Migration Features](https://www.iso.org/standard/71692.html)
++ [apache poi 库](https://poi.apache.org/)
++ [MathML | MDN 的 mathml 文档](https://developer.mozilla.org/en-US/docs/Web/MathML)
+
 # 版权
 
 Licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html) license.
