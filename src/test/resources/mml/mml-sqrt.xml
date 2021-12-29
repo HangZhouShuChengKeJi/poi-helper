@@ -1,0 +1,9 @@
+<!--
+\sqrt[3]{27}
+-->
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mroot>
+        <mn>27</mn>
+        <mn>3</mn>
+    </mroot>
+</math>

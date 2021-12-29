@@ -2,6 +2,7 @@ package com.orange.poi.word;
 
 import com.orange.poi.util.OfficeMathMLUtil;
 import com.orange.poi.util.TempFileUtil;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.xmlbeans.XmlException;
@@ -14,6 +15,7 @@ import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author 小天
@@ -38,17 +40,28 @@ public class PoiWordMathToolTest {
         XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph;
 
-        paragraph = doc.createParagraph();
-        PoiWordParagraphTool.addTxt(paragraph, "解方程组：x=", defaultFontFamily, defaultFontSize, defaultColor);
-
-
-        PoiWordMathTool.addMathML(paragraph, "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n  <mfrac>\n    <mn>1</mn>\n    <mn>2</mn>\n  </mfrac>\n</math>");
-        PoiWordParagraphTool.addTxt(paragraph, "a+", defaultFontFamily, defaultFontSize, defaultColor);
-        PoiWordMathTool.addMathML(paragraph, "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n  <mfrac>\n    <mn>66</mn>\n    <mn>2</mn>\n  </mfrac>\n</math>");
-        PoiWordParagraphTool.addTxt(paragraph, "b=99", defaultFontFamily, defaultFontSize, defaultColor);
+        String mml;
 
         paragraph = doc.createParagraph();
-        PoiWordParagraphTool.addTxt(paragraph, "第二段", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "公式——分数：", defaultFontFamily, defaultFontSize, defaultColor);
+        mml = IOUtils.resourceToString("/mml/mml-frac.xml", StandardCharsets.UTF_8);
+        PoiWordMathTool.addMathML(paragraph, mml);
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addTxt(paragraph, "公式——开根号：", defaultFontFamily, defaultFontSize, defaultColor);
+        mml = IOUtils.resourceToString("/mml/mml-sqrt.xml", StandardCharsets.UTF_8);
+        PoiWordMathTool.addMathML(paragraph, mml);
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addTxt(paragraph, "公式——方程组(mfenced)：", defaultFontFamily, defaultFontSize, defaultColor);
+        mml = IOUtils.resourceToString("/mml/mml-mfenced.xml", StandardCharsets.UTF_8);
+        PoiWordMathTool.addMathML(paragraph, mml);
+
+
+        paragraph = doc.createParagraph();
+        PoiWordParagraphTool.addTxt(paragraph, "公式——方程组(mathjax-env-cases)：", defaultFontFamily, defaultFontSize, defaultColor);
+        mml = IOUtils.resourceToString("/mml/mml-env-cases.xml", StandardCharsets.UTF_8);
+        PoiWordMathTool.addMathML(paragraph, mml);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 

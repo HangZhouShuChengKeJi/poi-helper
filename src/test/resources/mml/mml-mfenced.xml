@@ -1,0 +1,34 @@
+<!--
+方程组，使用 mfenced 替换 mo ：
+
+\begin{cases}
+   x=1 & \text{ (1) } \\
+   y=2 & \text{ (2) }
+\end{cases}
+-->
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mfenced open="{" close="">
+        <mtable columnalign="left left" columnspacing="1em" rowspacing=".2em">
+            <mtr>
+                <mtd>
+                    <mi>x</mi>
+                    <mo>=</mo>
+                    <mn>1</mn>
+                </mtd>
+                <mtd>
+                    <mtext>&#xA0;(1)&#xA0;</mtext>
+                </mtd>
+            </mtr>
+            <mtr>
+                <mtd>
+                    <mi>y</mi>
+                    <mo>=</mo>
+                    <mn>2</mn>
+                </mtd>
+                <mtd>
+                    <mtext>&#xA0;(2)&#xA0;</mtext>
+                </mtd>
+            </mtr>
+        </mtable>
+    </mfenced>
+</math>
