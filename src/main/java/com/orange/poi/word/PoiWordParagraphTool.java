@@ -22,8 +22,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRuby;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabStop;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabs;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STRubyAlign;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTabJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTabTlc;
 
 import java.math.BigInteger;
 
@@ -291,10 +295,10 @@ public class PoiWordParagraphTool {
      * @param paragraph 段落 {@link XWPFParagraph}
      * @param plainTxt  文本内容
      *
-     * @return {@link XWPFParagraph}
+     * @return {@link XWPFRun}
      */
-    public static void addTxt(XWPFParagraph paragraph, String plainTxt) {
-        addTxt(paragraph, plainTxt, null, null, null, false, false);
+    public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt) {
+        return addTxt(paragraph, plainTxt, null, null, null, false, false);
     }
 
     /**
@@ -305,11 +309,11 @@ public class PoiWordParagraphTool {
      * @param fontFamily 字体
      * @param fontSize   字号
      *
-     * @return {@link XWPFParagraph}
+     * @return {@link XWPFRun}
      */
-    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+    public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                               String fontFamily, Integer fontSize) {
-        addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
+        return addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
     }
 
     /**
@@ -320,10 +324,12 @@ public class PoiWordParagraphTool {
      * @param fontFamily 字体
      * @param fontSize   字号
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+    public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                               String fontFamily, Integer fontSize, String color) {
-        addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
+        return addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
     }
 
     /**
@@ -336,11 +342,13 @@ public class PoiWordParagraphTool {
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
      * @param bold       是否加粗
      * @param underline  是否增加下划线
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+    public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                               String fontFamily, Integer fontSize, String color,
                               boolean bold, boolean underline) {
-        addTxt(paragraph, plainTxt, fontFamily, fontFamily, fontSize, color, bold, underline);
+        return addTxt(paragraph, plainTxt, fontFamily, fontFamily, fontSize, color, bold, underline);
     }
 
 
@@ -355,36 +363,18 @@ public class PoiWordParagraphTool {
      * @param color        颜色（RGB 格式，例如："FFFFFF"）
      * @param bold         是否加粗
      * @param underline    是否增加下划线
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addTxt(XWPFParagraph paragraph, String plainTxt,
+    public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                               String defaultFont, String eastAsiaFont, Integer fontSize, String color,
                               boolean bold, boolean underline) {
         if (paragraph == null) {
-            return;
+            return null;
         }
-        XWPFRun paragraphRun = paragraph.createRun();
-        paragraphRun.setText(plainTxt);
-        if (StringUtils.isNotBlank(defaultFont)) {
-            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.ascii);
-            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.cs);
-            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.hAnsi);
-        }
-        if (StringUtils.isNotBlank(eastAsiaFont)) {
-            paragraphRun.setFontFamily(eastAsiaFont, XWPFRun.FontCharRange.eastAsia);
-        } else if (StringUtils.isNotBlank(defaultFont)) {
-            // 中文使用默认字体
-            paragraphRun.setFontFamily(defaultFont, XWPFRun.FontCharRange.eastAsia);
-        }
-        if (fontSize != null) {
-            paragraphRun.setFontSize(fontSize);
-        }
-        if (StringUtils.isNotBlank(color)) {
-            paragraphRun.setColor(color);
-        }
-        paragraphRun.setBold(bold);
-        if (underline) {
-            paragraphRun.setUnderline(UnderlinePatterns.SINGLE);
-        }
+        XWPFRun run = paragraph.createRun();
+        PoiWordRunTool.setTxt(run, plainTxt, defaultFont, eastAsiaFont, fontSize, color, bold, underline);
+        return run;
     }
 
     /**
@@ -395,9 +385,11 @@ public class PoiWordParagraphTool {
      * @param fontFamily 字体
      * @param fontSize   字号
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addSubscript(XWPFParagraph paragraph, String plainTxt, String fontFamily, Integer fontSize, String color) {
-        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, false, VerticalAlign.SUBSCRIPT);
+    public static XWPFRun addSubscript(XWPFParagraph paragraph, String plainTxt, String fontFamily, Integer fontSize, String color) {
+        return addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, false);
     }
 
     /**
@@ -409,12 +401,18 @@ public class PoiWordParagraphTool {
      * @param fontSize   字号
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
      * @param bold       是否加粗
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addSubscript(XWPFParagraph paragraph, String plainTxt,
+    public static XWPFRun addSubscript(XWPFParagraph paragraph, String plainTxt,
                                     String fontFamily, Integer fontSize, String color,
                                     boolean bold) {
-
-        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, bold, VerticalAlign.SUBSCRIPT);
+        if (paragraph == null) {
+            return null;
+        }
+        XWPFRun run = paragraph.createRun();
+        PoiWordRunTool.setSubscript(run, plainTxt, fontFamily, fontSize, color, bold);
+        return run;
     }
 
 
@@ -426,9 +424,11 @@ public class PoiWordParagraphTool {
      * @param fontFamily 字体
      * @param fontSize   字号
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addSuperscript(XWPFParagraph paragraph, String plainTxt, String fontFamily, Integer fontSize, String color) {
-        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, false, VerticalAlign.SUPERSCRIPT);
+    public static XWPFRun addSuperscript(XWPFParagraph paragraph, String plainTxt, String fontFamily, Integer fontSize, String color) {
+        return addSuperscript(paragraph, plainTxt, fontFamily, fontSize, color, false);
     }
 
     /**
@@ -440,46 +440,18 @@ public class PoiWordParagraphTool {
      * @param fontSize   字号
      * @param color      颜色（RGB 格式，例如："FFFFFF"）
      * @param bold       是否加粗
+     *
+     * @return {@link XWPFRun}
      */
-    public static void addSuperscript(XWPFParagraph paragraph, String plainTxt,
+    public static XWPFRun addSuperscript(XWPFParagraph paragraph, String plainTxt,
                                       String fontFamily, Integer fontSize, String color,
                                       boolean bold) {
-
-        addSubscript(paragraph, plainTxt, fontFamily, fontSize, color, bold, VerticalAlign.SUPERSCRIPT);
-    }
-
-    /**
-     * 添加角标
-     *
-     * @param paragraph     {@link XWPFParagraph}
-     * @param plainTxt      文本内容
-     * @param fontFamily    字体
-     * @param fontSize      字号
-     * @param color         颜色（RGB 格式，例如："FFFFFF"）
-     * @param bold          是否加粗
-     * @param verticalAlign 对齐方式
-     */
-    private static void addSubscript(XWPFParagraph paragraph, String plainTxt,
-                                     String fontFamily, Integer fontSize, String color,
-                                     boolean bold, VerticalAlign verticalAlign) {
         if (paragraph == null) {
-            return;
+            return null;
         }
-        XWPFRun paragraphRun = paragraph.createRun();
-        paragraphRun.setText(plainTxt);
-        if (StringUtils.isNotBlank(fontFamily)) {
-            paragraphRun.setFontFamily(fontFamily);
-        }
-        if (fontSize != null) {
-            paragraphRun.setFontSize(fontSize);
-        }
-        if (StringUtils.isNotBlank(color)) {
-            paragraphRun.setColor(color);
-        }
-        if (bold) {
-            paragraphRun.setBold(bold);
-        }
-        paragraphRun.setSubscript(verticalAlign);
+        XWPFRun run = paragraph.createRun();
+        PoiWordRunTool.setSuperscript(run, plainTxt, fontFamily, fontSize, color, bold);
+        return run;
     }
 
     /**
@@ -574,6 +546,61 @@ public class PoiWordParagraphTool {
         return ppr;
     }
 
+    /**
+     * 设置普通制表符。
+     *
+     * 当制表符位置参数数量 == tabSize 时，按照 pos 参数设置各个制表符的位置；
+     * 否则以 pos[0] 为基准，设置各个制表符的位置，保证各个制表符是等宽的。
+     *
+     * @param paragraph 段落 {@link XWPFParagraph}
+     * @param tabSize   制表符数量
+     * @param pos       制表符位置。单位：dxa。
+     */
+    public static void setTabs(XWPFParagraph paragraph, int tabSize, int... pos) {
+        CTPPr ctpPr = getParagraphProperties(paragraph);
+        CTTabs ctTabs;
+        if (ctpPr.isSetTabs()) {
+            ctTabs = ctpPr.getTabs();
+        } else {
+            ctTabs = ctpPr.addNewTabs();
+        }
+        // 清空旧的制表符设置项
+        for (int i = 0; i < ctTabs.sizeOfTabArray(); i++) {
+            ctTabs.removeTab(i);
+        }
+
+        if(pos.length == tabSize) {
+            for (int i = 1; i < tabSize; i++) {
+                CTTabStop ctTabStop = ctTabs.addNewTab();
+                ctTabStop.setVal(STTabJc.LEFT);
+                // 无前导符
+                ctTabStop.setLeader(STTabTlc.NONE);
+                ctTabStop.setPos(pos[i]);
+            }
+        } else {
+            for (int i = 1; i < tabSize; i++) {
+                CTTabStop ctTabStop = ctTabs.addNewTab();
+                ctTabStop.setVal(STTabJc.LEFT);
+                // 无前导符
+                ctTabStop.setLeader(STTabTlc.NONE);
+                // 制表符位置是累加的（即各制表符是等宽的）
+                ctTabStop.setPos(i * pos[0]);
+            }
+        }
+    }
+
+    /**
+     * 添加制表符
+     *
+     * @param paragraph 段落 {@link XWPFParagraph}
+     *
+     * @return {@link XWPFRun}
+     */
+    public static XWPFRun addTab(XWPFParagraph paragraph) {
+        XWPFRun run = paragraph.createRun();
+        PoiWordRunTool.setTab(run);
+        return run;
+    }
 
     /**
      * 设置段落首行缩进

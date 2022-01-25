@@ -1,6 +1,5 @@
 package com.orange.poi.word;
 
-import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.TempFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -11,19 +10,11 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRuby;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STRubyAlign;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.URISyntaxException;
 
 /**
@@ -39,7 +30,7 @@ public class PoiWordParagraphToolTest {
 
     @Before
     public void setUp() throws Exception {
-        File outputDir = new File("output");
+        File outputDir = new File("temp");
         System.setProperty("java.io.tmpdir", outputDir.getAbsolutePath());
     }
 
@@ -74,7 +65,28 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addBlankLine(doc);
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "测试段落缩进", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进", defaultFontFamily, defaultFontSize, defaultColor);
+
+        PoiWordParagraphTool.setInd(paragraph, 5, -1, -1);
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进", defaultFontFamily, defaultFontSize, defaultColor);
 
         PoiWordParagraphTool.setInd(paragraph, -1, 5, -1);
 
@@ -317,6 +329,82 @@ public class PoiWordParagraphToolTest {
                 "微软雅黑", 16, "000000",
                 "微软雅黑", 8, "FF0000",
                 5, "zh-CN");
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
+    @Test
+    public void addTabs() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+
+        int docWidth = (int) PoiWordTool.getContentWidthOfDxa(doc);
+
+        XWPFParagraph paragraph;
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "制表符测试：");
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        // 等宽制表符
+        PoiWordParagraphTool.setTabs(paragraph, 4, docWidth / 4);
+
+        XWPFRun run = PoiWordParagraphTool.addTxt(paragraph, "aaa");
+        // 设置制表符
+        PoiWordRunTool.setTab(run);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "bbb");
+        PoiWordRunTool.setTab(run);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "ccc");
+        PoiWordRunTool.setTab(run);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "ddd");
+        PoiWordRunTool.setTab(run);
+
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        // 非等宽制表符
+        PoiWordParagraphTool.setTabs(paragraph, 4, 0, docWidth / 3, docWidth / 2, docWidth / 4 * 3);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "aaa");
+        PoiWordRunTool.setTab(run);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "bbb");
+        PoiWordRunTool.setTab(run);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "ccc");
+        PoiWordRunTool.setTab(run);
+
+        run = PoiWordParagraphTool.addTxt(paragraph, "ddd");
+        PoiWordRunTool.setTab(run);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        // 等宽制表符
+        PoiWordParagraphTool.setTabs(paragraph, 4, docWidth / 4);
+        PoiWordParagraphTool.addTab(paragraph);
+
+        PoiWordParagraphTool.addTxt(paragraph, "aaa");
+        PoiWordParagraphTool.addTxt(paragraph, "777");
+        PoiWordParagraphTool.addTxt(paragraph, "888");
+
+        PoiWordParagraphTool.addTab(paragraph);
+
+        PoiWordParagraphTool.addTxt(paragraph, "bbb");
+
+        PoiWordParagraphTool.addTab(paragraph);
+        PoiWordParagraphTool.addTxt(paragraph, "ccc");
+
+        PoiWordParagraphTool.addTab(paragraph);
+
+        PoiWordParagraphTool.addTxt(paragraph, "ddd");
+        //PoiWordParagraphTool.addTab(paragraph);
+
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
