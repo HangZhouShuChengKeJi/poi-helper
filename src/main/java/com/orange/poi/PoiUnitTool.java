@@ -115,6 +115,17 @@ public class PoiUnitTool {
     }
 
     /**
+     * 像素 转换为 emu
+     *
+     * @param pixel 像素
+     *
+     * @return emu
+     */
+    public static int pixelToEMU(int pixel) {
+        return Units.toEMU(pixelToPoint(pixel));
+    }
+
+    /**
      * emu 转换为 像素
      *
      * @param emu emu
