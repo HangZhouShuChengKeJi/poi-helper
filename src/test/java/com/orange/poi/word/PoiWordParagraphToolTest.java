@@ -65,6 +65,21 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addBlankLine(doc);
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进", defaultFontFamily, defaultFontSize, defaultColor);
+
+        PoiWordParagraphTool.setInd(paragraph, -1, -1, 2);
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
         PoiWordParagraphTool.addTxt(paragraph, "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
                 "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
                 "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
@@ -104,47 +119,19 @@ public class PoiWordParagraphToolTest {
     }
 
     @Test
-    public void addParagraph() {
-    }
-
-    @Test
-    public void addSubscript() throws IOException, URISyntaxException, InvalidFormatException {
+    public void addSubscript() throws IOException {
         XWPFDocument doc = PoiWordTool.createDocForA4();
         XWPFParagraph paragraph = PoiWordParagraphTool.createParagraph(doc);
-        ;
 
+        // 下标
         PoiWordParagraphTool.addTxt(paragraph, "y = log", defaultFontFamily, defaultFontSize, defaultColor);
-//        PoiWordParagraphTool.addSubscript(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
-//
-//        paragraph = PoiWordParagraphTool.createParagraph(doc);
-//        PoiWordParagraphTool.addTxt(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
-//        PoiWordParagraphTool.addSuperscript(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addSubscript(paragraph, "2", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "10", defaultFontFamily, defaultFontSize, defaultColor);
 
-
-        File picFileIS = new File(getClass().getResource("/img/1.png").toURI());
-
+        // 上标
         paragraph = PoiWordParagraphTool.createParagraph(doc);
-        ;
-        XWPFRun paragraphRun = paragraph.createRun();
-        paragraphRun.addPicture(new FileInputStream(picFileIS), XWPFDocument.PICTURE_TYPE_PNG, "123", 16, 26);
-        if (StringUtils.isNotBlank(defaultFontFamily)) {
-            paragraphRun.setFontFamily(defaultFontFamily);
-        }
-//        if (defaultFontSize != null) {
-//            paragraphRun.setFontSize(defaultFontSize);
-//        }
-//        if (StringUtils.isNotBlank(color)) {
-//            paragraphRun.setColor(color);
-//        }
-//        if (bold) {
-//            paragraphRun.setBold(bold);
-//        }
-        paragraphRun.setSubscript(VerticalAlign.SUBSCRIPT);
-
-
-        paragraph = PoiWordParagraphTool.createParagraph(doc);
-        ;
-        PoiWordParagraphTool.addTxt(paragraph, " x", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "3", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addSuperscript(paragraph, "x+1", defaultFontFamily, defaultFontSize, defaultColor);
 
 
         File wordFile = TempFileUtil.createTempFile("docx");
@@ -162,11 +149,21 @@ public class PoiWordParagraphToolTest {
         XWPFParagraph paragraph;
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "1.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
-        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 0.5f);
+        PoiWordParagraphTool.addTxt(paragraph, "1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距" +
+                "1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距" +
+                "1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距" +
+                "1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距" +
+                "1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距" +
+                "1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距1.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setLineHeightMultiple(paragraph, 1.0f);
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "2.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距" +
+                "2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距" +
+                "2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距" +
+                "2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距" +
+                "2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距" +
+                "2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距2.0 倍行距", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setLineHeightMultiple(paragraph, 2.0f);
 
         File wordFile = TempFileUtil.createTempFile("docx");
