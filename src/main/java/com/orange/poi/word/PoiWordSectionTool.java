@@ -121,10 +121,11 @@ public class PoiWordSectionTool {
      *
      * type 说明：
      * <ul>
-     *     <li>{@link STSectionMark#CONTINUOUS} : 连续的分节符，下一个节从新的段落开始。</li>
-     *     <li>{@link STSectionMark#NEXT_PAGE} : 下一页分节符（如果未指定类型，则为默认值），下一个节从新的页开始。</li>
-     *     <li>{@link STSectionMark#EVEN_PAGE} : 偶数页分节符，从下一个偶数页开始新的节。</li>
+     *     <li>{@link STSectionMark#NEXT_PAGE} : 下一页分节符（如果未指定类型，则为默认值），从新的页开始新的节。</li>
      *     <li>{@link STSectionMark#ODD_PAGE} : 奇数页分节符，在下一个奇数页上开始新的节。</li>
+     *     <li>{@link STSectionMark#EVEN_PAGE} : 偶数页分节符，从下一个偶数页开始新的节。</li>
+     *     <li>{@link STSectionMark#CONTINUOUS} : 连续的分节符，从新的段落开始新的节。</li>
+     *     <li>{@link STSectionMark#NEXT_COLUMN} : 连续的分节符，从下一栏开始新的节（用于多栏场景）。</li>
      * </ul>
      *
      * @param ctSectPr section 属性 {@link CTSectPr}
