@@ -64,50 +64,7 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);
 
-        paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
-                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
-                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
-                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
-                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
-                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
-                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进", defaultFontFamily, defaultFontSize, defaultColor);
-
-        PoiWordParagraphTool.setInd(paragraph, -1, -1, 2);
-
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-
-        paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
-                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
-                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
-                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
-                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
-                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
-                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进", defaultFontFamily, defaultFontSize, defaultColor);
-
-        PoiWordParagraphTool.setInd(paragraph, 5, -1, -1);
-
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-
-        paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
-                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
-                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
-                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
-                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
-                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
-                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进", defaultFontFamily, defaultFontSize, defaultColor);
-
-        PoiWordParagraphTool.setInd(paragraph, -1, 5, -1);
-
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.setRightInd(paragraph, 6);
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
@@ -411,4 +368,87 @@ public class PoiWordParagraphToolTest {
         doc.write(out);
         out.close();
     }
+
+    @Test
+    public void setInd() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+
+        // 设置默认样式
+        PoiWordTool.setDefaultStyle(doc, defaultFontFamily, defaultFontFamily, defaultFontSize, defaultColor);
+
+
+        XWPFParagraph paragraph;
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.addTxt(paragraph, "段落缩进测试", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 0.5f, 0.5f);
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.setFirstLineInd(paragraph, 6);
+        PoiWordParagraphTool.addTxt(paragraph, "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进" +
+                "段落首行缩进段落首行缩进段落首行缩进段落首行缩进段落首行缩进", defaultFontFamily, defaultFontSize, defaultColor);
+
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.setHangingInd(paragraph, 6);
+        PoiWordParagraphTool.addTxt(paragraph, "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进" +
+                "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进" +
+                "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进" +
+                "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进" +
+                "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进" +
+                "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进" +
+                "段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进段落悬挂缩进", defaultFontFamily, defaultFontSize, defaultColor);
+
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.setLeftInd(paragraph, 6);
+        PoiWordParagraphTool.addTxt(paragraph, "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进" +
+                "段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进段落左侧缩进", defaultFontFamily, defaultFontSize, defaultColor);
+
+
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        PoiWordParagraphTool.setRightInd(paragraph, 6);
+        PoiWordParagraphTool.addTxt(paragraph, "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进" +
+                "段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进段落右侧缩进", defaultFontFamily, defaultFontSize, defaultColor);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
 }

@@ -312,7 +312,7 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
-                              String fontFamily, Integer fontSize) {
+                                 String fontFamily, Integer fontSize) {
         return addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
     }
 
@@ -328,7 +328,7 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
-                              String fontFamily, Integer fontSize, String color) {
+                                 String fontFamily, Integer fontSize, String color) {
         return addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
     }
 
@@ -346,8 +346,8 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
-                              String fontFamily, Integer fontSize, String color,
-                              boolean bold, boolean underline) {
+                                 String fontFamily, Integer fontSize, String color,
+                                 boolean bold, boolean underline) {
         return addTxt(paragraph, plainTxt, fontFamily, fontFamily, fontSize, color, bold, underline);
     }
 
@@ -367,8 +367,8 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
-                              String defaultFont, String eastAsiaFont, Integer fontSize, String color,
-                              boolean bold, boolean underline) {
+                                 String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                                 boolean bold, boolean underline) {
         if (paragraph == null) {
             return null;
         }
@@ -405,8 +405,8 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addSubscript(XWPFParagraph paragraph, String plainTxt,
-                                    String fontFamily, Integer fontSize, String color,
-                                    boolean bold) {
+                                       String fontFamily, Integer fontSize, String color,
+                                       boolean bold) {
         if (paragraph == null) {
             return null;
         }
@@ -444,8 +444,8 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addSuperscript(XWPFParagraph paragraph, String plainTxt,
-                                      String fontFamily, Integer fontSize, String color,
-                                      boolean bold) {
+                                         String fontFamily, Integer fontSize, String color,
+                                         boolean bold) {
         if (paragraph == null) {
             return null;
         }
@@ -548,7 +548,7 @@ public class PoiWordParagraphTool {
 
     /**
      * 设置普通制表符。
-     *
+     * <p>
      * 当制表符位置参数数量 == tabSize 时，按照 pos 参数设置各个制表符的位置；
      * 否则以 pos[0] 为基准，设置各个制表符的位置，保证各个制表符是等宽的。
      *
@@ -569,7 +569,7 @@ public class PoiWordParagraphTool {
             ctTabs.removeTab(i);
         }
 
-        if(pos.length == tabSize) {
+        if (pos.length == tabSize) {
             for (int i = 1; i < tabSize; i++) {
                 CTTabStop ctTabStop = ctTabs.addNewTab();
                 ctTabStop.setVal(STTabJc.LEFT);
@@ -612,7 +612,7 @@ public class PoiWordParagraphTool {
      */
     @Deprecated
     public static void setInt(XWPFParagraph paragraph, double firstLineChars) {
-        setInd(paragraph, -1, -1, firstLineChars);
+        setInd(paragraph, -1, -1, firstLineChars, -1);
     }
 
 
@@ -627,7 +627,7 @@ public class PoiWordParagraphTool {
      */
     @Deprecated
     public static void setInt(XWPFParagraph paragraph, double leftChars, double rightChars) {
-        setInd(paragraph, leftChars, rightChars, -1);
+        setInd(paragraph, leftChars, rightChars, -1, -1);
     }
 
     /**
@@ -642,7 +642,7 @@ public class PoiWordParagraphTool {
      */
     @Deprecated
     public static void setInt(XWPFParagraph paragraph, double firstLineChars, double leftChars, double rightChars) {
-        setInd(paragraph, leftChars, rightChars, firstLineChars);
+        setInd(paragraph, leftChars, rightChars, firstLineChars, -1);
     }
 
     /**
@@ -651,8 +651,9 @@ public class PoiWordParagraphTool {
      * @param paragraph      段落
      * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
      */
+    @Deprecated
     public static void setInd(XWPFParagraph paragraph, double firstLineChars) {
-        setInd(paragraph, -1, -1, firstLineChars);
+        setInd(paragraph, -1, -1, firstLineChars, -1);
     }
 
     /**
@@ -662,8 +663,9 @@ public class PoiWordParagraphTool {
      * @param leftChars  左侧缩进字符数量（小于等于 0 时，忽略）
      * @param rightChars 右侧缩进字符数量（小于等于 0 时，忽略）
      */
+    @Deprecated
     public static void setInd(XWPFParagraph paragraph, double leftChars, double rightChars) {
-        setInd(paragraph, leftChars, rightChars, -1);
+        setInd(paragraph, leftChars, rightChars, -1, -1);
     }
 
     /**
@@ -674,9 +676,83 @@ public class PoiWordParagraphTool {
      * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
      * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
      */
+    @Deprecated
     public static void setInd(XWPFParagraph paragraph, double leftChars, double rightChars, double firstLineChars) {
+        setInd(paragraph, leftChars, rightChars, firstLineChars, -1);
+    }
+
+    /**
+     * 设置段落缩进 - 左侧缩进。
+     * <p>
+     * <b>提醒：</b> 段落左右缩进时，使用文档的默认字体字号进行计算。如果默认字体字号与段落字体字号不一致的话，缩进的距离看上去比较奇怪。
+     *
+     * @param paragraph 段落
+     * @param leftChars 左侧缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setLeftInd(XWPFParagraph paragraph, double leftChars) {
+        setInd(paragraph, leftChars, -1, -1, -1);
+    }
+
+    /**
+     * 设置段落缩进 - 右侧缩进。
+     * <p>
+     * <b>提醒：</b> 段落左右缩进时，使用文档的默认字体字号进行计算。如果默认字体字号与段落字体字号不一致的话，缩进的距离看上去比较奇怪。
+     *
+     * @param paragraph  段落
+     * @param rightChars 右侧缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setRightInd(XWPFParagraph paragraph, double rightChars) {
+        setInd(paragraph, -1, rightChars, -1, -1);
+    }
+
+    /**
+     * 设置段落缩进 - 首行缩进
+     *
+     * @param paragraph      段落
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     */
+    public static void setFirstLineInd(XWPFParagraph paragraph, double firstLineChars) {
         CTPPr ctpPr = getParagraphProperties(paragraph);
-        setInd(ctpPr, leftChars, rightChars, firstLineChars);
+        setInd(ctpPr, -1, -1, firstLineChars, -1);
+    }
+
+    /**
+     * 设置段落缩进 - 悬挂缩进
+     *
+     * @param paragraph    段落
+     * @param hangingChars 悬挂缩进（小于等于 0 时，忽略）
+     */
+    public static void setHangingInd(XWPFParagraph paragraph, double hangingChars) {
+        CTPPr ctpPr = getParagraphProperties(paragraph);
+        setInd(ctpPr, -1, -1, -1, hangingChars);
+    }
+
+    /**
+     * 设置段落缩进
+     *
+     * @param paragraph      段落
+     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
+     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）
+     */
+    public static void setInd(XWPFParagraph paragraph, double leftChars, double rightChars, double firstLineChars, double hangingChars) {
+        CTPPr ctpPr = getParagraphProperties(paragraph);
+        setInd(ctpPr, leftChars, rightChars, firstLineChars, hangingChars);
+    }
+
+    /**
+     * 设置段落缩进
+     *
+     * @param ctp            段落 {@link CTP}
+     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
+     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）
+     */
+    public static void setInd(CTP ctp, double leftChars, double rightChars, double firstLineChars, double hangingChars) {
+        CTPPr ctpPr = getParagraphProperties(ctp);
+        setInd(ctpPr, leftChars, rightChars, firstLineChars, hangingChars);
     }
 
     /**
@@ -687,9 +763,10 @@ public class PoiWordParagraphTool {
      * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
      * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
      */
+    @Deprecated
     public static void setInd(CTP ctp, double leftChars, double rightChars, double firstLineChars) {
         CTPPr ctpPr = getParagraphProperties(ctp);
-        setInd(ctpPr, leftChars, rightChars, firstLineChars);
+        setInd(ctpPr, leftChars, rightChars, firstLineChars, -1);
     }
 
     /**
@@ -700,7 +777,21 @@ public class PoiWordParagraphTool {
      * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
      * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
      */
+    @Deprecated
     public static void setInd(CTPPr ctpPr, double leftChars, double rightChars, double firstLineChars) {
+        setInd(ctpPr, leftChars, rightChars, firstLineChars, -1);
+    }
+
+    /**
+     * 设置段落缩进
+     *
+     * @param ctpPr          段落属性 {@link CTPPr}
+     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
+     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
+     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
+     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）
+     */
+    public static void setInd(CTPPr ctpPr, double leftChars, double rightChars, double firstLineChars, double hangingChars) {
         CTInd ctInd;
         if (ctpPr.isSetInd()) {
             ctInd = ctpPr.getInd();
@@ -709,6 +800,7 @@ public class PoiWordParagraphTool {
         }
         if (leftChars > 0) {
             ctInd.setLeftChars(BigInteger.valueOf((long) (leftChars * 100)));
+//            ctInd.setStartChars(BigInteger.valueOf((long) (leftChars * 100)));
         } else {
             if (ctInd.isSetLeftChars()) {
                 ctInd.unsetLeftChars();
@@ -716,6 +808,7 @@ public class PoiWordParagraphTool {
         }
         if (rightChars > 0) {
             ctInd.setRightChars(BigInteger.valueOf((long) (rightChars * 100)));
+//            ctInd.setEndChars(BigInteger.valueOf((long) (rightChars * 100)));
         } else {
             if (ctInd.isSetRightChars()) {
                 ctInd.unsetRightChars();
@@ -726,6 +819,13 @@ public class PoiWordParagraphTool {
         } else {
             if (ctInd.isSetFirstLineChars()) {
                 ctInd.unsetFirstLineChars();
+            }
+        }
+        if (hangingChars > 0) {
+            ctInd.setHangingChars(BigInteger.valueOf((long) (hangingChars * 100)));
+        } else {
+            if (ctInd.isSetHangingChars()) {
+                ctInd.unsetHangingChars();
             }
         }
     }
