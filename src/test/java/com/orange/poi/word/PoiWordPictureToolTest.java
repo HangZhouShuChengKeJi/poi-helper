@@ -28,7 +28,7 @@ public class PoiWordPictureToolTest {
 
     @Before
     public void setUp() throws Exception {
-        File outputDir = new File("output");
+        File outputDir = new File("temp");
         System.setProperty("java.io.tmpdir", outputDir.getAbsolutePath());
     }
 
