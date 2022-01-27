@@ -1,18 +1,16 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
-import org.apache.commons.lang3.StringUtils;
+import com.orange.poi.lowlevel.ParagraphBasePropertyTool;
 import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.TextAlignment;
-import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
-import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
@@ -694,6 +692,16 @@ public class PoiWordParagraphTool {
     }
 
     /**
+     * 设置段落缩进 - 左侧缩进。
+     *
+     * @param paragraph 段落
+     * @param left      左侧缩进（小于等于 0 时，忽略）。单位：磅
+     */
+    public static void setLeftIndByPoint(XWPFParagraph paragraph, double left) {
+        setIndByPoint(paragraph, left, -1, -1, -1);
+    }
+
+    /**
      * 设置段落缩进 - 右侧缩进。
      * <p>
      * <b>提醒：</b> 段落左右缩进时，使用文档的默认字体字号进行计算。如果默认字体字号与段落字体字号不一致的话，缩进的距离看上去比较奇怪。
@@ -706,6 +714,16 @@ public class PoiWordParagraphTool {
     }
 
     /**
+     * 设置段落缩进 - 右侧缩进。
+     *
+     * @param paragraph 段落
+     * @param right     右侧缩进（小于等于 0 时，忽略）。单位：磅
+     */
+    public static void setRightIndByPoint(XWPFParagraph paragraph, double right) {
+        setIndByPoint(paragraph, -1, right, -1, -1);
+    }
+
+    /**
      * 设置段落缩进 - 首行缩进
      *
      * @param paragraph      段落
@@ -713,7 +731,17 @@ public class PoiWordParagraphTool {
      */
     public static void setFirstLineInd(XWPFParagraph paragraph, double firstLineChars) {
         CTPPr ctpPr = getParagraphProperties(paragraph);
-        setInd(ctpPr, -1, -1, firstLineChars, -1);
+        ParagraphBasePropertyTool.setInd(ctpPr, -1, -1, firstLineChars, -1);
+    }
+
+    /**
+     * 设置段落缩进 - 首行缩进。
+     *
+     * @param paragraph 段落
+     * @param firstLine 首行缩进（小于等于 0 时，忽略）。单位：磅
+     */
+    public static void setFirstIndByPoint(XWPFParagraph paragraph, double firstLine) {
+        setIndByPoint(paragraph, -1, -1, firstLine, -1);
     }
 
     /**
@@ -724,35 +752,45 @@ public class PoiWordParagraphTool {
      */
     public static void setHangingInd(XWPFParagraph paragraph, double hangingChars) {
         CTPPr ctpPr = getParagraphProperties(paragraph);
-        setInd(ctpPr, -1, -1, -1, hangingChars);
+        ParagraphBasePropertyTool.setInd(ctpPr, -1, -1, -1, hangingChars);
+    }
+
+    /**
+     * 设置段落缩进 - 悬挂缩进
+     *
+     * @param paragraph 段落
+     * @param hanging   悬挂缩进（小于等于 0 时，忽略）。单位：磅
+     */
+    public static void setHangingIndByPoint(XWPFParagraph paragraph, double hanging) {
+        setIndByPoint(paragraph, -1, -1, -1, hanging);
     }
 
     /**
      * 设置段落缩进
      *
      * @param paragraph      段落
-     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
-     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
-     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
-     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）
+     * @param leftChars      左侧缩进（小于等于 0 时，忽略）。单位：字符
+     * @param rightChars     右侧缩进（小于等于 0 时，忽略）。单位：字符
+     * @param firstLineChars 首行缩进（小于等于 0 时，忽略）。单位：字符
+     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）。单位：字符
      */
     public static void setInd(XWPFParagraph paragraph, double leftChars, double rightChars, double firstLineChars, double hangingChars) {
         CTPPr ctpPr = getParagraphProperties(paragraph);
-        setInd(ctpPr, leftChars, rightChars, firstLineChars, hangingChars);
+        ParagraphBasePropertyTool.setInd(ctpPr, leftChars, rightChars, firstLineChars, hangingChars);
     }
 
     /**
      * 设置段落缩进
      *
-     * @param ctp            段落 {@link CTP}
-     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
-     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
-     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
-     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）
+     * @param paragraph 段落
+     * @param left      左侧缩进（小于等于 0 时，忽略）。单位：磅
+     * @param right     右侧缩进（小于等于 0 时，忽略）。单位：磅
+     * @param firstLine 首行缩进（小于等于 0 时，忽略）。单位：磅
+     * @param hanging   悬挂缩进（小于等于 0 时，忽略）。单位：磅
      */
-    public static void setInd(CTP ctp, double leftChars, double rightChars, double firstLineChars, double hangingChars) {
-        CTPPr ctpPr = getParagraphProperties(ctp);
-        setInd(ctpPr, leftChars, rightChars, firstLineChars, hangingChars);
+    public static void setIndByPoint(XWPFParagraph paragraph, double left, double right, double firstLine, double hanging) {
+        CTPPr ctpPr = getParagraphProperties(paragraph);
+        ParagraphBasePropertyTool.setIndByPoint(ctpPr, left, right, firstLine, hanging);
     }
 
     /**
@@ -766,7 +804,7 @@ public class PoiWordParagraphTool {
     @Deprecated
     public static void setInd(CTP ctp, double leftChars, double rightChars, double firstLineChars) {
         CTPPr ctpPr = getParagraphProperties(ctp);
-        setInd(ctpPr, leftChars, rightChars, firstLineChars, -1);
+        ParagraphBasePropertyTool.setInd(ctpPr, leftChars, rightChars, firstLineChars, -1);
     }
 
     /**
@@ -779,56 +817,9 @@ public class PoiWordParagraphTool {
      */
     @Deprecated
     public static void setInd(CTPPr ctpPr, double leftChars, double rightChars, double firstLineChars) {
-        setInd(ctpPr, leftChars, rightChars, firstLineChars, -1);
+        ParagraphBasePropertyTool.setInd(ctpPr, leftChars, rightChars, firstLineChars, -1);
     }
 
-    /**
-     * 设置段落缩进
-     *
-     * @param ctpPr          段落属性 {@link CTPPr}
-     * @param leftChars      左侧缩进字符数量（小于等于 0 时，忽略）
-     * @param rightChars     右侧缩进字符数量（小于等于 0 时，忽略）
-     * @param firstLineChars 首行缩进字符数量（小于等于 0 时，忽略）
-     * @param hangingChars   悬挂缩进（小于等于 0 时，忽略）
-     */
-    public static void setInd(CTPPr ctpPr, double leftChars, double rightChars, double firstLineChars, double hangingChars) {
-        CTInd ctInd;
-        if (ctpPr.isSetInd()) {
-            ctInd = ctpPr.getInd();
-        } else {
-            ctInd = ctpPr.addNewInd();
-        }
-        if (leftChars > 0) {
-            ctInd.setLeftChars(BigInteger.valueOf((long) (leftChars * 100)));
-//            ctInd.setStartChars(BigInteger.valueOf((long) (leftChars * 100)));
-        } else {
-            if (ctInd.isSetLeftChars()) {
-                ctInd.unsetLeftChars();
-            }
-        }
-        if (rightChars > 0) {
-            ctInd.setRightChars(BigInteger.valueOf((long) (rightChars * 100)));
-//            ctInd.setEndChars(BigInteger.valueOf((long) (rightChars * 100)));
-        } else {
-            if (ctInd.isSetRightChars()) {
-                ctInd.unsetRightChars();
-            }
-        }
-        if (firstLineChars > 0) {
-            ctInd.setFirstLineChars(BigInteger.valueOf((long) (firstLineChars * 100)));
-        } else {
-            if (ctInd.isSetFirstLineChars()) {
-                ctInd.unsetFirstLineChars();
-            }
-        }
-        if (hangingChars > 0) {
-            ctInd.setHangingChars(BigInteger.valueOf((long) (hangingChars * 100)));
-        } else {
-            if (ctInd.isSetHangingChars()) {
-                ctInd.unsetHangingChars();
-            }
-        }
-    }
 
     /**
      * 设置段落间距（以磅为单位）
@@ -1052,5 +1043,34 @@ public class PoiWordParagraphTool {
         rubyRtCtrpr.addNewSzCs().setVal(realBaseTextFontSize);
         // 设置颜色
         rubyRtCtrpr.addNewColor().setVal(rubyTextColor);
+    }
+
+    /**
+     * 设置段落序号
+     *
+     * @param paragraph 段落对象 {@link XWPFParagraph}
+     * @param numId     编号Id
+     * @param level     编号级别
+     */
+    public static void setNumber(XWPFParagraph paragraph, BigInteger numId, BigInteger level) {
+        CTPPr ppr = getParagraphProperties(paragraph);
+        CTNumPr ctNumPr;
+        if (ppr.isSetNumPr()) {
+            ctNumPr = ppr.getNumPr();
+        } else {
+            ctNumPr = ppr.addNewNumPr();
+        }
+
+        if (ctNumPr.isSetNumId()) {
+            ctNumPr.getNumId().setVal(numId);
+        } else {
+            ctNumPr.addNewNumId().setVal(numId);
+        }
+
+        if (ctNumPr.isSetIlvl()) {
+            ctNumPr.getIlvl().setVal(level);
+        } else {
+            ctNumPr.addNewIlvl().setVal(level);
+        }
     }
 }
