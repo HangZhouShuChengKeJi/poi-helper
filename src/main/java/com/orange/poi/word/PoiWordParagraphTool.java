@@ -390,6 +390,7 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFRun}
      */
+    @Deprecated
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String fontFamily, Integer fontSize) {
         return addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, false);
@@ -406,9 +407,28 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFRun}
      */
+    @Deprecated
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String fontFamily, Integer fontSize, String color) {
         return addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false, false);
+    }
+
+    /**
+     * 添加文本内容
+     *
+     * @param paragraph  段落 {@link XWPFParagraph}
+     * @param defaultFont  默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont 东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize     字号
+     * @param color        颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFRun}
+     */
+    public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
+                                 String defaultFont, String eastAsiaFont, Integer fontSize, String color) {
+        return addTxt(paragraph, plainTxt,
+                defaultFont, eastAsiaFont, fontSize, color,
+                false, false, false);
     }
 
     /**
@@ -424,6 +444,7 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFRun}
      */
+    @Deprecated
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String fontFamily, Integer fontSize, String color,
                                  boolean bold, boolean underline, boolean italics) {
