@@ -155,8 +155,11 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFParagraph}
      */
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt) {
-        return createParagraph(document, plainTxt, null, null, null, false, false,
-                ParagraphAlignment.LEFT, TextAlignment.CENTER);
+        return createParagraph(document, plainTxt,
+                null, null, null, null,
+                false, false, false,
+                ParagraphAlignment.LEFT, TextAlignment.CENTER,
+                false);
     }
 
     /**
@@ -169,6 +172,7 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFParagraph}
      */
+    @Deprecated
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize) {
         return createParagraph(document, plainTxt, fontFamily, fontSize, "000000", false, false,
@@ -186,10 +190,32 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFParagraph}
      */
+    @Deprecated
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color) {
         return createParagraph(document, plainTxt, fontFamily, fontSize, color, false, false,
                 ParagraphAlignment.LEFT, TextAlignment.CENTER, false);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document     {@link XWPFDocument}
+     * @param plainTxt     文本内容
+     * @param defaultFont  默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont 东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize     字号
+     * @param color        颜色（RGB 格式，例如："FFFFFF"）
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
+                                                String defaultFont, String eastAsiaFont, Integer fontSize, String color) {
+        return createParagraph(document, plainTxt,
+                defaultFont, eastAsiaFont, fontSize, color,
+                false, false, false,
+                ParagraphAlignment.LEFT, TextAlignment.CENTER,
+                false);
     }
 
     /**
@@ -207,6 +233,7 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFParagraph}
      */
+    @Deprecated
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color,
                                                 boolean bold, boolean underline,
@@ -230,6 +257,7 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFParagraph}
      */
+    @Deprecated
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String fontFamily, Integer fontSize, String color,
                                                 boolean bold, boolean underline,
@@ -251,6 +279,31 @@ public class PoiWordParagraphTool {
      * @param color              颜色（RGB 格式，例如："FFFFFF"）
      * @param bold               是否加粗
      * @param underline          是否增加下划线
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
+                                                String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                                                boolean bold, boolean underline, boolean italics) {
+        return createParagraph(document, plainTxt,
+                defaultFont, eastAsiaFont, fontSize, color,
+                bold, underline, italics,
+                ParagraphAlignment.LEFT, TextAlignment.CENTER,
+                false);
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document           {@link XWPFDocument}
+     * @param plainTxt           文本内容
+     * @param defaultFont        默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont       东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize           字号
+     * @param color              颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold               是否加粗
+     * @param underline          是否增加下划线
+     * @param italics            是否倾斜
      * @param paragraphAlignment 段落对齐方式
      * @param textAlignment      文本对齐方式
      * @param snapToGrid         true: 如果定义了文档网格，则对齐到网格
@@ -284,6 +337,7 @@ public class PoiWordParagraphTool {
      *
      * @return {@link XWPFParagraph}
      */
+    @Deprecated
     public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
                                                 String defaultFont, String eastAsiaFont, Integer fontSize, String color,
                                                 boolean bold, boolean underline,
