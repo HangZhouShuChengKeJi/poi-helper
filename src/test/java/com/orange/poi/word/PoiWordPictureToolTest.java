@@ -43,7 +43,7 @@ public class PoiWordPictureToolTest {
         XWPFDocument doc = PoiWordTool.createDocForA4();
 
         PoiWordParagraphTool.addTxt(doc.createParagraph(), "新的", defaultFontFamily, 25, defaultColor,
-                true, false);
+                true, false, false);
 
         // 设置背景图
         XWPFPicture picture1 = PoiWordPictureTool.addPictureWithResize(doc.createParagraph(), img1, false);

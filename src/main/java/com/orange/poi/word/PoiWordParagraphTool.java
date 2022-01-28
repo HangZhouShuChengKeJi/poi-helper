@@ -236,7 +236,34 @@ public class PoiWordParagraphTool {
                                                 ParagraphAlignment paragraphAlignment, TextAlignment textAlignment,
                                                 boolean snapToGrid) {
         XWPFParagraph paragraph = createParagraph(document, paragraphAlignment, textAlignment, snapToGrid);
-        addTxt(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline);
+        addTxt(paragraph, plainTxt, fontFamily, fontSize, color, bold, underline, false);
+        return paragraph;
+    }
+
+    /**
+     * 创建段落
+     *
+     * @param document           {@link XWPFDocument}
+     * @param plainTxt           文本内容
+     * @param defaultFont        默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont       东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize           字号
+     * @param color              颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold               是否加粗
+     * @param underline          是否增加下划线
+     * @param paragraphAlignment 段落对齐方式
+     * @param textAlignment      文本对齐方式
+     * @param snapToGrid         true: 如果定义了文档网格，则对齐到网格
+     *
+     * @return {@link XWPFParagraph}
+     */
+    public static XWPFParagraph createParagraph(XWPFDocument document, String plainTxt,
+                                                String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                                                boolean bold, boolean underline, boolean italics,
+                                                ParagraphAlignment paragraphAlignment, TextAlignment textAlignment,
+                                                boolean snapToGrid) {
+        XWPFParagraph paragraph = createParagraph(document, paragraphAlignment, textAlignment, snapToGrid);
+        addTxt(paragraph, plainTxt, defaultFont, eastAsiaFont, fontSize, color, bold, underline, italics);
         return paragraph;
     }
 
@@ -263,7 +290,7 @@ public class PoiWordParagraphTool {
                                                 ParagraphAlignment paragraphAlignment, TextAlignment textAlignment,
                                                 boolean snapToGrid) {
         XWPFParagraph paragraph = createParagraph(document, paragraphAlignment, textAlignment, snapToGrid);
-        addTxt(paragraph, plainTxt, defaultFont, eastAsiaFont, fontSize, color, bold, underline);
+        addTxt(paragraph, plainTxt, defaultFont, eastAsiaFont, fontSize, color, bold, underline, false);
         return paragraph;
     }
 
@@ -296,7 +323,7 @@ public class PoiWordParagraphTool {
      * @return {@link XWPFRun}
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt) {
-        return addTxt(paragraph, plainTxt, null, null, null, false, false);
+        return addTxt(paragraph, plainTxt, null, null, null, false, false, false);
     }
 
     /**
@@ -311,7 +338,7 @@ public class PoiWordParagraphTool {
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String fontFamily, Integer fontSize) {
-        return addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false);
+        return addTxt(paragraph, plainTxt, fontFamily, fontSize, "000000", false, false, false);
     }
 
     /**
@@ -327,7 +354,7 @@ public class PoiWordParagraphTool {
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String fontFamily, Integer fontSize, String color) {
-        return addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false);
+        return addTxt(paragraph, plainTxt, fontFamily, fontSize, color, false, false, false);
     }
 
     /**
@@ -345,8 +372,8 @@ public class PoiWordParagraphTool {
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String fontFamily, Integer fontSize, String color,
-                                 boolean bold, boolean underline) {
-        return addTxt(paragraph, plainTxt, fontFamily, fontFamily, fontSize, color, bold, underline);
+                                 boolean bold, boolean underline, boolean italics) {
+        return addTxt(paragraph, plainTxt, fontFamily, fontFamily, fontSize, color, bold, underline, italics);
     }
 
 
@@ -361,17 +388,20 @@ public class PoiWordParagraphTool {
      * @param color        颜色（RGB 格式，例如："FFFFFF"）
      * @param bold         是否加粗
      * @param underline    是否增加下划线
+     * @param italics      是否倾斜
      *
      * @return {@link XWPFRun}
      */
     public static XWPFRun addTxt(XWPFParagraph paragraph, String plainTxt,
                                  String defaultFont, String eastAsiaFont, Integer fontSize, String color,
-                                 boolean bold, boolean underline) {
+                                 boolean bold, boolean underline, boolean italics) {
         if (paragraph == null) {
             return null;
         }
         XWPFRun run = paragraph.createRun();
-        PoiWordRunTool.setTxt(run, plainTxt, defaultFont, eastAsiaFont, fontSize, color, bold, underline);
+        PoiWordRunTool.setTxt(run, plainTxt,
+                defaultFont, eastAsiaFont, fontSize, color,
+                bold, underline, italics);
         return run;
     }
 

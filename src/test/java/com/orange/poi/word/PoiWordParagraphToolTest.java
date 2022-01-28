@@ -57,8 +57,11 @@ public class PoiWordParagraphToolTest {
         PoiWordParagraphTool.addBlankLine(doc);
 
         paragraph = PoiWordParagraphTool.createParagraph(doc);
-        PoiWordParagraphTool.addTxt(paragraph, "新的段落", defaultFontFamily, defaultFontSize, defaultColor);
         PoiWordParagraphTool.setParagraphSpaceOfLine(paragraph, 0.5f, 0.5f);
+        PoiWordParagraphTool.addTxt(paragraph, "倾斜测试：", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "1.4×103", defaultFontFamily, defaultFontSize, defaultColor);
+        PoiWordParagraphTool.addTxt(paragraph, "kg／m3", defaultFontFamily, defaultFontSize, defaultColor, false, false, true);
+        PoiWordParagraphTool.addTxt(paragraph, "倾斜测试", defaultFontFamily, defaultFontSize, defaultColor);
 
         PoiWordParagraphTool.addBlankLine(doc);
         PoiWordParagraphTool.addBlankLine(doc);

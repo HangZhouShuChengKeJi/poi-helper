@@ -192,7 +192,7 @@ public class PoiWordNumberTool {
         setLevel(getLevel(abstractNum, level, true),
                 start, numFmt, text, STJc.LEFT,
                 defaultFont, eastAsiaFont, fontSize, color,
-                false, false);
+                false, false, false);
     }
 
     /**
@@ -215,7 +215,7 @@ public class PoiWordNumberTool {
         setLevel(getLevel(abstractNum, level, true),
                 start, numFmt, text, justification,
                 defaultFont, eastAsiaFont, fontSize, color,
-                false, false);
+                false, false, false);
     }
 
     /**
@@ -232,11 +232,12 @@ public class PoiWordNumberTool {
      * @param color         文字颜色
      * @param bold          是否加粗
      * @param underline     是否下划线
+     * @param italics       是否倾斜
      */
     public static void setLevel(CTLvl ctLvl,
                                 int start, STNumberFormat.Enum numFmt, String text, STJc.Enum justification,
                                 String defaultFont, String eastAsiaFont, Integer fontSize, String color,
-                                boolean bold, boolean underline) {
+                                boolean bold, boolean underline, boolean italics) {
         // 起始编号
         ctLvl.addNewStart().setVal(BigInteger.valueOf(start));
         // 编号格式类型
@@ -248,6 +249,8 @@ public class PoiWordNumberTool {
 
         // 设置文本样式
         CTRPr ctrPr = ctLvl.addNewRPr();
-        RunPropertyTool.set(ctrPr, defaultFont, eastAsiaFont, fontSize, color, bold, underline);
+        RunPropertyTool.set(ctrPr,
+                defaultFont, eastAsiaFont, fontSize, color,
+                bold, underline, italics);
     }
 }

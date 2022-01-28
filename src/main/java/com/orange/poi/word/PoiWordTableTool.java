@@ -798,7 +798,7 @@ public class PoiWordTableTool {
                                         boolean bold, boolean underline,
                                         STJc.Enum horizontalAlign, STVerticalJc.Enum verticalAlign) {
         XWPFParagraph paragraph = getFirstParagraph(tableCell);
-        PoiWordParagraphTool.addTxt(paragraph, text, fontFamily, fontSize, color, bold, underline);
+        PoiWordParagraphTool.addTxt(paragraph, text, fontFamily, fontSize, color, bold, underline, false);
         setTableCellAlign(tableCell, horizontalAlign, verticalAlign);
     }
 
