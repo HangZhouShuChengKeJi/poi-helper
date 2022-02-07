@@ -1,5 +1,6 @@
 package com.orange.poi.word;
 
+import com.orange.poi.PoiUnitTool;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
@@ -84,7 +85,7 @@ public class PoiWordSectionTool {
      *
      * @param doc       文档 {@link XWPFDocument}
      * @param colSize   分栏数量
-     * @param space     分栏间距
+     * @param space     分栏间距。单位：磅
      * @param splitLine 是否显示分割线
      */
     public static void setCols(XWPFDocument doc, int colSize, int space, boolean splitLine) {
@@ -97,7 +98,7 @@ public class PoiWordSectionTool {
      *
      * @param ctSectPr  section 属性 {@link CTSectPr}
      * @param colSize   分栏数量
-     * @param space     分栏间距
+     * @param space     分栏间距。单位：磅
      * @param splitLine 是否显示分割线
      */
     public static void setCols(CTSectPr ctSectPr, int colSize, int space, boolean splitLine) {
@@ -109,7 +110,7 @@ public class PoiWordSectionTool {
         if (colSize == 1) {
             return;
         }
-        ctColumns.setSpace(space);
+        ctColumns.setSpace(PoiUnitTool.pointToDXA(space));
         ctColumns.setEqualWidth(STOnOff1.ON);
         if (splitLine) {
             ctColumns.setSep(STOnOff1.ON);

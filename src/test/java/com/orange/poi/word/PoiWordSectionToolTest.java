@@ -40,7 +40,7 @@ public class PoiWordSectionToolTest {
         // 设置默认样式
         PoiWordTool.setDefaultStyle(doc, "Arial", "宋体", 14, "000000");
         // 设置默认分栏
-        PoiWordSectionTool.setCols(doc, 2, 200, true);
+        PoiWordSectionTool.setCols(doc, 2, 10, true);
         // 设置默认 section 不分页
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(doc), STSectionMark.NEXT_PAGE);
 
