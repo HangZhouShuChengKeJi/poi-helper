@@ -141,10 +141,30 @@ public class PoiWordNumberToolTest {
                 "编号后面的文本，编号后面的文本，编号后面的文本，编号后面的文本，编号后面的文本，" +
                 "编号后面的文本，编号后面的文本，编号后面的文本，编号后面的文本，编号后面的文本，", defaultFontFamily, defaultFontSize, defaultColor);
 
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
+        PoiWordParagraphTool.addBlankLine(doc);
 
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
-        PoiWordParagraphTool.addBlankLine(doc);
+        // 重新开始编号
+        xwpfAbstractNum = PoiWordNumberTool.createAbstractNumOfSingleLevel(doc);
+        numId = PoiWordNumberTool.createNumber(doc, xwpfAbstractNum);
+        numLevel = BigInteger.ZERO;
+
+        // 编号级别样式
+        PoiWordNumberTool.setLevel(xwpfAbstractNum, numLevel,
+                1, STNumberFormat.DECIMAL, "%1.", STJc.CENTER,
+                defaultFontFamily, defaultFontFamily, defaultFontSize, defaultColor);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        // 设置段落编号
+        PoiWordParagraphTool.setNumber(paragraph, numId, numLevel);
+        PoiWordParagraphTool.addTxt(paragraph, "重新开始编号", defaultFontFamily, defaultFontSize, defaultColor);
+
+        paragraph = PoiWordParagraphTool.createParagraph(doc);
+        // 设置段落编号
+        PoiWordParagraphTool.setNumber(paragraph, numId, numLevel);
+        PoiWordParagraphTool.addTxt(paragraph, "重新开始编号", defaultFontFamily, defaultFontSize, defaultColor);
+
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
