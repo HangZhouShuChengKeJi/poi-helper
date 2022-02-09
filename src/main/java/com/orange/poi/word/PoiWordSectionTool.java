@@ -4,8 +4,11 @@ import com.orange.poi.PoiUnitTool;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColumns;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STSectionMark;
@@ -51,7 +54,26 @@ public class PoiWordSectionTool {
      * @return {@link CTSectPr}
      */
     public static CTSectPr getSectionProperties(XWPFDocument doc) {
-        return doc.getDocument().getBody().getSectPr();
+        return getSectionProperties(doc, true);
+    }
+
+    /**
+     * 获取 section 属性。
+     *
+     * @param doc    文档 {@link XWPFDocument}
+     * @param create 未设置 section 时，是否创建
+     *
+     * @return {@link CTSectPr}
+     */
+    public static CTSectPr getSectionProperties(XWPFDocument doc, boolean create) {
+        CTBody ctBody = doc.getDocument().getBody();
+        if(ctBody.isSetSectPr()) {
+            return ctBody.getSectPr();
+        }
+        if(create) {
+            return ctBody.addNewSectPr();
+        }
+        return null;
     }
 
     /**
@@ -134,5 +156,95 @@ public class PoiWordSectionTool {
      */
     public static void setType(CTSectPr ctSectPr, STSectionMark.Enum type) {
         ctSectPr.addNewType().setVal(type);
+    }
+
+
+    /**
+     * 获取 word 文档 默认的节属性
+     *
+     * @param doc 文档 {@link XWPFDocument}
+     *
+     * @return
+     */
+    public static CTSectPr getSectPr(XWPFDocument doc) {
+        CTBody body = doc.getDocument().getBody();
+        if (body.isSetSectPr()) {
+            return body.getSectPr();
+        } else {
+            return body.addNewSectPr();
+        }
+    }
+
+    /**
+     * 获取页边距对象
+     *
+     * @param doc 文档 {@link XWPFDocument}
+     *
+     * @return 页边距对象
+     */
+    public static CTPageMar getPageMar(XWPFDocument doc) {
+        CTSectPr ctSectPr = getSectPr(doc);
+        return getPageMar(ctSectPr);
+    }
+
+    /**
+     * 获取页边距对象
+     *
+     * @param ctSectPr section 属性 {@link CTSectPr}
+     *
+     * @return 页边距对象
+     */
+    public static CTPageMar getPageMar(CTSectPr ctSectPr) {
+        if (ctSectPr.isSetPgMar()) {
+            return ctSectPr.getPgMar();
+        } else {
+            return ctSectPr.addNewPgMar();
+        }
+    }
+
+    /**
+     * 设置页边距
+     *
+     * @param doc             文档 ({@link XWPFDocument})
+     * @param marginTopDxa    上边距（单位：dxa）
+     * @param marginBottomDxa 下边距（单位：dxa）
+     * @param marginLeftDxa   左边距（单位：dxa）
+     * @param marginRightDxa  右边距（单位：dxa）
+     */
+    public static void setPageMargin(XWPFDocument doc,
+                                     long marginTopDxa, long marginBottomDxa,
+                                     long marginLeftDxa, long marginRightDxa) {
+        CTPageMar pageMar = getPageMar(doc);
+        pageMar.setTop(BigInteger.valueOf(marginTopDxa));
+        pageMar.setBottom(BigInteger.valueOf(marginBottomDxa));
+        pageMar.setLeft(BigInteger.valueOf(marginLeftDxa));
+        pageMar.setRight(BigInteger.valueOf(marginRightDxa));
+    }
+
+    /**
+     * 获取页面宽度，单位：dxa
+     *
+     * @param doc word 文档 {@link XWPFDocument}
+     *
+     * @return 页面宽度
+     */
+    public static CTPageSz getPageSize(XWPFDocument doc) {
+        CTSectPr sectPr = getSectPr(doc);
+        return getPageSize(sectPr);
+    }
+
+    /**
+     * 获取页面宽度，单位：dxa
+     *
+     * @param ctSectPr section 属性 {@link CTSectPr}
+     *
+     * @return 页面宽度
+     */
+    public static CTPageSz getPageSize(CTSectPr ctSectPr) {
+        CTPageSz pageSize = ctSectPr.getPgSz();
+        if (pageSize == null) {
+            throw new IllegalStateException("未设置节尺寸");
+        }
+        return pageSize;
     }
 }

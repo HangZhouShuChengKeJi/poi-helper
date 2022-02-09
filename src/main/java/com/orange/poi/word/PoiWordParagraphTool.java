@@ -2,6 +2,7 @@ package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
 import com.orange.poi.lowlevel.ParagraphBasePropertyTool;
+import com.orange.poi.lowlevel.RunPropertyTool;
 import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.TextAlignment;
@@ -9,6 +10,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFldChar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
@@ -22,6 +25,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabStop;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabs;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STRubyAlign;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTabJc;
@@ -1177,5 +1182,31 @@ public class PoiWordParagraphTool {
         } else {
             ctNumPr.addNewIlvl().setVal(level);
         }
+    }
+
+    /**
+     * 添加字段代码
+     *
+     * @param paragraph
+     * @param fieldCode
+     * @param defaultFont
+     * @param eastAsiaFont
+     * @param fontSize
+     * @param color
+     */
+    public static void addFieldCode(XWPFParagraph paragraph, String fieldCode, String defaultFont, String eastAsiaFont, Integer fontSize, String color) {
+        XWPFRun run = paragraph.createRun();
+        CTFldChar fldChar = run.getCTR().addNewFldChar();
+        fldChar.setFldCharType(STFldCharType.BEGIN);
+
+        run = paragraph.createRun();
+        PoiWordRunTool.setInstrTxt(run, fieldCode, defaultFont, eastAsiaFont, fontSize, color, false, false, false);
+        run = paragraph.createRun();
+        fldChar = run.getCTR().addNewFldChar();
+        fldChar.setFldCharType(STFldCharType.SEPARATE);
+
+        run = paragraph.createRun();
+        fldChar = run.getCTR().addNewFldChar();
+        fldChar.setFldCharType(STFldCharType.END);
     }
 }

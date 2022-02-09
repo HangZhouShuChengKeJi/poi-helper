@@ -3,7 +3,9 @@ package com.orange.poi.word;
 import com.orange.poi.lowlevel.RunPropertyTool;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
 /**
  * run 元素工具。对应 "r" 标签。
@@ -70,6 +72,36 @@ public class PoiWordRunTool {
         run.setText(plainTxt);
 
         CTR ctr = run.getCTR();
+        RunPropertyTool.set(ctr,
+                defaultFont, eastAsiaFont, fontSize, color,
+                bold, underline, italics);
+    }
+
+    /**
+     * 设置 instrText（字段代码）内容
+     *
+     * @param run          段落 {@link XWPFRun}
+     * @param fieldCode    字段代码。
+     * @param defaultFont  默认字体（用于 ascii 等字符的字体）
+     * @param eastAsiaFont 东亚文字字体（中日韩文字等）。null 时使用 defaultFont
+     * @param fontSize     字号
+     * @param color        颜色（RGB 格式，例如："FFFFFF"）
+     * @param bold         是否加粗
+     * @param underline    是否增加下划线
+     * @param italics      是否倾斜
+     */
+    public static void setInstrTxt(XWPFRun run, String fieldCode,
+                              String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                              boolean bold, boolean underline, boolean italics) {
+        if (run == null) {
+            return;
+        }
+        CTR ctr = run.getCTR();
+
+        CTText ctText = ctr.addNewInstrText();
+        ctText.setStringValue(fieldCode);
+        ctText.setSpace(SpaceAttribute.Space.PRESERVE);
+
         RunPropertyTool.set(ctr,
                 defaultFont, eastAsiaFont, fontSize, color,
                 bold, underline, italics);
@@ -153,4 +185,5 @@ public class PoiWordRunTool {
             ctr.removeTab(0);
         }
     }
+
 }
