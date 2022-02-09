@@ -1209,4 +1209,19 @@ public class PoiWordParagraphTool {
         fldChar = run.getCTR().addNewFldChar();
         fldChar.setFldCharType(STFldCharType.END);
     }
+
+    /**
+     * 设置大纲级别
+     *
+     * @param paragraph 段落对象 {@link XWPFParagraph}
+     * @param level     大纲级别。从 0 开始。
+     */
+    public static void setOutLineLevel(XWPFParagraph paragraph, int level) {
+        CTPPr ctpPr = getParagraphProperties(paragraph);
+        if (ctpPr.isSetOutlineLvl()) {
+            ctpPr.getOutlineLvl().setVal(BigInteger.valueOf(level));
+        } else {
+            ctpPr.addNewOutlineLvl().setVal(BigInteger.valueOf(level));
+        }
+    }
 }
