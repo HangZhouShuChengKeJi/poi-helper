@@ -221,6 +221,33 @@ public class PoiWordNumberTool {
     /**
      * 设置指定编号级别的样式
      *
+     * @param abstractNum   编号对象 {@link XWPFAbstractNum}
+     * @param level         编号级别
+     * @param start         起始编号
+     * @param numFmt        格式类型
+     * @param text          格式文本
+     * @param justification 对齐方式
+     * @param defaultFont   默认字体
+     * @param eastAsiaFont  中日韩字体
+     * @param fontSize      字号
+     * @param color         文字颜色
+     * @param bold          是否加粗
+     * @param underline     是否下划线
+     * @param italics       是否倾斜
+     */
+    public static void setLevel(XWPFAbstractNum abstractNum, BigInteger level,
+                                int start, STNumberFormat.Enum numFmt, String text, STJc.Enum justification,
+                                String defaultFont, String eastAsiaFont, Integer fontSize, String color,
+                                boolean bold, boolean underline, boolean italics) {
+        setLevel(getLevel(abstractNum, level, true),
+                start, numFmt, text, justification,
+                defaultFont, eastAsiaFont, fontSize, color,
+                bold, underline, italics);
+    }
+
+    /**
+     * 设置指定编号级别的样式
+     *
      * @param ctLvl         编号级别对象 {@link CTLvl}
      * @param start         起始编号
      * @param numFmt        格式类型
