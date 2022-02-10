@@ -1185,7 +1185,7 @@ public class PoiWordParagraphTool {
     }
 
     /**
-     * 添加字段代码
+     * 添加域代码
      *
      * @param paragraph
      * @param fieldCode

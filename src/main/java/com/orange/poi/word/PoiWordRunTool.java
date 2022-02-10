@@ -1,11 +1,13 @@
 package com.orange.poi.word;
 
 import com.orange.poi.lowlevel.RunPropertyTool;
+import com.orange.poi.lowlevel.RunTool;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
 
 /**
  * run 元素工具。对应 "r" 标签。
@@ -78,10 +80,10 @@ public class PoiWordRunTool {
     }
 
     /**
-     * 设置 instrText（字段代码）内容
+     * 设置 instrText（域代码）内容
      *
      * @param run          段落 {@link XWPFRun}
-     * @param fieldCode    字段代码。
+     * @param fieldCode    域代码。
      * @param defaultFont  默认字体（用于 ascii 等字符的字体）
      * @param eastAsiaFont 东亚文字字体（中日韩文字等）。null 时使用 defaultFont
      * @param fontSize     字号
@@ -105,6 +107,80 @@ public class PoiWordRunTool {
         RunPropertyTool.set(ctr,
                 defaultFont, eastAsiaFont, fontSize, color,
                 bold, underline, italics);
+    }
+
+    /**
+     * 获取 instrText（域代码）内容
+     *
+     * @param run 段落 {@link XWPFRun}
+     *
+     * @return instrText（域代码）内容
+     */
+    public static String getInstrTxt(XWPFRun run) {
+        if (run == null) {
+            return null;
+        }
+        CTR ctr = run.getCTR();
+        return RunTool.getInstrTxt(ctr);
+    }
+
+    /**
+     * 获取复杂域字符类型。复杂域字符类型是一种特殊字符，有以下几个值：
+     * <ul>
+     *     <li>{@link STFldCharType#BEGIN}: 复杂域开始</li>
+     *     <li>{@link STFldCharType#SEPARATE}: 复杂域分隔符</li>
+     *     <li>{@link STFldCharType#END}: 复杂域结束</li>
+     * </ul>
+     *
+     * @param run 段落 {@link XWPFRun}
+     *
+     * @return 域代码类型 {@link STFldCharType.Enum}
+     */
+    public static STFldCharType.Enum getFieldCharType(XWPFRun run) {
+        if (run == null) {
+            return null;
+        }
+        CTR ctr = run.getCTR();
+        return RunTool.getFldCharType(ctr);
+    }
+
+    /**
+     * 是否为域代码开始标记
+     *
+     * @param run 段落 {@link XWPFRun}
+     *
+     * @return
+     * @see {@link #getFieldCharType(XWPFRun)}
+     */
+    public static boolean isFieldBegin(XWPFRun run) {
+        STFldCharType.Enum type = getFieldCharType(run);
+        return type == STFldCharType.BEGIN;
+    }
+
+    /**
+     * 是否为域代码分隔符
+     *
+     * @param run 段落 {@link XWPFRun}
+     *
+     * @return
+     * @see {@link #getFieldCharType(XWPFRun)}
+     */
+    public static boolean isFieldSeparate(XWPFRun run) {
+        STFldCharType.Enum type = getFieldCharType(run);
+        return type == STFldCharType.SEPARATE;
+    }
+
+    /**
+     * 是否为域代码结束标记
+     *
+     * @param run 段落 {@link XWPFRun}
+     *
+     * @return
+     * @see {@link #getFieldCharType(XWPFRun)}
+     */
+    public static boolean isFieldEnd(XWPFRun run) {
+        STFldCharType.Enum type = getFieldCharType(run);
+        return type == STFldCharType.END;
     }
 
     /**
@@ -175,7 +251,7 @@ public class PoiWordRunTool {
         }
     }
     /**
-     * 添加制表符
+     * 删除制表符
      *
      * @param xwpfRun {@link XWPFRun}
      */
