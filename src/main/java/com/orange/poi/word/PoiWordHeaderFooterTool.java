@@ -1,20 +1,24 @@
 package com.orange.poi.word;
 
 import org.apache.poi.wp.usermodel.HeaderFooterType;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFFactory;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtrRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 
 import java.math.BigInteger;
 
 /**
- * 页眉页脚工具
+ * 页眉页脚工具。
  *
  * @author 小天
  * @date 2022/2/9 11:27
@@ -32,105 +36,149 @@ public class PoiWordHeaderFooterTool {
     }
 
     /**
-     * 创建页眉
+     * 创建页眉。
+     * 该方法创建的页眉不会和任何节挂钩。
+     * 如有需要可以使用 {@link #addHeader(XWPFDocument, CTSectPr, HeaderFooterType)} 方法创建页眉，并将页眉关联到节上。
+     * 也可以使用 {@link #setHeaderReference(XWPFDocument, CTSectPr, HeaderFooterType, XWPFHeader)} 方法，将页眉关联到节上。
      *
-     * @param doc
-     * @param sectPr
+     * @param doc word 文档 {@link XWPFDocument}
      *
-     * @return
+     * @return 页眉 {@link XWPFHeader}
      */
-    public static XWPFHeaderFooterPolicy createHeaderFooterPolicy(XWPFDocument doc, CTSectPr sectPr) {
-        return new XWPFHeaderFooterPolicy(doc, sectPr);
+    public static XWPFHeader createHeader(XWPFDocument doc) {
+        HdrDocument hdrDoc = HdrDocument.Factory.newInstance();
+
+        XWPFRelation relation = XWPFRelation.HEADER;
+        int i = PoiWordRelationTool.getRelationIndex(doc, relation);
+
+        XWPFHeader header = (XWPFHeader) doc.createRelationship(relation, XWPFFactory.getInstance(), i);
+        header.setXWPFDocument(doc);
+
+        CTHdrFtr hdr = header._getHdrFtr();
+        header.setHeaderFooter(hdr);
+        hdrDoc.setHdr(hdr);
+        return header;
     }
 
     /**
-     * 创建页眉
+     * 创建页脚。
+     * 该方法创建的页脚不会和任何节挂钩。
+     * 如有需要可以使用 {@link #addFooter(XWPFDocument, CTSectPr, HeaderFooterType)} 方法创建页脚，并将页脚关联到节上。
+     * 也可以使用 {@link #setFooterReference(XWPFDocument, CTSectPr, HeaderFooterType, XWPFFooter)} 方法，将页脚关联到节上。
      *
-     * @param doc
-     * @param type
+     * @param doc word 文档 {@link XWPFDocument}
      *
-     * @return
+     * @return 页脚 {@link XWPFFooter}
      */
-    public static XWPFHeader createHeader(XWPFDocument doc, HeaderFooterType type) {
-        return createHeader(doc, null, type);
+    public static XWPFFooter createFooter(XWPFDocument doc) {
+        FtrDocument ftrDoc = FtrDocument.Factory.newInstance();
+
+        XWPFRelation relation = XWPFRelation.FOOTER;
+        int i = PoiWordRelationTool.getRelationIndex(doc, relation);
+
+        XWPFFooter footer = (XWPFFooter) doc.createRelationship(relation, XWPFFactory.getInstance(), i);
+        footer.setXWPFDocument(doc);
+
+        CTHdrFtr hdr = footer._getHdrFtr();
+        footer.setHeaderFooter(hdr);
+        ftrDoc.setFtr(hdr);
+        return footer;
     }
 
     /**
-     * 创建页眉
+     * 添加页眉到默认的节
      *
-     * @param doc
-     * @param sectPr
-     * @param type
+     * @param doc  word 文档 {@link XWPFDocument}
+     * @param type 页眉类型 {@link HeaderFooterType}
      *
-     * @return
+     * @return 页眉 {@link XWPFHeader}
      */
-    public static XWPFHeader createHeader(XWPFDocument doc, CTSectPr sectPr, HeaderFooterType type) {
-        XWPFHeaderFooterPolicy hfPolicy = createHeaderFooterPolicy(doc, sectPr);
-        if (type == HeaderFooterType.FIRST) {
-            CTSectPr ctSectPr = PoiWordSectionTool.getSectionProperties(doc);
-            if (!ctSectPr.isSetTitlePg()) {
-                CTOnOff titlePg = ctSectPr.addNewTitlePg();
-                titlePg.setVal(STOnOff1.ON);
+    public static XWPFHeader addHeader(XWPFDocument doc, HeaderFooterType type) {
+        return addHeader(doc, PoiWordSectionTool.getSectPr(doc), type);
+    }
+
+    /**
+     * 添加指定节的页眉
+     *
+     * @param doc    word 文档 {@link XWPFDocument}
+     * @param sectPr 节属性
+     * @param type   页眉类型 {@link HeaderFooterType}
+     *
+     * @return 页眉 {@link XWPFHeader}
+     */
+    public static XWPFHeader addHeader(XWPFDocument doc, CTSectPr sectPr, HeaderFooterType type) {
+        XWPFHeader header = createHeader(doc);
+        setHeaderReference(doc, sectPr, type, header);
+        return header;
+    }
+
+    /**
+     * 设置指定节的页眉
+     *
+     * @param doc              word 文档 {@link XWPFDocument}
+     * @param sectPr           节属性 {@link CTSectPr}
+     * @param headerFooterType 页眉类型 {@link HeaderFooterType}
+     * @param header           页眉 {@link XWPFHeader}
+     */
+    public static void setHeaderReference(XWPFDocument doc, CTSectPr sectPr, HeaderFooterType headerFooterType, XWPFHeader header) {
+        STHdrFtr.Enum type = STHdrFtr.Enum.forInt(headerFooterType.toInt());
+        for (CTHdrFtrRef ref : sectPr.getFooterReferenceArray()) {
+            if (ref.getType().equals(type)) {
+                ref.setId(doc.getRelationId(header));
+                return;
             }
         }
-        return createHeader(hfPolicy, type);
+        CTHdrFtrRef ref = sectPr.addNewHeaderReference();
+        ref.setType(type);
+        ref.setId(doc.getRelationId(header));
     }
 
     /**
-     * 创建页眉
+     * 添加页脚到默认的节
      *
-     * @param hfPolicy
-     * @param type
+     * @param doc  word 文档 {@link XWPFDocument}
+     * @param type 页脚类型 {@link HeaderFooterType}
      *
-     * @return
+     * @return 页脚 {@link XWPFFooter}
      */
-    public static XWPFHeader createHeader(XWPFHeaderFooterPolicy hfPolicy, HeaderFooterType type) {
-        return hfPolicy.createHeader(STHdrFtr.Enum.forInt(type.toInt()));
+    public static XWPFFooter addFooter(XWPFDocument doc, HeaderFooterType type) {
+        return addFooter(doc, PoiWordSectionTool.getSectPr(doc), type);
     }
 
     /**
-     * 创建页脚
+     * 添加指定节的页脚
      *
-     * @param doc
-     * @param type
+     * @param doc    word 文档 {@link XWPFDocument}
+     * @param sectPr 节属性 {@link CTSectPr}
+     * @param type   页脚类型 {@link HeaderFooterType}
      *
-     * @return
+     * @return 页脚 {@link XWPFFooter}
      */
-    public static XWPFFooter createFooter(XWPFDocument doc, HeaderFooterType type) {
-        return createFooter(doc, null, type);
+    public static XWPFFooter addFooter(XWPFDocument doc, CTSectPr sectPr, HeaderFooterType type) {
+        XWPFFooter header = createFooter(doc);
+        setFooterReference(doc, sectPr, type, header);
+        return header;
     }
 
     /**
-     * 创建页脚
+     * 设置指定节的页脚
      *
-     * @param doc
-     * @param sectPr
-     * @param type
-     *
-     * @return
+     * @param doc              word 文档 {@link XWPFDocument}
+     * @param sectPr           节属性 {@link CTSectPr}
+     * @param headerFooterType 页脚类型 {@link HeaderFooterType}
+     * @param footer           页脚 {@link XWPFFooter}
      */
-    public static XWPFFooter createFooter(XWPFDocument doc, CTSectPr sectPr, HeaderFooterType type) {
-        XWPFHeaderFooterPolicy hfPolicy = createHeaderFooterPolicy(doc, sectPr);
-        if (type == HeaderFooterType.FIRST) {
-            CTSectPr ctSectPr = PoiWordSectionTool.getSectionProperties(doc);
-            if (!ctSectPr.isSetTitlePg()) {
-                CTOnOff titlePg = ctSectPr.addNewTitlePg();
-                titlePg.setVal(STOnOff1.ON);
+    public static void setFooterReference(XWPFDocument doc, CTSectPr sectPr, HeaderFooterType headerFooterType, XWPFFooter footer) {
+        STHdrFtr.Enum type = STHdrFtr.Enum.forInt(headerFooterType.toInt());
+        for (CTHdrFtrRef ref : sectPr.getFooterReferenceArray()) {
+            if (ref.getType().equals(type)) {
+                ref.setId(doc.getRelationId(footer));
+                return;
             }
         }
-        return createFooter(hfPolicy, type);
-    }
-
-    /**
-     * 创建页脚
-     *
-     * @param hfPolicy
-     * @param type
-     *
-     * @return
-     */
-    public static XWPFFooter createFooter(XWPFHeaderFooterPolicy hfPolicy, HeaderFooterType type) {
-        return hfPolicy.createFooter(STHdrFtr.Enum.forInt(type.toInt()));
+        CTHdrFtrRef ref = sectPr.addNewFooterReference();
+        ref.setType(type);
+        ref.setId(doc.getRelationId(footer));
     }
 
     /**

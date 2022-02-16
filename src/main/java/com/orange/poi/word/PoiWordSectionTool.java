@@ -6,6 +6,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColumns;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
@@ -26,21 +27,23 @@ public class PoiWordSectionTool {
     /**
      * 添加 section。 section 在形式上是一个 "设置了 'sectPr'" 的段落（{@link XWPFParagraph}）。
      * <p>
-     * 该方法会创建一个新的段落，并复制默认的 'sectPr'。如有其它需要，可以通过 {@link #getSectionProperties} 方法获取 section 属性，并进行相关设置。
+     * 该方法会创建一个新的段落，并设置 'sectPr'。'sectPr' 的 pgSz, pgMar, docGrid 属性与默认的 'sectPr' 保持一致。
+     * <p>
+     * 如有其它需要，可以通过 {@link #getSectionProperties} 方法获取 section 属性，并进行相关设置。
      *
      * @param doc 文档 {@link XWPFDocument}
-     * @param includeCols 复制时，是否包含默认的分栏设置
      *
      * @return 段落 {@link XWPFParagraph}
      */
-    public static XWPFParagraph addSection(XWPFDocument doc, boolean includeCols) {
+    public static XWPFParagraph addSection(XWPFDocument doc) {
         XWPFParagraph paragraph = doc.createParagraph();
-        CTSectPr ctSectPr = doc.getDocument().getBody().getSectPr();
-        // 复制一份新的
-        ctSectPr = (CTSectPr) ctSectPr.copy();
-        if (!includeCols) {
-            unsetCols(ctSectPr);
-        }
+        CTSectPr docSectPr = doc.getDocument().getBody().getSectPr();
+        CTSectPr ctSectPr = CTSectPr.Factory.newInstance();
+
+        ctSectPr.setPgSz((CTPageSz)docSectPr.getPgSz().copy());
+        ctSectPr.setPgMar((CTPageMar) docSectPr.getPgMar().copy());
+        ctSectPr.setDocGrid((CTDocGrid) docSectPr.getDocGrid().copy());
+
         CTPPr ctpPr = PoiWordParagraphTool.getParagraphProperties(paragraph);
         ctpPr.setSectPr(ctSectPr);
         return paragraph;

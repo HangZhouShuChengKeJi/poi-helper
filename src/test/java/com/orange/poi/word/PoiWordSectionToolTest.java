@@ -3,7 +3,6 @@ package com.orange.poi.word;
 import com.orange.poi.PoiUnitTool;
 import com.orange.poi.util.TempFileUtil;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
@@ -53,7 +52,7 @@ public class PoiWordSectionToolTest {
 
         PoiWordParagraphTool.createParagraph(doc, "第 1 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         // 第 1 节的分节符
-        XWPFParagraph sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        XWPFParagraph sectionParagraph = PoiWordSectionTool.addSection(doc);
         // 第 1 节 的 type 设置不设置效果都一样。
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.CONTINUOUS);
 
@@ -62,21 +61,21 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.createParagraph(doc, "第 2 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         PoiWordParagraphTool.createParagraph(doc, "本节从新的页开始");
         // 第 2 节的分节符
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.NEXT_PAGE);
 
         // 第 3 节
 
         PoiWordParagraphTool.createParagraph(doc, "第 3 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         PoiWordParagraphTool.createParagraph(doc, "本节和前一节挨在一起");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.CONTINUOUS);
 
         // 第 4 节
 
         PoiWordParagraphTool.createParagraph(doc, "第 4 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         PoiWordParagraphTool.createParagraph(doc, "本节从新的页开始");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.NEXT_PAGE);
 
         // 第 5 节
@@ -84,7 +83,7 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.createParagraph(doc, "第 5 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         // 导出的 word 可能看不出来，可以转换位 pdf，就可以看到该效果
         PoiWordParagraphTool.createParagraph(doc, "本节从新的奇数页开始");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.ODD_PAGE);
 
         // 第 6 节
@@ -92,7 +91,7 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.createParagraph(doc, "第 6 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         // 导出的 word 可能看不出来，可以转换位 pdf，就可以看到该效果
         PoiWordParagraphTool.createParagraph(doc, "本节从新的奇数页开始");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.ODD_PAGE);
 
         // 最后一节 - 从新的页开始
@@ -141,12 +140,12 @@ public class PoiWordSectionToolTest {
         PoiWordHeaderFooterTool.setFooterMargin(doc, PoiUnitTool.centimeterToDXA(1.200f));
 
         // 页眉
-        XWPFHeader xwpfHeader = PoiWordHeaderFooterTool.createHeader(doc, HeaderFooterType.DEFAULT);
+        XWPFHeader xwpfHeader = PoiWordHeaderFooterTool.addHeader(doc, HeaderFooterType.DEFAULT);
         XWPFParagraph headerParagraph = xwpfHeader.createParagraph();
         PoiWordParagraphTool.addTxt(headerParagraph, "分节 | 页眉页脚 | 页码 | 测试");
 
         // 奇数页页脚
-        XWPFFooter xwpfFooter = PoiWordHeaderFooterTool.createFooter(doc, HeaderFooterType.DEFAULT);
+        XWPFFooter xwpfFooter = PoiWordHeaderFooterTool.addFooter(doc, HeaderFooterType.DEFAULT);
         XWPFParagraph footerParagraph = xwpfFooter.createParagraph();
         // 奇数页页脚的页码右对齐
         footerParagraph.setAlignment(ParagraphAlignment.RIGHT);
@@ -155,7 +154,7 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.addTxt(footerParagraph, "页", defaultFontFamily, defaultFontFamily, defaultFontSize, defaultColor);
 
         // 偶数页页脚
-        xwpfFooter = PoiWordHeaderFooterTool.createFooter(doc, HeaderFooterType.EVEN);
+        xwpfFooter = PoiWordHeaderFooterTool.addFooter(doc, HeaderFooterType.EVEN);
         footerParagraph = xwpfFooter.createParagraph();
         // 偶数页页脚的页码左对齐
         footerParagraph.setAlignment(ParagraphAlignment.LEFT);
@@ -167,7 +166,7 @@ public class PoiWordSectionToolTest {
 
         PoiWordParagraphTool.createParagraph(doc, "第 1 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         // 第 1 节的分节符
-        XWPFParagraph sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        XWPFParagraph sectionParagraph = PoiWordSectionTool.addSection(doc);
         // 第 1 节 的 type 设置不设置效果都一样。
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.CONTINUOUS);
 
@@ -176,7 +175,7 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.createParagraph(doc, "第 2 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         PoiWordParagraphTool.createParagraph(doc, "本节从新的页开始");
         // 第 2 节的分节符
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.NEXT_PAGE);
 
         PoiWordParagraphTool.addPageBreak(doc);
@@ -189,14 +188,14 @@ public class PoiWordSectionToolTest {
 
         PoiWordParagraphTool.createParagraph(doc, "第 3 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         PoiWordParagraphTool.createParagraph(doc, "本节和前一节挨在一起");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.CONTINUOUS);
 
         // 第 4 节
 
         PoiWordParagraphTool.createParagraph(doc, "第 4 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         PoiWordParagraphTool.createParagraph(doc, "本节从新的页开始");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.NEXT_PAGE);
 
         // 第 5 节
@@ -204,7 +203,7 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.createParagraph(doc, "第 5 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         // 导出的 word 可能看不出来，可以转换位 pdf，就可以看到该效果
         PoiWordParagraphTool.createParagraph(doc, "本节从新的奇数页开始");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.ODD_PAGE);
 
         // 第 6 节
@@ -212,7 +211,7 @@ public class PoiWordSectionToolTest {
         PoiWordParagraphTool.createParagraph(doc, "第 6 节 - 第一段 - 不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏不需要分栏");
         // 导出的 word 可能看不出来，可以转换位 pdf，就可以看到该效果
         PoiWordParagraphTool.createParagraph(doc, "本节从新的奇数页开始");
-        sectionParagraph = PoiWordSectionTool.addSection(doc, false);
+        sectionParagraph = PoiWordSectionTool.addSection(doc);
         PoiWordSectionTool.setType(PoiWordSectionTool.getSectionProperties(sectionParagraph), STSectionMark.ODD_PAGE);
 
         // 最后一节 - 从新的页开始
