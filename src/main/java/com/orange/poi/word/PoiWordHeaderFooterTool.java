@@ -101,7 +101,7 @@ public class PoiWordHeaderFooterTool {
      * 添加指定节的页眉
      *
      * @param doc    word 文档 {@link XWPFDocument}
-     * @param sectPr 节属性
+     * @param sectPr 节属性 {@link CTSectPr}
      * @param type   页眉类型 {@link HeaderFooterType}
      *
      * @return 页眉 {@link XWPFHeader}
@@ -110,6 +110,17 @@ public class PoiWordHeaderFooterTool {
         XWPFHeader header = createHeader(doc);
         setHeaderReference(doc, sectPr, type, header);
         return header;
+    }
+
+    /**
+     * 移除页眉
+     *
+     * @param sectPr 节属性 {@link CTSectPr}
+     */
+    public static void removeHeader(CTSectPr sectPr) {
+        while (sectPr.sizeOfHeaderReferenceArray() > 0) {
+            sectPr.removeHeaderReference(0);
+        }
     }
 
     /**
@@ -158,6 +169,17 @@ public class PoiWordHeaderFooterTool {
         XWPFFooter header = createFooter(doc);
         setFooterReference(doc, sectPr, type, header);
         return header;
+    }
+
+    /**
+     * 移除页脚
+     *
+     * @param sectPr 节属性 {@link CTSectPr}
+     */
+    public static void removeFooter(CTSectPr sectPr) {
+        while (sectPr.sizeOfFooterReferenceArray() > 0) {
+            sectPr.removeFooterReference(0);
+        }
     }
 
     /**
