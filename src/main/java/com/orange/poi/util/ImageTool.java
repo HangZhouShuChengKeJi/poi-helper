@@ -119,7 +119,12 @@ public class ImageTool {
                 // 已指定了像素密度时，不再继续处理
                 return null;
             }
-            resetDensity(jpegMetadata);
+            try {
+                resetDensity(jpegMetadata);
+            } catch (IIOInvalidTreeException e) {
+                logger.error("imageFile={}", imageFile, e);
+                return null;
+            }
             exName = "jpg";
         } else if (metadata instanceof PNGMetadata) {
             PNGMetadata pngMetadata = (PNGMetadata) metadata;
