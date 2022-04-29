@@ -1,7 +1,10 @@
 package com.orange.poi.word;
 
 import com.orange.poi.util.TempFileUtil;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +12,9 @@ import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -37,6 +42,66 @@ public class PoiWordHeaderFooterToolTest {
 
     @Test
     public void createFooter() {
+    }
+
+    @Test
+    public void addHeader() throws IOException {
+        File wordFileDir = new File("D:\\word\\排版过的");
+        File[] wordFileArr = wordFileDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith("-new.docx");
+            }
+        });
+
+        for (File wordFile : wordFileArr) {
+            InputStream wordInputStream = new FileInputStream(wordFile);
+
+            XWPFDocument wordDoc = new XWPFDocument(wordInputStream);
+
+            int sectionIndex = 0;
+            for (XWPFParagraph paragraph : wordDoc.getParagraphs()) {
+                CTSectPr sectPr = PoiWordSectionTool.getSectionProperties(paragraph);
+                if (sectPr == null) {
+                    continue;
+                }
+                if (sectionIndex == 1) {
+                    PoiWordHeaderFooterTool.removeFooter(sectPr);
+
+                    // 奇数页页脚
+                    XWPFFooter xwpfFooter = PoiWordHeaderFooterTool.addFooter(wordDoc, sectPr, HeaderFooterType.DEFAULT);
+                    XWPFParagraph footerParagraph = xwpfFooter.createParagraph();
+                    // 奇数页页脚的页码右对齐
+                    footerParagraph.setAlignment(ParagraphAlignment.RIGHT);
+                    PoiWordPageNoTool.addPageNo(footerParagraph,
+                            "Times New Roman",
+                            "宋体",
+                            10,
+                            "000000");
+
+                    // 偶数页页脚
+                    xwpfFooter = PoiWordHeaderFooterTool.addFooter(wordDoc, sectPr, HeaderFooterType.EVEN);
+                    footerParagraph = xwpfFooter.createParagraph();
+                    // 偶数页页脚的页码左对齐
+                    footerParagraph.setAlignment(ParagraphAlignment.LEFT);
+                    PoiWordPageNoTool.addPageNo(footerParagraph,
+                            "Times New Roman",
+                            "宋体",
+                            10,
+                            "000000");
+
+                    break;
+                }
+                sectionIndex++;
+            }
+
+//            File newWordFile = TempFileUtil.createTempFile("docx");
+            File newWordFile = new File(wordFile.getParent(), wordFile.getName().replace("-new.docx", "-new2.docx"));
+            System.out.println(newWordFile);
+            FileOutputStream out = new FileOutputStream(newWordFile);
+            wordDoc.write(out);
+            out.close();
+        }
     }
 
     @Test

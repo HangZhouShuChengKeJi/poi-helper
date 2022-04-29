@@ -505,15 +505,7 @@ public class PoiWordTableTool {
      * @return 左边距大小，单位：dxa
      */
     private static Long getTableCellMarginInternal(XWPFTable table, String type) {
-        CTTbl ctTbl = table.getCTTbl();
-        CTTblPr ctTblPr;
-        if ((ctTblPr = ctTbl.getTblPr()) == null) {
-            ctTblPr = ctTbl.addNewTblPr();
-        }
-        CTTblCellMar ctTblCellMar;
-        if ((ctTblCellMar = ctTblPr.getTblCellMar()) == null) {
-            return null;
-        }
+        CTTblCellMar ctTblCellMar = getTableCellMargin(table, true);
         CTTblWidth ctTblWidth;
         switch (type) {
             case "top":
@@ -548,6 +540,265 @@ public class PoiWordTableTool {
         return width.longValue();
     }
 
+    /**
+     * 获取表格中设置的单元格边距对象
+     *
+     * @param table  表格
+     * @param create 未设置时，是否创建新的
+     *
+     * @return 单元格边距对象 {@link CTTblCellMar}
+     */
+    public static CTTblCellMar getTableCellMargin(XWPFTable table, boolean create) {
+        CTTbl ctTbl = table.getCTTbl();
+        CTTblPr ctTblPr;
+        if ((ctTblPr = ctTbl.getTblPr()) == null) {
+            ctTblPr = ctTbl.addNewTblPr();
+        }
+        CTTblCellMar ctTblCellMar;
+        if ((ctTblCellMar = ctTblPr.getTblCellMar()) == null) {
+            if (create) {
+                return ctTblPr.addNewTblCellMar();
+            }
+            return null;
+        }
+        return ctTblCellMar;
+    }
+
+    /**
+     * 设置表格中的所有单元格的默认四周边距
+     *
+     * @param table 表格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMargin(XWPFTable table, long value) {
+        setTableCellMargin(table, value, value, value, value);
+    }
+
+    /**
+     * 设置表格中的所有单元格的默认四周边距
+     *
+     * @param table  表格
+     * @param top    上边距（单位：DXA）
+     * @param right  右边距（单位：DXA）
+     * @param bottom 下边距（单位：DXA）
+     * @param left   左边距（单位：DXA）
+     */
+    public static void setTableCellMargin(XWPFTable table, long top, long right, long bottom, long left) {
+        CTTblCellMar ctTblCellMar = getTableCellMargin(table, true);
+        CTTblWidth ctTblWidth;
+
+        if ((ctTblWidth = ctTblCellMar.getTop()) == null) {
+            ctTblWidth = ctTblCellMar.addNewTop();
+        }
+        ctTblWidth.setW(top);
+
+        if ((ctTblWidth = ctTblCellMar.getRight()) == null) {
+            ctTblWidth = ctTblCellMar.addNewRight();
+        }
+        ctTblWidth.setW(right);
+
+        if ((ctTblWidth = ctTblCellMar.getBottom()) == null) {
+            ctTblWidth = ctTblCellMar.addNewBottom();
+        }
+        ctTblWidth.setW(bottom);
+
+        if ((ctTblWidth = ctTblCellMar.getLeft()) == null) {
+            ctTblWidth = ctTblCellMar.addNewLeft();
+        }
+        ctTblWidth.setW(left);
+    }
+
+    /**
+     * 设置表格中的所有单元格的默认顶部边距
+     *
+     * @param table 表格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginTop(XWPFTable table, long value) {
+        CTTblCellMar ctTblCellMar = getTableCellMargin(table, true);
+        CTTblWidth ctTblWidth;
+
+        if ((ctTblWidth = ctTblCellMar.getTop()) == null) {
+            ctTblWidth = ctTblCellMar.addNewTop();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 设置表格中的所有单元格的默认底部边距
+     *
+     * @param table 表格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginBottom(XWPFTable table, long value) {
+        CTTblCellMar ctTblCellMar = getTableCellMargin(table, true);
+        CTTblWidth ctTblWidth;
+
+        if ((ctTblWidth = ctTblCellMar.getBottom()) == null) {
+            ctTblWidth = ctTblCellMar.addNewBottom();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 设置表格中的所有单元格的默认左侧边距
+     *
+     * @param table 表格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginLeft(XWPFTable table, long value) {
+        CTTblCellMar ctTblCellMar = getTableCellMargin(table, true);
+        CTTblWidth ctTblWidth;
+
+        if ((ctTblWidth = ctTblCellMar.getLeft()) == null) {
+            ctTblWidth = ctTblCellMar.addNewLeft();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 设置表格中的所有单元格的默认右侧边距
+     *
+     * @param table 表格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginRight(XWPFTable table, long value) {
+        CTTblCellMar ctTblCellMar = getTableCellMargin(table, true);
+        CTTblWidth ctTblWidth;
+
+        if ((ctTblWidth = ctTblCellMar.getRight()) == null) {
+            ctTblWidth = ctTblCellMar.addNewRight();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 获取单元格边距对象
+     *
+     * @param cell   单元格
+     * @param create 未设置时，是否创建新的
+     *
+     * @return 单元格边距对象 {@link CTTcMar}
+     */
+    public static CTTcMar getTableCellMargin(XWPFTableCell cell, boolean create) {
+        CTTc ctTc = cell.getCTTc();
+        CTTcPr ctTcPr;
+        if ((ctTcPr = ctTc.getTcPr()) == null) {
+            ctTcPr = ctTc.addNewTcPr();
+        }
+        CTTcMar ctTcMar;
+        if ((ctTcMar = ctTcPr.getTcMar()) == null) {
+            if (create) {
+                return ctTcPr.addNewTcMar();
+            }
+            return null;
+        }
+        return ctTcMar;
+    }
+
+    /**
+     * 设置单元格四周边距
+     *
+     * @param cell  单元格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMargin(XWPFTableCell cell, long value) {
+        setTableCellMargin(cell, value, value, value, value);
+    }
+
+    /**
+     * 设置单元格四周边距
+     *
+     * @param cell   单元格
+     * @param top    上边距（单位：DXA）
+     * @param right  右边距（单位：DXA）
+     * @param bottom 下边距（单位：DXA）
+     * @param left   左边距（单位：DXA）
+     */
+    public static void setTableCellMargin(XWPFTableCell cell, long top, long right, long bottom, long left) {
+        CTTcMar ctTcMar = getTableCellMargin(cell, true);
+        CTTblWidth ctTblWidth;
+
+        if ((ctTblWidth = ctTcMar.getTop()) == null) {
+            ctTblWidth = ctTcMar.addNewTop();
+        }
+        ctTblWidth.setW(top);
+
+        if ((ctTblWidth = ctTcMar.getRight()) == null) {
+            ctTblWidth = ctTcMar.addNewRight();
+        }
+        ctTblWidth.setW(right);
+
+        if ((ctTblWidth = ctTcMar.getBottom()) == null) {
+            ctTblWidth = ctTcMar.addNewBottom();
+        }
+        ctTblWidth.setW(bottom);
+
+        if ((ctTblWidth = ctTcMar.getLeft()) == null) {
+            ctTblWidth = ctTcMar.addNewLeft();
+        }
+        ctTblWidth.setW(left);
+    }
+
+    /**
+     * 设置单元格顶部边距
+     *
+     * @param cell  单元格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginTop(XWPFTableCell cell, long value) {
+        CTTcMar ctTcMar = getTableCellMargin(cell, true);
+        CTTblWidth ctTblWidth;
+        if ((ctTblWidth = ctTcMar.getTop()) == null) {
+            ctTblWidth = ctTcMar.addNewTop();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 设置单元格底部边距
+     *
+     * @param cell  单元格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginBottom(XWPFTableCell cell, long value) {
+        CTTcMar ctTcMar = getTableCellMargin(cell, true);
+        CTTblWidth ctTblWidth;
+        if ((ctTblWidth = ctTcMar.getBottom()) == null) {
+            ctTblWidth = ctTcMar.addNewBottom();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 设置单元格左侧边距
+     *
+     * @param cell  单元格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginLeft(XWPFTableCell cell, long value) {
+        CTTcMar ctTcMar = getTableCellMargin(cell, true);
+        CTTblWidth ctTblWidth;
+        if ((ctTblWidth = ctTcMar.getLeft()) == null) {
+            ctTblWidth = ctTcMar.addNewLeft();
+        }
+        ctTblWidth.setW(value);
+    }
+
+    /**
+     * 设置单元格右侧边距
+     *
+     * @param cell  单元格
+     * @param value 边距（单位：DXA）
+     */
+    public static void setTableCellMarginRight(XWPFTableCell cell, long value) {
+        CTTcMar ctTcMar = getTableCellMargin(cell, true);
+        CTTblWidth ctTblWidth;
+        if ((ctTblWidth = ctTcMar.getRight()) == null) {
+            ctTblWidth = ctTcMar.addNewRight();
+        }
+        ctTblWidth.setW(value);
+    }
 
     /**
      * 设置表格行高

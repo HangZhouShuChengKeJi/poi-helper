@@ -20,6 +20,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVAnchor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -265,6 +266,30 @@ public class PoiWordTableToolTest {
         PoiWordTableTool.setVMerge(tableCell, STMerge.CONTINUE);
         tableCell = PoiWordTableTool.getTableCell(table, 3, 2);
         PoiWordTableTool.setVMerge(tableCell, STMerge.CONTINUE);
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
+    @Test
+    public void setTableCellMargin() throws IOException {
+        XWPFDocument doc = PoiWordTool.createDocForA4();
+        XWPFTable table = PoiWordTableTool.addTable(doc, 1, 2, false);
+
+
+        PoiWordTableTool.setTableCell(table, 0,0, "左边距 1 厘米", true);
+        PoiWordTableTool.setTableCell(table, 0,1, "左边距 2 厘米", true);
+
+        XWPFTableCell tableCell = PoiWordTableTool.getTableCell(table, 0, 0);
+        PoiWordTableTool.setTableCellMargin(tableCell, PoiUnitTool.centimeterToDXA(1));
+
+        tableCell = PoiWordTableTool.getTableCell(table, 0, 1);
+        PoiWordTableTool.setTableCellMarginLeft(tableCell, PoiUnitTool.centimeterToDXA(2));
 
         File wordFile = TempFileUtil.createTempFile("docx");
 
