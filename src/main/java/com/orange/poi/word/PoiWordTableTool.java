@@ -453,6 +453,29 @@ public class PoiWordTableTool {
     }
 
     /**
+     * 设置段落缩进 - 左侧缩进。
+     *
+     * @param table 表格
+     * @param left  左侧缩进（小于等于 0 时，忽略）。单位：磅
+     */
+    public static void setLeftIndByPoint(XWPFTable table, double left) {
+        CTTbl ctTbl = table.getCTTbl();
+        CTTblPr ctTblPr;
+        if ((ctTblPr = ctTbl.getTblPr()) == null) {
+            ctTblPr = ctTbl.addNewTblPr();
+        }
+        if (ctTblPr.isSetTblInd()) {
+            CTTblWidth tblInd = ctTblPr.getTblInd();
+            tblInd.setType(STTblWidth.DXA);
+            tblInd.setW(PoiUnitTool.pointToDXA(left));
+        } else {
+            CTTblWidth tblInd = ctTblPr.addNewTblInd();
+            tblInd.setType(STTblWidth.DXA);
+            tblInd.setW(PoiUnitTool.pointToDXA(left));
+        }
+    }
+
+    /**
      * 获取表格中设置的单元格上边距
      *
      * @param table 表格
