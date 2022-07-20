@@ -10,6 +10,14 @@ import com.orange.poi.PoiUnitTool;
  */
 public enum PaperSize {
     /**
+     * A3 纸，宽：297mm，高：420mm
+     */
+    A3(297, 420),
+    /**
+     * A3 纸 - 横排，宽：297mm，高：420mm
+     */
+    A3_H(420, 297),
+    /**
      * A4 纸，宽：210mm，高：297mm
      */
     A4(210, 297),

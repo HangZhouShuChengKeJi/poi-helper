@@ -11,6 +11,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,6 +61,31 @@ public class PoiWordToolTest {
         PoiWordTool.setDefaultStyle(doc, "Arial", "思源黑体 CN Light", 14, "FF0000");
 
         PoiWordParagraphTool.createParagraph(doc, "中文 ABC ______");
+
+        File wordFile = TempFileUtil.createTempFile("docx");
+
+        System.out.println(wordFile);
+
+        FileOutputStream out = new FileOutputStream(wordFile);
+        doc.write(out);
+        out.close();
+    }
+
+    @Test
+    public void createDocA3H() throws IOException {
+        // A4 横排版式，两栏测试
+
+        XWPFDocument doc = PoiWordTool.createDoc();
+
+        PoiWordTool.setDefaultStyle(doc, "Arial", "思源黑体 CN Light", 14, "FF0000");
+
+        CTSectPr ctSectPr = PoiWordSectionTool.getSectPr(doc);
+        PoiWordSectionTool.setPageSize(ctSectPr, PaperSize.A3_H, 20, 20, 15, 15);
+        PoiWordSectionTool.setCols(ctSectPr, 2, 20, false);
+
+        for (int i = 1; i <= 100; i++) {
+            PoiWordParagraphTool.createParagraph(doc, "第 " + i + " 行：中文 ABC ______");
+        }
 
         File wordFile = TempFileUtil.createTempFile("docx");
 

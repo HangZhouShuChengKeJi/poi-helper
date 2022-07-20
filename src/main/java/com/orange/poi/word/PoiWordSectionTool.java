@@ -1,6 +1,7 @@
 package com.orange.poi.word;
 
 import com.orange.poi.PoiUnitTool;
+import com.orange.poi.paper.PaperSize;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
@@ -23,6 +24,22 @@ import java.math.BigInteger;
  * @date 2022/1/25 16:05
  */
 public class PoiWordSectionTool {
+
+    /**
+     * 获取 word 文档 默认的节属性
+     *
+     * @param doc 文档 {@link XWPFDocument}
+     *
+     * @return 节对象 {@link CTSectPr}
+     */
+    public static CTSectPr getSectPr(XWPFDocument doc) {
+        CTBody body = doc.getDocument().getBody();
+        if (body.isSetSectPr()) {
+            return body.getSectPr();
+        } else {
+            return body.addNewSectPr();
+        }
+    }
 
     /**
      * 添加 section。 section 在形式上是一个 "设置了 'sectPr'" 的段落（{@link XWPFParagraph}）。
@@ -161,23 +178,6 @@ public class PoiWordSectionTool {
         ctSectPr.addNewType().setVal(type);
     }
 
-
-    /**
-     * 获取 word 文档 默认的节属性
-     *
-     * @param doc 文档 {@link XWPFDocument}
-     *
-     * @return
-     */
-    public static CTSectPr getSectPr(XWPFDocument doc) {
-        CTBody body = doc.getDocument().getBody();
-        if (body.isSetSectPr()) {
-            return body.getSectPr();
-        } else {
-            return body.addNewSectPr();
-        }
-    }
-
     /**
      * 获取页边距对象
      *
@@ -185,6 +185,7 @@ public class PoiWordSectionTool {
      *
      * @return 页边距对象
      */
+    @Deprecated
     public static CTPageMar getPageMar(XWPFDocument doc) {
         CTSectPr ctSectPr = getSectPr(doc);
         return getPageMar(ctSectPr);
@@ -214,14 +215,46 @@ public class PoiWordSectionTool {
      * @param marginLeftDxa   左边距（单位：dxa）
      * @param marginRightDxa  右边距（单位：dxa）
      */
+    @Deprecated
     public static void setPageMargin(XWPFDocument doc,
                                      long marginTopDxa, long marginBottomDxa,
                                      long marginLeftDxa, long marginRightDxa) {
         CTPageMar pageMar = getPageMar(doc);
+        setPageMargin(pageMar, marginTopDxa, marginBottomDxa, marginLeftDxa, marginRightDxa);
+    }
+
+    /**
+     * 设置页边距
+     *
+     * @param pageMar         页边距对象 ({@link CTPageMar})
+     * @param marginTopDxa    上边距（单位：dxa）
+     * @param marginBottomDxa 下边距（单位：dxa）
+     * @param marginLeftDxa   左边距（单位：dxa）
+     * @param marginRightDxa  右边距（单位：dxa）
+     */
+    public static void setPageMargin(CTPageMar pageMar,
+                                     long marginTopDxa, long marginBottomDxa,
+                                     long marginLeftDxa, long marginRightDxa) {
         pageMar.setTop(BigInteger.valueOf(marginTopDxa));
         pageMar.setBottom(BigInteger.valueOf(marginBottomDxa));
         pageMar.setLeft(BigInteger.valueOf(marginLeftDxa));
         pageMar.setRight(BigInteger.valueOf(marginRightDxa));
+    }
+
+    /**
+     * 设置页边距
+     *
+     * @param ctSectPr        节 {@link CTSectPr}
+     * @param marginTopDxa    上边距（单位：dxa）
+     * @param marginBottomDxa 下边距（单位：dxa）
+     * @param marginLeftDxa   左边距（单位：dxa）
+     * @param marginRightDxa  右边距（单位：dxa）
+     */
+    public static void setPageMargin(CTSectPr ctSectPr,
+                                     long marginTopDxa, long marginBottomDxa,
+                                     long marginLeftDxa, long marginRightDxa) {
+        CTPageMar ctPageMar = getPageMar(ctSectPr);
+        setPageMargin(ctPageMar, marginTopDxa, marginBottomDxa, marginLeftDxa, marginRightDxa);
     }
 
     /**
@@ -231,6 +264,7 @@ public class PoiWordSectionTool {
      *
      * @return 页面宽度
      */
+    @Deprecated
     public static CTPageSz getPageSize(XWPFDocument doc) {
         CTSectPr sectPr = getSectPr(doc);
         return getPageSize(sectPr);
@@ -245,9 +279,34 @@ public class PoiWordSectionTool {
      */
     public static CTPageSz getPageSize(CTSectPr ctSectPr) {
         CTPageSz pageSize = ctSectPr.getPgSz();
-        if (pageSize == null) {
-            throw new IllegalStateException("未设置节尺寸");
+        if (ctSectPr.isSetPgSz()) {
+            return pageSize;
         }
-        return pageSize;
+        return ctSectPr.addNewPgSz();
+    }
+
+    /**
+     * 设置指定节的页面尺寸
+     *
+     * @param ctSectPr     节 {@link CTSectPr}
+     * @param paperSize    纸张尺寸
+     * @param marginTop    上边距（单位：毫米）
+     * @param marginBottom 下边距（单位：毫米）
+     * @param marginLeft   左边距（单位：毫米）
+     * @param marginRight  右边距（单位：毫米）
+     */
+    public static void setPageSize(CTSectPr ctSectPr, PaperSize paperSize,
+                                   float marginTop, float marginBottom, float marginLeft, float marginRight) {
+        CTPageSz pageSize = getPageSize(ctSectPr);
+        pageSize.setW(BigInteger.valueOf(paperSize.width_dxa));
+        pageSize.setH(BigInteger.valueOf(paperSize.height_dxa));
+
+        final long marginTopDxa = PoiUnitTool.centimeterToDXA(marginTop / 10.f);
+        final long marginBottomDxa = PoiUnitTool.centimeterToDXA(marginBottom / 10.f);
+        final long marginLeftDxa = PoiUnitTool.centimeterToDXA(marginLeft / 10.f);
+        final long marginRightDxa = PoiUnitTool.centimeterToDXA(marginRight / 10.f);
+
+        CTPageMar ctPageMar = getPageMar(ctSectPr);
+        setPageMargin(ctPageMar, marginTopDxa, marginBottomDxa, marginLeftDxa, marginRightDxa);
     }
 }
