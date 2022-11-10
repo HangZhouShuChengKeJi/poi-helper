@@ -110,8 +110,8 @@ public class OfficeMathMLUtil {
                             && thirdEle.attribute("data-mjx-texclass").getValue().equalsIgnoreCase("close")) {
 
                         Element mfencedEle = parentEle.addElement("mfenced");
-                        mfencedEle.addAttribute("open", firstEle.getText());
-                        mfencedEle.addAttribute("close", thirdEle.getText());
+                        mfencedEle.addAttribute("open", firstEle.getTextTrim());
+                        mfencedEle.addAttribute("close", thirdEle.getTextTrim());
                         mfencedEle.add(secondEle.createCopy());
                         parentEle.remove(firstEle);
                         parentEle.remove(secondEle);

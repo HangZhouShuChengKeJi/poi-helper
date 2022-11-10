@@ -14,8 +14,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 
 import javax.xml.transform.TransformerException;
 
-import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
 /**
  * apache poi word 数学公式工具类
  *
@@ -27,7 +25,7 @@ public class PoiWordMathTool {
     public static void addMathML(XWPFParagraph paragraph, String mathML) throws XmlException, TransformerException, DocumentException {
         // 转换为 office mathml
         String officeMathML = OfficeMathMLUtil.getInstance().convertMmlToOmml(mathML);
-        XmlToken xmlToken = XmlToken.Factory.parse(officeMathML, DEFAULT_XML_OPTIONS);
+        XmlToken xmlToken = XmlToken.Factory.parse(officeMathML, org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS);
 
         CTOMathPara ctoMathPara = paragraph.getCTP().addNewOMathPara();
         ctoMathPara.set(xmlToken);
